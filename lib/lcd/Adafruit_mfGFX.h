@@ -8,7 +8,7 @@
 #include "fonts.h"
 
 
-#define swap(a, b) { int16_t t = a; a = b; b = t; }
+#define swap_Adafruit_GFX(a, b) { int16_t t = a; a = b; b = t; }
 
 class Adafruit_GFX : public Print {
 

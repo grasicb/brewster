@@ -1,10 +1,10 @@
-#include "UI_Button.h"
+#include "Button.h"
 //#include "Adafruit_ILI9341.h"
 //#include "Adafruit_mfGFX.h"
 
 //#define TFT_GRID
 
-UI_Button::UI_Button() {
+Button::Button() {
   x = 0;
   y = 0;
   width = 0;
@@ -12,7 +12,7 @@ UI_Button::UI_Button() {
   caption = "";
 }
 
-UI_Button::UI_Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, String action) {
+Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t action) {
   this->tft = tft;
   this->x = x;
   this->y = y;
@@ -22,7 +22,7 @@ UI_Button::UI_Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t wid
   this->action = action;
 }
 
-void UI_Button::updateButton(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, String action) {
+void Button::updateButton(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t action) {
   this->tft = tft;
   this->x = x;
   this->y = y;
@@ -33,7 +33,7 @@ void UI_Button::updateButton(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint
   draw();
 }
 
-void UI_Button::draw() {
+void Button::draw() {
   tft->fillRect(x, y, width, height, ILI9341_YELLOW);
   tft->setCursor(x+5, y+(height/2)-4);
 	tft->setTextColor(ILI9341_BLACK, ILI9341_YELLOW);
@@ -41,11 +41,7 @@ void UI_Button::draw() {
 	tft->print(caption);
 }
 
-boolean UI_Button::isClicked(uint16_t x_pos, uint16_t y_pos) {
-  //Serial.print("Button ");
-  //Serial.print(action);
-  //Serial.printf(" (x=%d, y=%d, w=%d, h=%d)\n", x, y, width, height);
-
+boolean Button::isClicked(uint16_t x_pos, uint16_t y_pos) {
   if (x_pos >= x && x_pos <= x+width && y_pos >= y && y_pos <= y + height) {
     if (!isActivated) {
       tft->fillRect(x, y, width, height, ILI9341_RED);
@@ -69,7 +65,7 @@ boolean UI_Button::isClicked(uint16_t x_pos, uint16_t y_pos) {
   }
 }
 
-void UI_Button::deactivateButton() {
+void Button::deactivateButton() {
   if (isActivated) {
     tft->fillRect(x, y, width, height, ILI9341_YELLOW);
     tft->setCursor(x+5, y+(height/2)-4);
@@ -80,6 +76,6 @@ void UI_Button::deactivateButton() {
   }
 }
 
-String UI_Button::getAction() {
+uint8_t Button::getAction() {
   return action;
 }

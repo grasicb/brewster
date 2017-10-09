@@ -3,7 +3,7 @@
 
 #include "../lib/lcd/Adafruit_ILI9341.h"
 #include "../lib/lcd/Adafruit_mfGFX.h"
-#include "../lib/ui/UI_Button.h"
+#include "../lib/ui/Button.h"
 
 class TemperatureScreen {
 public:
@@ -22,7 +22,7 @@ private:
   Adafruit_ILI9341 tft = Adafruit_ILI9341(A2, A0, A1);
   //#define NUM_BUTTONS 2
   static const uint16_t NUM_BUTTONS = 2;
-  UI_Button *buttons;
+  Button *buttons;
   int8_t buttonPressed = -1;
 };
 

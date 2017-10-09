@@ -1,4 +1,5 @@
 #include "TemperatureScreen.h"
+#include "../util/BrewsterGlobals.h"
 //#include "Adafruit_ILI9341.h"
 //#include "Adafruit_mfGFX.h"
 
@@ -10,12 +11,15 @@ TemperatureScreen::TemperatureScreen() {
 
 void TemperatureScreen::showLoadingScreen() {
   tft.begin();
+
+  lcdMutex.lock();
   tft.setRotation(3);
   tft.setFont(ARIAL_8);
 	tft.fillScreen(ILI9341_WHITE);
 	tft.setCursor(50, 110);
 	tft.setTextColor(ILI9341_BLACK, ILI9341_WHITE);  tft.setTextSize(2);
 	tft.println("Zaganjam aplikacijo");
+  lcdMutex.unlock();
 }
 
 Adafruit_ILI9341* TemperatureScreen::getTft() {
@@ -23,6 +27,7 @@ Adafruit_ILI9341* TemperatureScreen::getTft() {
 }
 
 void TemperatureScreen::initScreen() {
+  lcdMutex.lock();
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
 
@@ -62,15 +67,17 @@ void TemperatureScreen::initScreen() {
   tft.print("Temperatura 1: ");
   tft.setCursor(2, 85);
   tft.print("Temperatura 2: ");
+  lcdMutex.unlock();
 
 //  tft.drawFastHLine(0, 30, 43, ILI9341_YELLOW);
 
-  buttons = new UI_Button[NUM_BUTTONS];
-  buttons[0].updateButton(&tft, 15, 200, 80, 30, "Start mashing", "MASHING_START");
-  buttons[1].updateButton(&tft, 110, 200, 80, 30, "Stop mashing", "MASHING_STOP");
+  buttons = new Button[NUM_BUTTONS];
+  buttons[0].updateButton(&tft, 15, 200, 80, 30, "Start mashing", 0);
+  buttons[1].updateButton(&tft, 110, 200, 80, 30, "Stop mashing", 1);
 }
 
 void TemperatureScreen::displayData(float humidity, float temp1, float temp2) {
+  lcdMutex.lock();
   tft.setTextSize(1);
   tft.setTextColor(ILI9341_BLUE, ILI9341_BLACK);
   tft.setCursor(34, 55);
@@ -82,12 +89,16 @@ void TemperatureScreen::displayData(float humidity, float temp1, float temp2) {
   tft.setCursor(80, 85);
   tft.print(temp2);
   tft.print(" C   ");
+  lcdMutex.unlock();
 }
 
 void TemperatureScreen::updateTime(String time) {
+  lcdMutex.lock();
+  tft.setTextColor(ILI9341_BLUE, ILI9341_BLACK);
   tft.setCursor(26, 40);
   tft.print(time);
   tft.print("   ");
+  lcdMutex.unlock();
 }
 
 void TemperatureScreen::drawPixel(uint16_t x, uint16_t y) {

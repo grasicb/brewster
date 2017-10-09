@@ -6,14 +6,33 @@
 #include "lib/touch/BrewPiTouch.h"
 #include "lib/sensors/OneWire.h"
 #include "lib/sensors/DS18.h"
-#include "lib/ui/IWindow.h"
+#include "util/BrewsterGlobals.h"
+#include "lib/ui/AWindow.h"
+#include "ui/WindowManager.h"
+
+#include "ui/MainWindow.h"
+
+
 
 #define TFT_GRID
 
 //Globals
-TemperatureScreen tempScreen = TemperatureScreen();
 SYSTEM_MODE(SEMI_AUTOMATIC);
-IWindow *testWin;
+LogCategoryFilters logFilters;
+SerialLogHandler logHandler(9600, LOG_LEVEL_ALL, logFilters);
+
+//LCD
+Adafruit_ILI9341 tft = Adafruit_ILI9341(A2, A0, A1);
+
+//Window Management
+AWindow *currentWindow;
+WindowManager *windowManager;
+
+//Threads
+Thread *tempWorker;
+Thread *windowProcessor;
+TemperatureScreen tempScreen = TemperatureScreen();
+
 
 //Temperature Sensors
 PietteTech_DHT dhtSensor(6, DHT22);
@@ -21,7 +40,9 @@ OneWire wire = OneWire(D5);
 DS18 ds18Sensor(D5);
 float lastDs18Temp = 0;
 long lastRead = 0;
-const int refreshRate = 5000;
+const int refreshRate = 15000;
+float humidity;
+float temp1;
 
 //Touch Sensor Variables
 BrewPiTouch ts(GlobalSPIArbiter, D3, D4);
@@ -34,9 +55,11 @@ const int touchTresshold = 65;
 void setup() {
 	//LCD Setup
 	Serial.begin(9600);
-	Serial.println("Adafruit 2.2\" SPI TFT Test! _m1");
+	Log.trace("Starting application setup");
 
-	tempScreen.showLoadingScreen();
+	tft.begin();
+	showLoadingScreen();
+	//tempScreen.showLoadingScreen();
 
 
 	//Init Touch sensor
@@ -50,22 +73,23 @@ void setup() {
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
 
+	tempWorker = new Thread(NULL, readTemeratureThread);
+
   //Setup done
-	tempScreen.initScreen();
+	//tempScreen.initScreen();
 	scanOneWireAddresses();
 	scanOneWireAddresses();
 	scanOneWireAddresses();
 	scanOneWireAddresses();
-}
 
-void touchPressedHandler() {
-	//touchPressed = true;
-}
 
-void touchReleasedHandler() {
-	//touchPressed = false;
-	//printTouchCoordinates();
-	//Serial.println("Released: ");
+	windowManager = new WindowManager(&tft);
+	windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
+//	currentWindow = new MainWindow(&tft, windowManager);
+//	currentWindow->initScreen();
+
+
+	Log.info("Setup done. Brewster is ready");
 }
 
 void readTouch() {
@@ -90,52 +114,33 @@ void printTouchCoordinates() {
 
 void loop(void) {
 
+	//Handling touch sensor
 	if (ts.isTouched()) {
 		touchPressed = true;
 		lastTouchPressed = millis();
 		readTouch();
+
 		if (ts.isStable()) {
-			//printTouchCoordinates();
-		 //if (millis() > lastTouchPressed+touchTresshold)
-				tempScreen.screenTouched(ts_x, ts_y);
+			windowManager->screenTouched(ts_x, ts_y);
 		}
 	}
-
 	if (touchPressed && !ts.isTouched()) {
 		touchPressed = false;
-		Serial.println("Touch released");
-		tempScreen.screenReleased();
+		windowManager->screenReleased();
 	}
+
+	windowManager->process();
 
 /*
-	if (touchPressed && millis() > lastTouchPressed+touchTresshold) {
-		touchPressed = false;
-		printTouchCoordinates();
-		//tempScreen.drawPixel(ts_x, ts_y);
-		tempScreen.screenTouched(ts_x, ts_y);
-	}
-*/
-
-/*
-	if (ts.isTouched()) {
-		readTouch();
-	}
-	*/
-
 	String time = Time.format(Time.now(), "%H:%M:%S");
 	tempScreen.updateTime(time);
 	if (millis() > lastRead+refreshRate) {
 		Serial.println("Refreshing temperature");
 		lastRead = millis();
-		float humidity;
-		float temp1;
-		getDhtSensorData(humidity, temp1);
-		if (ds18Sensor.read())
-			lastDs18Temp = ds18Sensor.celsius();
-
+		readDS18();
 		tempScreen.displayData(humidity, temp1, lastDs18Temp);
 	}
-
+*/
 }
 
 void getDhtSensorData(float &humidity, float &temp) {
@@ -243,5 +248,36 @@ void scanOneWireAddresses() {
 }
 
 void readDS18() {
+	byte sensor1[] = {0x28, 0xFF, 0x60, 0xA0, 0x64, 0x16, 0x3, 0x6F};
+	byte sensor2[] = {0x28, 0xFF, 0xD0, 0x50, 0x63, 0x16, 0x4, 0xA8};
+	byte sensor3[] = {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x3, 0x6A};
 
+	if (ds18Sensor.read(sensor1)) {
+		lastDs18Temp = ds18Sensor.celsius();
+		Serial.printf("Sensor 1: %.1f\n", ds18Sensor.celsius());
+	}
+	if (ds18Sensor.read(sensor2)) {
+		Serial.printf("Sensor 2: %.1f\n", ds18Sensor.celsius());
+	}
+	if (ds18Sensor.read(sensor3)) {
+		Serial.printf("Sensor 3: %.1f\n", ds18Sensor.celsius());
+	}
+}
+
+os_thread_return_t readTemeratureThread(void* param) {
+	for(;;) {
+		getDhtSensorData(humidity, temp1);
+		delay(1000);
+	}
+}
+
+void showLoadingScreen() {
+	lcdMutex.lock();
+  tft.setRotation(3);
+  tft.setFont(ARIAL_8);
+	tft.fillScreen(ILI9341_WHITE);
+	tft.setCursor(50, 110);
+	tft.setTextColor(ILI9341_BLACK, ILI9341_WHITE);  tft.setTextSize(2);
+	tft.println("Zaganjam aplikacijo");
+  lcdMutex.unlock();
 }
