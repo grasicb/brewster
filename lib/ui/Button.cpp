@@ -34,9 +34,9 @@ void Button::updateButton(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_
 }
 
 void Button::draw() {
-  tft->fillRect(x, y, width, height, ILI9341_YELLOW);
+  tft->fillRect(x, y, width, height, backgroundColor);
   tft->setCursor(x+5, y+(height/2)-4);
-	tft->setTextColor(ILI9341_BLACK, ILI9341_YELLOW);
+	tft->setTextColor(ILI9341_BLACK, backgroundColor);
   tft->setTextSize(1);
 	tft->print(caption);
 }
@@ -54,9 +54,9 @@ boolean Button::isClicked(uint16_t x_pos, uint16_t y_pos) {
     return true;
   } else {
     if (isActivated) {
-      tft->fillRect(x, y, width, height, ILI9341_YELLOW);
+      tft->fillRect(x, y, width, height, backgroundColor);
       tft->setCursor(x+5, y+(height/2)-4);
-    	tft->setTextColor(ILI9341_BLACK, ILI9341_YELLOW);
+    	tft->setTextColor(ILI9341_BLACK, backgroundColor);
       tft->setTextSize(1);
     	tft->print(caption);
       isActivated = false;
@@ -67,9 +67,9 @@ boolean Button::isClicked(uint16_t x_pos, uint16_t y_pos) {
 
 void Button::deactivateButton() {
   if (isActivated) {
-    tft->fillRect(x, y, width, height, ILI9341_YELLOW);
+    tft->fillRect(x, y, width, height, backgroundColor);
     tft->setCursor(x+5, y+(height/2)-4);
-    tft->setTextColor(ILI9341_BLACK, ILI9341_YELLOW);
+    tft->setTextColor(ILI9341_BLACK, backgroundColor);
     tft->setTextSize(1);
     tft->print(caption);
     isActivated = false;

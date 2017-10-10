@@ -3,10 +3,12 @@
 
 void MainWindow::initScreen() {
   lcdMutex.lock();
-  tft->fillScreen(ILI9341_BLACK);
+  //tft->fillScreen(ILI9341_BLACK);
+  tft->fillScreen(0x346E);
+
 
   tft->setTextSize(1);
-  tft->setTextColor(ILI9341_WHITE, ILI9341_BLACK);
+  tft->setTextColor(ILI9341_WHITE, 0x346E);
   tft->setCursor(15, 225);
   tft->print("Brewster Homebrewing System");
   lcdMutex.unlock();
@@ -28,7 +30,7 @@ void MainWindow::refreshScreen() {}
 void MainWindow::process(void* param) {
   if (lastMinute != Time.minute()) {
       lastMinute = Time.minute();
-      tft->setTextColor(ILI9341_WHITE, ILI9341_BLACK);
+      tft->setTextColor(ILI9341_WHITE, 0x346E);
       tft->setCursor(285, 225);
       tft->printf("%02d:%02d     ", Time.hour(), Time.minute());
   }

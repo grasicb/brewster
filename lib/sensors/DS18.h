@@ -13,6 +13,7 @@ enum DS18Type {
 
 class DS18 {
 public:
+  enum PRECISION {BIT_9, BIT_10, BIT_11, BIT_12};
   DS18(uint16_t pin, bool parasitic = false);
 
   bool read();
@@ -28,6 +29,7 @@ public:
   bool crcError();
 
   void setConversionTime(uint16_t ms);
+  void setPrecision(PRECISION p);
 
 private:
   void init();

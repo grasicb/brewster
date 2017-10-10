@@ -6,7 +6,7 @@ DS18::DS18(uint16_t pin, bool parasitic)
   _wire{pin},
   _parasitic{parasitic},
    // maybe 750ms is enough, maybe not, wait 1 sec for conversion
-  _conversionTime{1000}
+  _conversionTime{100}
 {
   init();
 }
@@ -176,4 +176,43 @@ bool DS18::crcError() {
 
 void DS18::setConversionTime(uint16_t ms) {
   _conversionTime = ms;
+}
+
+void DS18::setPrecision(PRECISION p) {
+  init();
+  uint8_t i = 0;
+  Log.trace("Setting precision of sensors.");
+
+  while (_wire.search(_addr)) {
+    if (_addr[0] == 0x28) {
+      i++;
+      Log.trace("Setting precision of sensor %d", i);
+
+      _wire.reset();
+      _wire.select(_addr);
+      _wire.write(0x4E); // write on scratchPad
+      _wire.write(0x00); // User byte 0 - Unused
+      _wire.write(0x00); // User byte 1 - Unused
+      switch (p) {
+        case PRECISION::BIT_9:
+          _wire.write(0x1F); // set up en 12 bits (0x7F)
+          break;
+        case PRECISION::BIT_10:
+          _wire.write(0x3F); // set up en 12 bits (0x7F)
+          break;
+        case PRECISION::BIT_11:
+          _wire.write(0x5F); // set up en 12 bits (0x7F)
+          break;
+        case PRECISION::BIT_12:
+          _wire.write(0x7F); // set up en 12 bits (0x7F)
+          break;
+      }
+      _wire.reset(); // reset 1-Wire
+      _wire.select(_addr); // select DS18B20
+      _wire.write(0x48); // copy scratchpad to EEPROM
+      delay(15); // wait for end of write
+    }
+  }
+
+  Log.trace("Sensor precision set");
 }

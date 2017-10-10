@@ -23,6 +23,8 @@ private:
   String caption;
   uint8_t action;
   boolean isActivated = false;
+
+  uint16_t backgroundColor = 0xD687;
 };
 
 #endif BUTTON_H

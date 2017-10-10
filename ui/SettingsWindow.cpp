@@ -1,5 +1,6 @@
 #include "SettingsWindow.h"
 #include "../util/BrewsterGlobals.h"
+#include "../util/TempUtils.h"
 
 void SettingsWindow::initScreen() {
   lcdMutex.lock();
@@ -39,6 +40,14 @@ void SettingsWindow::processAction(uint8_t action) {
   switch (action) {
     case Action::W_MAIN_MENU:
       windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
+      break;
+    case Action::FIND_SENSORS:
+      TempUtils::setPrecision(DS18::PRECISION::BIT_9);
+      delay(1000);
+      TempUtils::listSensors();
+      break;
+    case Action::TEST_SENSORS:
+      TempUtils::readTemperature();
       break;
     default:
       Log.warn("No all actions implemented in window Settings");

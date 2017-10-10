@@ -4,8 +4,6 @@
 #include "lib/sensors/PietteTech_DHT.h"
 #include "lib/touch/SPIArbiter.h"
 #include "lib/touch/BrewPiTouch.h"
-#include "lib/sensors/OneWire.h"
-#include "lib/sensors/DS18.h"
 #include "util/BrewsterGlobals.h"
 #include "lib/ui/AWindow.h"
 #include "ui/WindowManager.h"
@@ -36,9 +34,6 @@ TemperatureScreen tempScreen = TemperatureScreen();
 
 //Temperature Sensors
 PietteTech_DHT dhtSensor(6, DHT22);
-OneWire wire = OneWire(D5);
-DS18 ds18Sensor(D5);
-float lastDs18Temp = 0;
 long lastRead = 0;
 const int refreshRate = 15000;
 float humidity;
@@ -75,18 +70,9 @@ void setup() {
 
 	tempWorker = new Thread(NULL, readTemeratureThread);
 
-  //Setup done
-	//tempScreen.initScreen();
-	scanOneWireAddresses();
-	scanOneWireAddresses();
-	scanOneWireAddresses();
-	scanOneWireAddresses();
-
-
 	windowManager = new WindowManager(&tft);
 	windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
-//	currentWindow = new MainWindow(&tft, windowManager);
-//	currentWindow->initScreen();
+
 
 
 	Log.info("Setup done. Brewster is ready");
@@ -180,87 +166,6 @@ void getDhtSensorData(float &humidity, float &temp) {
 	}else{
 		humidity = dhtSensor.getHumidity();
 		temp = dhtSensor.getCelsius();
-	}
-}
-
-
-void scanOneWireAddresses() {
-	byte i;
-  byte present = 0;
-  byte addr[8];
-
-  if (!wire.search(addr)) {
-    Serial.println("No more addresses.");
-    Serial.println();
-    wire.reset_search();
-    //delay(250);
-    return;
-  }
-
-  // if we get here we have a valid address in addr[]
-  // you can do what you like with it
-  // see the Temperature example for one way to use
-  // this basic code.
-
-  // this example just identifies a few chip types
-  // so first up, lets see what we have found
-
-  // the first ROM byte indicates which chip family
-  switch (addr[0]) {
-    case 0x10:
-      Serial.println("Chip = DS1820/DS18S20 Temp sensor");
-      break;
-    case 0x28:
-      Serial.println("Chip = DS18B20 Temp sensor");
-      break;
-    case 0x22:
-      Serial.println("Chip = DS1822 Temp sensor");
-      break;
-    case 0x26:
-      Serial.println("Chip = DS2438 Smart Batt Monitor");
-      break;
-    default:
-      Serial.println("Device type is unknown.");
-      // Just dumping addresses, show them all
-      //return;  // uncomment if you only want a known type
-  }
-
-  // Now print out the device address
-  Serial.print("ROM = ");
-  Serial.print("0x");
-    Serial.print(addr[0],HEX);
-  for( i = 1; i < 8; i++) {
-    Serial.print(", 0x");
-    Serial.print(addr[i],HEX);
-  }
-
-  // Show the CRC status
-  // you should always do this on scanned addresses
-
-  if (OneWire::crc8(addr, 7) != addr[7]) {
-      Serial.println("CRC is not valid!");
-      return;
-  }
-
-  Serial.println();
-
-  wire.reset(); // clear bus for next use
-}
-
-void readDS18() {
-	byte sensor1[] = {0x28, 0xFF, 0x60, 0xA0, 0x64, 0x16, 0x3, 0x6F};
-	byte sensor2[] = {0x28, 0xFF, 0xD0, 0x50, 0x63, 0x16, 0x4, 0xA8};
-	byte sensor3[] = {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x3, 0x6A};
-
-	if (ds18Sensor.read(sensor1)) {
-		lastDs18Temp = ds18Sensor.celsius();
-		Serial.printf("Sensor 1: %.1f\n", ds18Sensor.celsius());
-	}
-	if (ds18Sensor.read(sensor2)) {
-		Serial.printf("Sensor 2: %.1f\n", ds18Sensor.celsius());
-	}
-	if (ds18Sensor.read(sensor3)) {
-		Serial.printf("Sensor 3: %.1f\n", ds18Sensor.celsius());
 	}
 }
 
