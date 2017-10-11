@@ -16,8 +16,14 @@ public:
   enum PRECISION {BIT_9, BIT_10, BIT_11, BIT_12};
   DS18(uint16_t pin, bool parasitic = false);
 
+  //Synchronous read
   bool read();
   bool read(uint8_t addr[8]);
+
+  //Asynchronous read
+  void asyncReadRequest(uint8_t addr[8]);
+  bool asyncReadFetchData(uint8_t addr[8]);
+
   int16_t raw();
   float celsius();
   float fahrenheit();

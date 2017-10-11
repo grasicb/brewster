@@ -45,24 +45,7 @@ bool DS18::read(uint8_t addr[8]) {
   // Save the chip ROM information for later
   memcpy(_addr, addr, sizeof(_addr));
 
-  // Identify the type of chip
-
-  // the first ROM byte indicates which chip
-  // Return if this is an unknown chip
-  switch (addr[0]) {
-    case 0x10: _type = WIRE_DS1820; break;
-    case 0x28: _type = WIRE_DS18B20; break;
-    case 0x22: _type = WIRE_DS1822; break;
-    case 0x26: _type = WIRE_DS2438; break;
-    default:   _type = WIRE_UNKNOWN; return false;
-  }
-
-  // Read the actual temperature!!!
-
-  _wire.reset();               // first clear the 1-wire bus
-  _wire.select(_addr);          // now select the device we just found
-  int power = _parasitic ? 1 : 0; // whether to leave parasite power on at the end of the conversion
-  _wire.write(0x44, power);    // tell it to start a conversion
+  asyncReadRequest(addr);
 
   // just wait a second while the conversion takes place
   // different chips have different conversion times, check the specs, 1 sec is worse case + 250ms
@@ -71,8 +54,28 @@ bool DS18::read(uint8_t addr[8]) {
 
   delay(_conversionTime); // wait for conversion to finish
 
-  // we might do a _wire.depower() (parasite) here, but the reset will take care of it.
+  return asyncReadFetchData(addr);
+}
 
+void DS18::asyncReadRequest(uint8_t addr[8]) {
+  memcpy(_addr, addr, sizeof(_addr));
+
+  switch (addr[0]) {
+    case 0x10: _type = WIRE_DS1820; break;
+    case 0x28: _type = WIRE_DS18B20; break;
+    case 0x22: _type = WIRE_DS1822; break;
+    case 0x26: _type = WIRE_DS2438; break;
+    default:   _type = WIRE_UNKNOWN; return;
+  }
+
+  _wire.reset();               // first clear the 1-wire bus
+  _wire.select(addr);          // now select the device we just found
+  int power = _parasitic ? 1 : 0; // whether to leave parasite power on at the end of the conversion
+  _wire.write(0x44, power);    // tell it to start a conversion
+}
+
+bool DS18::asyncReadFetchData(uint8_t addr[8]) {
+  memcpy(_addr, addr, sizeof(_addr));
   // first make sure current values are in the scratch pad
 
   _wire.reset();
@@ -210,6 +213,7 @@ void DS18::setPrecision(PRECISION p) {
       _wire.reset(); // reset 1-Wire
       _wire.select(_addr); // select DS18B20
       _wire.write(0x48); // copy scratchpad to EEPROM
+      _wire.reset(); // reset 1-Wire
       delay(15); // wait for end of write
     }
   }

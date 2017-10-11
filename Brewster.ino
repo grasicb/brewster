@@ -1,14 +1,16 @@
 #include "lib/lcd/Adafruit_ILI9341.h"
 #include "lib/lcd/Adafruit_mfGFX.h"
-#include "ui/TemperatureScreen.h"
 #include "lib/sensors/PietteTech_DHT.h"
 #include "lib/touch/SPIArbiter.h"
 #include "lib/touch/BrewPiTouch.h"
-#include "util/BrewsterGlobals.h"
 #include "lib/ui/AWindow.h"
-#include "ui/WindowManager.h"
 
+#include "util/BrewsterGlobals.h"
+
+#include "ui/WindowManager.h"
 #include "ui/MainWindow.h"
+
+#include "controller/BrewsterController.h"
 
 
 
@@ -27,10 +29,8 @@ AWindow *currentWindow;
 WindowManager *windowManager;
 
 //Threads
-Thread *tempWorker;
-Thread *windowProcessor;
-TemperatureScreen tempScreen = TemperatureScreen();
-
+Thread *controllerThread;
+//BrewsterController controller;
 
 //Temperature Sensors
 PietteTech_DHT dhtSensor(6, DHT22);
@@ -43,59 +43,38 @@ float temp1;
 BrewPiTouch ts(GlobalSPIArbiter, D3, D4);
 uint16_t ts_x, ts_y;
 bool touchPressed = false;
-long lastTouchPressed = 0;
-const int touchTresshold = 65;
 
 
 void setup() {
 	//LCD Setup
 	Serial.begin(9600);
 	Log.trace("Starting application setup");
-
 	tft.begin();
 	showLoadingScreen();
-	//tempScreen.showLoadingScreen();
-
 
 	//Init Touch sensor
 	ts.init();
 	//ts.calibrate(tempScreen.getTft());
-	//attachInterrupt(D4, touchPressedHandler, RISING);
-	//attachInterrupt(D4, touchReleasedHandler, FALLING);
 
 	//Connect to Cloud
 	Particle.connect();
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
 
-	tempWorker = new Thread(NULL, readTemeratureThread);
+	//Start controller thread
+	//controllerThread = new Thread(NULL, controllerLoop);
 
+	//Initialize first window
 	windowManager = new WindowManager(&tft);
 	windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
-
-
 
 	Log.info("Setup done. Brewster is ready");
 }
 
 void readTouch() {
 	ts.update();
-	//if (ts.isStable()) {
-		ts_x = ts.getX();
-		ts_y = ts.getY();
-	//}else{
-	//	ts_x = 0;
-	//	ts_y = 0;
-	//}
-
-}
-
-void printTouchCoordinates() {
-	Serial.print("Touched: ");
-	Serial.print("x = ");
-	Serial.print(ts_x);
-	Serial.print(", y = ");
-	Serial.println(ts_y);
+	ts_x = ts.getX();
+	ts_y = ts.getY();
 }
 
 void loop(void) {
@@ -103,7 +82,6 @@ void loop(void) {
 	//Handling touch sensor
 	if (ts.isTouched()) {
 		touchPressed = true;
-		lastTouchPressed = millis();
 		readTouch();
 
 		if (ts.isStable()) {
@@ -115,18 +93,8 @@ void loop(void) {
 		windowManager->screenReleased();
 	}
 
+	BrewsterController::get()->controllerLoop();
 	windowManager->process();
-
-/*
-	String time = Time.format(Time.now(), "%H:%M:%S");
-	tempScreen.updateTime(time);
-	if (millis() > lastRead+refreshRate) {
-		Serial.println("Refreshing temperature");
-		lastRead = millis();
-		readDS18();
-		tempScreen.displayData(humidity, temp1, lastDs18Temp);
-	}
-*/
 }
 
 void getDhtSensorData(float &humidity, float &temp) {
@@ -169,10 +137,9 @@ void getDhtSensorData(float &humidity, float &temp) {
 	}
 }
 
-os_thread_return_t readTemeratureThread(void* param) {
+os_thread_return_t controllerLoop(void* param) {
 	for(;;) {
-		getDhtSensorData(humidity, temp1);
-		delay(1000);
+		BrewsterController::get()->controllerLoop();
 	}
 }
 

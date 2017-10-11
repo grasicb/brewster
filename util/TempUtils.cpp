@@ -8,6 +8,7 @@ void TempUtils::listSensors() {
 
   Log.info("Listing sensors:");
 
+  //wire.search(addr);
   while (wire.search(addr)) {
     i++;
 
@@ -42,13 +43,9 @@ void TempUtils::setPrecision(DS18::PRECISION p) {
 void TempUtils::readTemperature() {
   DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
 
-	if (ds18Sensor.read(BrewsterGlobals::get()->tempSensor1)) {
-		Serial.printf("Sensor 1: %.1f\n", ds18Sensor.celsius());
-	}
-	if (ds18Sensor.read(BrewsterGlobals::get()->tempSensor2)) {
-		Serial.printf("Sensor 2: %.1f\n", ds18Sensor.celsius());
-	}
-	if (ds18Sensor.read(BrewsterGlobals::get()->tempSensor3)) {
-		Serial.printf("Sensor 3: %.1f\n", ds18Sensor.celsius());
-	}
+  for (int i=0; i<BrewsterGlobals::tempSensorsNo; i++) {
+    if (ds18Sensor.read(BrewsterGlobals::get()->tempSensors[i])) {
+  		Serial.printf("Sensor %d: %.1f\n", i, ds18Sensor.celsius());
+  	}
+  }
 }

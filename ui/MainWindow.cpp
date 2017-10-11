@@ -42,6 +42,9 @@ void MainWindow::processAction(uint8_t action) {
     case Action::W_SETTINGS:
       windowManager->openWindow(WindowManager::Windows::WINDOW_SETTINGS);
       break;
+    case Action::W_MASHING:
+      windowManager->openWindow(WindowManager::Windows::WINDOW_MASHING);
+      break;
     default:
       Log.warn("No all actions implemented in window Main Window");
       break;

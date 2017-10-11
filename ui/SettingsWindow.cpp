@@ -42,7 +42,7 @@ void SettingsWindow::processAction(uint8_t action) {
       windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
       break;
     case Action::FIND_SENSORS:
-      TempUtils::setPrecision(DS18::PRECISION::BIT_9);
+      TempUtils::setPrecision(DS18::PRECISION::BIT_10);
       delay(1000);
       TempUtils::listSensors();
       break;

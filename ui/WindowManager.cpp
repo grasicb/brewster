@@ -19,6 +19,11 @@ void WindowManager::openWindow(uint8_t windowId) {
       currentWindow = new SettingsWindow(tft, this);
       break;
 
+    case Windows::WINDOW_MASHING:
+      Log.trace("Opening Mashing Window");
+      currentWindow = new MashingWindow(tft, this);
+      break;
+
     default:
       Log.error("Could not find window with ID %d", windowId);
       break;

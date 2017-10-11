@@ -7,6 +7,7 @@
 
 #include "MainWindow.h"
 #include "SettingsWindow.h"
+#include "MashingWindow.h"
 
 
 class WindowManager : public AWindowManager {
