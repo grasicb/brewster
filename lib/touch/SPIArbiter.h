@@ -62,7 +62,7 @@ public:
 class SPIConfiguration
 {
 public:
-    SPIConfiguration() : mode_(SPI_MODE0), bitOrder_(MSBFIRST), clockDivider_(SPI_CLOCK_DIV128), ss_pin_(SS_PIN_UNINITIALIZED){}
+    SPIConfiguration() : mode_(SPI_MODE0), bitOrder_(MSBFIRST), clockDivider_(SPI_CLOCK_DIV32), ss_pin_(SS_PIN_UNINITIALIZED){}
     ~SPIConfiguration() = default;
 
 protected:

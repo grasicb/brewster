@@ -2,7 +2,7 @@
 #define BUTTON_H
 
 #include "../lcd/Adafruit_ILI9341.h"
-#include "../lcd/Adafruit_mfGFX.h"
+#include "../lcd/Adafruit_GFX.h"
 
 class Button {
 public:
@@ -23,6 +23,7 @@ private:
   String caption;
   uint8_t action;
   boolean isActivated = false;
+  GFXfont *font = NULL;
 
   uint16_t backgroundColor = 0xD687;
 };

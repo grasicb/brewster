@@ -44,19 +44,19 @@ void MashingWindow::refreshScreen() {
   if (BrewsterController::get()->temperatureSensors->temperature[0] != lastTemp[0]) {
     lastTemp[0] = BrewsterController::get()->temperatureSensors->temperature[0];
     tft->setCursor(35, 82);
-  	tft->printf("%.02f   ", BrewsterController::get()->temperatureSensors->temperature[0]);
+  	tft->printf("%.02f", BrewsterController::get()->temperatureSensors->temperature[0]);
   }
 
   if (BrewsterController::get()->temperatureSensors->temperature[1] != lastTemp[1]) {
     lastTemp[1] = BrewsterController::get()->temperatureSensors->temperature[1];
     tft->setCursor(135, 82);
-    tft->printf("%.02f   ", BrewsterController::get()->temperatureSensors->temperature[1]);
+    tft->printf("%.02f", BrewsterController::get()->temperatureSensors->temperature[1]);
   }
 
   if (BrewsterController::get()->temperatureSensors->temperature[2] != lastTemp[2]) {
     lastTemp[2] = BrewsterController::get()->temperatureSensors->temperature[2];
     tft->setCursor(235, 82);
-	  tft->printf("%.02f   ", BrewsterController::get()->temperatureSensors->temperature[2]);
+	  tft->printf("%.02f", BrewsterController::get()->temperatureSensors->temperature[2]);
   }
 }
 

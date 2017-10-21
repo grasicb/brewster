@@ -21,7 +21,7 @@
 
 #include <inttypes.h>
 #include "../lcd/Adafruit_ILI9341.h"
-#include "../lcd/Adafruit_mfGFX.h"
+#include "../lcd/Adafruit_GFX.h"
 #include "SPIArbiter.h"
 #include "LowPassFilter.h"
 

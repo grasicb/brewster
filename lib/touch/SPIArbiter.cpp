@@ -19,6 +19,7 @@
 
 
 #include "SPIArbiter.h"
+#include "../../util/BrewsterGlobals.h"
 
 void SPIArbiter::apply(SPIConfiguration& client){
     if(ss_pin_ == SS_PIN_UNINITIALIZED){
@@ -42,10 +43,19 @@ void SPIArbiter::apply(SPIConfiguration& client){
         spi_.setBitOrder(bitOrder_);
     }
 
+
     if (clockDivider_!=client.getClockDivider()) {
         clockDivider_ = client.getClockDivider();
+        BrewsterGlobals::get()->global_spi_clock = client.getClockDivider();
+        spi_.setClockDivider(clockDivider_);
+    } else if (BrewsterGlobals::get()->global_spi_clock != SPI_CLOCK_DIV32) {
+        BrewsterGlobals::get()->global_spi_clock = SPI_CLOCK_DIV32;
+        clockDivider_ = SPI_CLOCK_DIV32;
         spi_.setClockDivider(clockDivider_);
     }
+
+
+//    spi_.setClockDivider(clockDivider_);
 }
 
 void SPIArbiter::unapply() {

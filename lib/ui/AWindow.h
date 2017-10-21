@@ -3,6 +3,8 @@
 
 
 #include "../lcd/Adafruit_ILI9341.h"
+#undef min
+#undef max
 #include "Button.h"
 #include "AWindowManager.h"
 #include <vector>
