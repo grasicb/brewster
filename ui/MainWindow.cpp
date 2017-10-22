@@ -7,10 +7,10 @@ void MainWindow::initScreen() {
   tft->setTextSize(1);
   tft->setTextColor(ILI9341_WHITE, 0x346E);
   tft->setCursor(15, 225);
-  tft->setFont(windowManager->font_tiny);
+  tft->setFont(font_tiny);
   tft->print("Brewster Homebrewing System");
 
-  tft->setFont(windowManager->font_small);
+  tft->setFont(font_small);
   buttons.push_back( Button(tft, 25, 25, 125, 35, "Drozganje", Action::W_MASHING));
   buttons.push_back( Button(tft, 170, 25, 125, 35, "Kuhanje", Action::W_BOLING));
   buttons.push_back( Button(tft, 25, 80, 125, 35, "Fermentiranje", Action::W_FERMENTING));
@@ -26,10 +26,18 @@ void MainWindow::refreshScreen() {}
 void MainWindow::process(void* param) {
   if (lastMinute != Time.minute()) {
       lastMinute = Time.minute();
-      tft->setFont(windowManager->font_tiny);
+      tft->setFont(font_tiny);
       tft->setTextColor(ILI9341_WHITE, 0x346E);
       tft->setCursor(285, 225);
       tft->printf("%02d:%02d     ", Time.hour(), Time.minute());
+  }
+
+  if (activeProcess != controller->getActiveProcess()) {
+    activeProcess = controller->getActiveProcess();
+    tft->setFont(font_small);
+    tft->setTextColor(ILI9341_BLACK, 0x346E);
+    tft->setCursor(15, 180);
+    tft->printf("Active process: %d   ", activeProcess);
   }
 }
 

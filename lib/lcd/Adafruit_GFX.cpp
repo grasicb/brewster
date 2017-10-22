@@ -792,6 +792,14 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
                         writeFillRect(x+(xo16+xx)*size, y+(yo16+yy)*size,
                           size, size, color);
                     }
+/*
+                } else if(bg != color && bg != NULL) {
+                    if(size == 1)
+                        writePixel(x+xo+xx, y+yo+yy, bg);
+                    else
+                        writeFillRect(x+(xo16+xx)*size, y+(yo16+yy)*size,
+                          size, size, bg);
+*/
                 }
                 bits <<= 1;
             }

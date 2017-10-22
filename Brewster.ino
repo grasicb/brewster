@@ -59,7 +59,11 @@ void setup() {
 
 	//Initialize first window
 	windowManager = new WindowManager(&tft);
-	windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
+
+	if (BrewsterController::get()->getActiveProcess() == BrewProcesses::MASHING)
+		windowManager->openWindow(WindowManager::Windows::WINDOW_MASHING);
+	else
+		windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
 
 	Log.info("Setup done. Brewster is ready");
 }

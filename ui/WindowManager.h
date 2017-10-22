@@ -9,6 +9,9 @@
 #include "SettingsWindow.h"
 #include "MashingWindow.h"
 
+#include "icons.h"
+#include "../lib/ui/colors.h"
+
 class WindowManager : public AWindowManager {
 
 public:

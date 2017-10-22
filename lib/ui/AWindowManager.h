@@ -3,12 +3,8 @@
 
 #include "application.h"
 #include "../lcd/Adafruit_ILI9341.h"
+#include "fonts.h"
 
-#include "../lcd/Fonts/FreeMonoBold9pt7b.h"
-#include "../lcd/Fonts/FreeSans9pt7b.h"
-#include "../lcd/Fonts/FreeSans12pt7b.h"
-#include "../lcd/Fonts/FreeSans18pt7b.h"
-//#include "../lcd/Fonts/Picopixel.h"
 
 class AWindowManager {
 
@@ -17,12 +13,6 @@ public:
   virtual void openWindow(uint8_t windowId);
   virtual void destroyWindow(uint8_t windowId);
   virtual void process();
-
-  const GFXfont *font_standard = &FreeSans12pt7b;
-  const GFXfont *font_small = &FreeSans9pt7b;
-  const GFXfont *font_large = &FreeSans18pt7b;
-  const GFXfont *font_tiny = NULL;
-  const GFXfont *font_monospace = &FreeMonoBold9pt7b;
 
 protected:
   Adafruit_ILI9341 *tft;

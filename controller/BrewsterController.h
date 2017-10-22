@@ -4,13 +4,20 @@
 #include "application.h"
 #include "TemperatureSensors.h"
 
+#define EEPROM_ACTIVE_PROCESS 0
+#define EEPROM_PROCESS_START 4
 
+enum BrewProcesses {NONE, MASHING, BOILING, CHILLING, FERMENTING};
 
 class BrewsterController {
 public:
     static BrewsterController *get();
     ~BrewsterController() {};
     void controllerLoop();
+    void startProcess(BrewProcesses process);
+    void stopProcess();
+    BrewProcesses getActiveProcess();
+    int getProcessStartTime();
 
     TemperatureSensors *temperatureSensors;
 
@@ -20,6 +27,8 @@ private:
 
     long i;
     Logger logger;
+    BrewProcesses processActive;
+    int processStarted;
 };
 
 

@@ -3,15 +3,6 @@
 //#include "Adafruit_mfGFX.h"
 
 //#define TFT_GRID
-
-Button::Button() {
-  x = 0;
-  y = 0;
-  width = 0;
-  height = 0;
-  caption = "";
-}
-
 Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t action) {
   this->tft = tft;
   this->x = x;
@@ -20,62 +11,100 @@ Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, ui
   this->height = height;
   this->caption = caption;
   this->action = action;
+
+  //Initialize calculated values
+  type = ButtonType::BTN_TEXT;
+  contentX = x + 6;
+  contentY = y + ((height/2)-6);
 }
 
-void Button::updateButton(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t action) {
+Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t imageBitmap[], int16_t imageWidth, int16_t imageHeight, uint8_t action) {
   this->tft = tft;
   this->x = x;
   this->y = y;
   this->width = width;
   this->height = height;
-  this->caption = caption;
   this->action = action;
-  draw();
+  this->imageBitmap = (uint8_t*) imageBitmap;
+  this->imageWidth = imageWidth;
+  this->imageHeight = imageHeight;
+
+  //Initialize calculated values
+  type = ButtonType::BTN_ICON;
+  contentX = x + max((width - imageWidth)/2,0);
+  contentY = y + max((height - imageHeight)/2,0);
 }
 
 void Button::draw() {
-  tft->fillRect(x, y, width, height, backgroundColor);
-  tft->setCursor(x+5, y+(height/2)-4);
-	tft->setTextColor(ILI9341_BLACK, backgroundColor);
-  tft->setTextSize(1);
-	tft->print(caption);
+  if (fontColor == NULL)
+    fontColor = colorButtonFont;
+
+  if (isActivated)
+    tft->fillRoundRect(x, y, width, height, 4, colorButtonSelected);
+  else
+    tft->fillRoundRect(x, y, width, height, 4, colorButtonNormal);
+
+
+  if (type == ButtonType::BTN_TEXT) {
+    tft->setCursor(contentX, contentY);
+    if (isActivated)
+      tft->setTextColor(fontColor, colorButtonSelected);
+    else
+      tft->setTextColor(fontColor, colorButtonNormal);
+    tft->setFont(font_tiny);
+    tft->setTextSize(1);
+    tft->print(caption);
+
+
+  }else if (type == ButtonType::BTN_ICON) {
+    tft->drawXBitmap(contentX, contentY, imageBitmap, imageWidth, imageHeight, fontColor);
+  }
 }
 
 boolean Button::isClicked(uint16_t x_pos, uint16_t y_pos) {
+  lastState = isActivated;
+
   if (x_pos >= x && x_pos <= x+width && y_pos >= y && y_pos <= y + height) {
-    if (!isActivated) {
-      tft->fillRect(x, y, width, height, ILI9341_RED);
-      tft->setCursor(x+5, y+(height/2)-4);
-    	tft->setTextColor(ILI9341_BLACK, ILI9341_RED);
-      tft->setTextSize(1);
-    	tft->print(caption);
-      isActivated = true;
-    }
-    return true;
+    isActivated = true;
   } else {
-    if (isActivated) {
-      tft->fillRect(x, y, width, height, backgroundColor);
-      tft->setCursor(x+5, y+(height/2)-4);
-    	tft->setTextColor(ILI9341_BLACK, backgroundColor);
-      tft->setTextSize(1);
-    	tft->print(caption);
-      isActivated = false;
-    }
-    return false;
+    isActivated = false;
   }
+
+  // If button state has changed, then redraw the button
+  if (lastState != isActivated)
+    draw();
+
+  return isActivated;
 }
 
 void Button::deactivateButton() {
-  if (isActivated) {
-    tft->fillRect(x, y, width, height, backgroundColor);
-    tft->setCursor(x+5, y+(height/2)-4);
-    tft->setTextColor(ILI9341_BLACK, backgroundColor);
-    tft->setTextSize(1);
-    tft->print(caption);
-    isActivated = false;
-  }
+  lastState = isActivated;
+  isActivated = false;
+  draw();
+}
+
+boolean Button::isPressed() {
+  return isActivated;
+}
+
+boolean Button::justPressed() {
+  if (lastState == false && isActivated == true)
+    return true;
+  else
+    return false;
+}
+
+boolean Button::justReleased() {
+  if (lastState == true && isActivated == false)
+    return true;
+  else
+    return false;
 }
 
 uint8_t Button::getAction() {
   return action;
+}
+
+void Button::setFontColor(uint16_t fontColor) {
+  this->fontColor = fontColor;
 }
