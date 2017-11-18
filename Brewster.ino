@@ -33,7 +33,7 @@ Thread *controllerThread;
 //BrewsterController controller;
 
 //Touch Sensor Variables
-BrewPiTouch ts(GlobalSPIArbiter, D3, D4);
+BrewPiTouch ts(GlobalSPIArbiter, D6, D7);
 uint16_t ts_x, ts_y;
 bool touchPressed = false;
 
@@ -44,6 +44,15 @@ void setup() {
 	Log.trace("Starting application setup");
 	tft.begin();
 	showLoadingScreen();
+
+	//Init PINS
+	pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
+	pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
+	pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
+	pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
+
+	analogWrite(BrewsterGlobals::get()->pinDC1, 50,7);
+	analogWrite(BrewsterGlobals::get()->pinDC2, 50,7);
 
 	//Init Touch sensor
 	ts.init();
