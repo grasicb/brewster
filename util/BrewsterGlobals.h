@@ -1,4 +1,4 @@
-#ifndef BREWSTER_GLOBALS_H
+  #ifndef BREWSTER_GLOBALS_H
 #define BREWSTER_GLOBALS_H
 
 #include "mutex"
@@ -14,12 +14,14 @@ public:
     ~BrewsterGlobals( );
 
     //PIN Assignment
-    static const uint8_t pinOneWire = D4;
+    static const uint8_t pinOneWire = 0x18; //0x18 - this is via i2c BUS
     static const uint8_t pinAC1 = WKP;
     static const uint8_t pinAC2 = A6;
     static const uint8_t pinDC1 = D2;
     static const uint8_t pinDC2 = D3;
     //static const uint8_t pinDC3 = D4;
+
+    static const uint8_t addrOneWire = 0x18;
 
     uint8_t global_spi_clock = 0;
 

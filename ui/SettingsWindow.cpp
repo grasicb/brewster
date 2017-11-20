@@ -1,5 +1,6 @@
 #include "SettingsWindow.h"
 #include "../util/BrewsterGlobals.h"
+#include "../util/BrewsterUtils.h"
 #include "../util/TempUtils.h"
 
 void SettingsWindow::initScreen() {
@@ -45,6 +46,8 @@ void SettingsWindow::processAction(uint8_t action) {
       TempUtils::setPrecision(DS18::PRECISION::BIT_10);
       delay(1000);
       TempUtils::listSensors();
+
+      BrewsterUtils::i2c_scanner();
       break;
     case Action::TEST_SENSORS:
       TempUtils::readTemperature();

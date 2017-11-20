@@ -6,6 +6,8 @@
 #include "lib/ui/AWindow.h"
 
 #include "util/BrewsterGlobals.h"
+#include "util/BrewsterUtils.h"
+#include "util/TempUtils.h"
 
 #include "ui/WindowManager.h"
 #include "ui/MainWindow.h"
@@ -45,26 +47,32 @@ void setup() {
 	tft.begin();
 	showLoadingScreen();
 
+	Particle.connect();
+
 	//Init PINS
 	pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
 
-	analogWrite(BrewsterGlobals::get()->pinDC1, 50,7);
-	analogWrite(BrewsterGlobals::get()->pinDC2, 50,7);
+	analogWrite(BrewsterGlobals::get()->pinDC1, 255,70);
+	analogWrite(BrewsterGlobals::get()->pinDC2, 150,70);
+
+	//I2C Setup
+	if (!Wire.isEnabled()) {
+    Wire.begin();
+	}
 
 	//Init Touch sensor
 	ts.init();
 	//ts.calibrate(tempScreen.getTft());
 
 	//Connect to Cloud
-	Particle.connect();
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
 
 	//Start controller thread
-	//controllerThread = new Thread(NULL, controllerLoop);
+	controllerThread = new Thread(NULL, controllerLoop);
 
 	//Initialize first window
 	windowManager = new WindowManager(&tft);
@@ -100,17 +108,17 @@ void loop(void) {
 		windowManager->screenReleased();
 	}
 
-	BrewsterController::get()->controllerLoop();
+//	BrewsterController::get()->controllerLoop();
 	windowManager->process();
 }
 
-/*
+
 os_thread_return_t controllerLoop(void* param) {
 	for(;;) {
 		BrewsterController::get()->controllerLoop();
 	}
 }
-*/
+
 void showLoadingScreen() {
   tft.setRotation(3);
 	tft.fillScreen(ILI9341_WHITE);

@@ -1,6 +1,6 @@
 /*
 
-Particle Verison of OneWire Libary
+Particle Verison of OneWirePin Libary
 
 Hotaman 2/1/2016
 Bit and Byte write functions have been changed to only drive the bus high at the end of a byte when requested.
@@ -32,12 +32,12 @@ Copyright (c) 2007, Jim Studt  (original old version - many contributors since)
 The latest version of this library may be found at:
   http://www.pjrc.com/teensy/td_libs_OneWire.html
 
-OneWire has been maintained by Paul Stoffregen (paul@pjrc.com) since
+OneWirePin has been maintained by Paul Stoffregen (paul@pjrc.com) since
 January 2010.  At the time, it was in need of many bug fixes, but had
 been abandoned the original author (Jim Studt).  None of the known
-contributors were interested in maintaining OneWire.  Paul typically
-works on OneWire every 6 to 12 months.  Patches usually wait that
-long.  If anyone is interested in more actively maintaining OneWire,
+contributors were interested in maintaining OneWirePin.  Paul typically
+works on OneWirePin every 6 to 12 months.  Patches usually wait that
+long.  If anyone is interested in more actively maintaining OneWirePin,
 please contact Paul.
 
 Version 2.2:
@@ -142,21 +142,21 @@ sample code bearing this copyright.
 //--------------------------------------------------------------------------
 */
 
-#include "OneWire.h"
+#include "OneWirePin.h"
 #include "application.h"
 
-OneWire::OneWire(uint16_t pin)
+OneWirePin::OneWirePin(uint16_t pin)
 {
     pinMode(pin, INPUT);
     _pin = pin;
 }
-// Perform the onewire reset function.  We will wait up to 250uS for
+// Perform the OneWirePin reset function.  We will wait up to 250uS for
 // the bus to come high, if it doesn't then it is broken or shorted
 // and we return a 0;
 //
 // Returns 1 if a device asserted a presence pulse, 0 otherwise.
 //
-uint8_t OneWire::reset(void)
+uint8_t OneWirePin::reset(void)
 {
     uint8_t r;
     uint8_t retries = 125;
@@ -193,7 +193,7 @@ uint8_t OneWire::reset(void)
     return r;
 }
 
-void OneWire::write_bit(uint8_t v)
+void OneWirePin::write_bit(uint8_t v)
 {
     if (v & 1) {
         noInterrupts();
@@ -228,7 +228,7 @@ void OneWire::write_bit(uint8_t v)
 // Read a bit. Port and bit is used to cut lookup time and provide
 // more certain timing.
 //
-uint8_t OneWire::read_bit(void)
+uint8_t OneWirePin::read_bit(void)
 {
     uint8_t r;
 
@@ -258,12 +258,12 @@ uint8_t OneWire::read_bit(void)
 // go tri-state at the end of the write to avoid heating in a short or
 // other mishap.
 //
-void OneWire::write(uint8_t v, uint8_t power /* = 0 */)
+void OneWirePin::write(uint8_t v, uint8_t power /* = 0 */)
 {
     uint8_t bitMask;
 
     for (bitMask = 0x01; bitMask; bitMask <<= 1) {
-        OneWire::write_bit( (bitMask & v)?1:0);
+        OneWirePin::write_bit( (bitMask & v)?1:0);
     }
 
     if ( power) {
@@ -276,7 +276,7 @@ void OneWire::write(uint8_t v, uint8_t power /* = 0 */)
     }
 }
 
-void OneWire::write_bytes(const uint8_t *buf, uint16_t count, bool power /* = 0 */)
+void OneWirePin::write_bytes(const uint8_t *buf, uint16_t count, bool power /* = 0 */)
 {
     for (uint16_t i = 0 ; i < count ; i++)
         write(buf[i]);
@@ -294,19 +294,19 @@ void OneWire::write_bytes(const uint8_t *buf, uint16_t count, bool power /* = 0 
 //
 // Read a byte
 //
-uint8_t OneWire::read()
+uint8_t OneWirePin::read()
 {
     uint8_t bitMask;
     uint8_t r = 0;
 
     for (bitMask = 0x01; bitMask; bitMask <<= 1) {
-        if ( OneWire::read_bit()) r |= bitMask;
+        if ( OneWirePin::read_bit()) r |= bitMask;
     }
 
     return r;
 }
 
-void OneWire::read_bytes(uint8_t *buf, uint16_t count)
+void OneWirePin::read_bytes(uint8_t *buf, uint16_t count)
 {
     for (uint16_t i = 0 ; i < count ; i++)
         buf[i] = read();
@@ -315,7 +315,7 @@ void OneWire::read_bytes(uint8_t *buf, uint16_t count)
 //
 // Do a ROM select
 //
-void OneWire::select(const uint8_t rom[8])
+void OneWirePin::select(const uint8_t rom[8])
 {
     uint8_t i;
 
@@ -327,12 +327,12 @@ void OneWire::select(const uint8_t rom[8])
 //
 // Do a ROM skip
 //
-void OneWire::skip()
+void OneWirePin::skip()
 {
     write(0xCC);           // Skip ROM
 }
 
-void OneWire::depower()
+void OneWirePin::depower()
 {
     noInterrupts();
 
@@ -347,7 +347,7 @@ void OneWire::depower()
 // You need to use this function to start a search again from the beginning.
 // You do not need to do it for the first search, though you could.
 //
-void OneWire::reset_search()
+void OneWirePin::reset_search()
 {
     // reset the search state
     LastDiscrepancy = 0;
@@ -363,7 +363,7 @@ void OneWire::reset_search()
 // Setup the search to find the device type 'family_code' on the next call
 // to search(*newAddr) if it is present.
 //
-void OneWire::target_search(uint8_t family_code)
+void OneWirePin::target_search(uint8_t family_code)
 {
    // set the search state to find SearchFamily type devices
 
@@ -380,10 +380,10 @@ void OneWire::target_search(uint8_t family_code)
 //
 // Perform a search. If this function returns a '1' then it has
 // enumerated the next device and you may retrieve the ROM from the
-// OneWire::address variable. If there are no devices, no further
+// OneWirePin::address variable. If there are no devices, no further
 // devices, or something horrible happens in the middle of the
 // enumeration then a 0 is returned.  If a new device is found then
-// its address is copied to newAddr.  Use OneWire::reset_search() to
+// its address is copied to newAddr.  Use OneWirePin::reset_search() to
 // start over.
 //
 // --- Replaced by the one from the Dallas Semiconductor web site ---
@@ -393,7 +393,7 @@ void OneWire::target_search(uint8_t family_code)
 // Return TRUE  : device found, ROM number in ROM_NO buffer
 //        FALSE : device not found, end of search
 //
-uint8_t OneWire::search(uint8_t *newAddr)
+uint8_t OneWirePin::search(uint8_t *newAddr)
 {
     uint8_t id_bit_number;
     uint8_t last_zero, rom_byte_number, search_result;
@@ -523,7 +523,7 @@ uint8_t OneWire::search(uint8_t *newAddr)
 // Compute a Dallas Semiconductor 8 bit CRC directly.
 // this is much slower, but much smaller, than the lookup table.
 //
-uint8_t OneWire::crc8( uint8_t *addr, uint8_t len)
+uint8_t OneWirePin::crc8( uint8_t *addr, uint8_t len)
 {
     uint8_t crc = 0;
 
@@ -542,14 +542,14 @@ uint8_t OneWire::crc8( uint8_t *addr, uint8_t len)
 #endif
 
 #if ONEWIRE_CRC16
-bool OneWire::check_crc16(const uint8_t* input, uint16_t len, const uint8_t* inverted_crc, uint16_t crc)
+bool OneWirePin::check_crc16(const uint8_t* input, uint16_t len, const uint8_t* inverted_crc, uint16_t crc)
 {
     crc = ~crc16(input, len, crc);
 
     return (crc & 0xFF) == inverted_crc[0] && (crc >> 8) == inverted_crc[1];
 }
 
-uint16_t OneWire::crc16(const uint8_t* input, uint16_t len, uint16_t crc)
+uint16_t OneWirePin::crc16(const uint8_t* input, uint16_t len, uint16_t crc)
 {
     static const uint8_t oddparity[16] =
         { 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0 };
