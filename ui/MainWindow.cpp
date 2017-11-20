@@ -51,51 +51,7 @@ void MainWindow::processAction(uint8_t action) {
       windowManager->openWindow(WindowManager::Windows::WINDOW_MASHING);
       break;
     case Action::W_FERMENTING:
-      {
-        uint32_t freemem = System.freeMemory();
-
-        Log.trace("Test windows optimisation. Free mem: %d", freemem);
-        boolean display_change[320][240];
-
-        freemem = System.freeMemory();
-        Log.trace("Create display change array. Free mem: %d", freemem);
-        for (int i=0; i<320; i++) {
-          for (int j=0; j<240;j++) {
-            //if (rand()%2 == 1)
-            display_change[i][j] = (boolean)(rand()%2);
-          }
-        }
-
-        uint16_t display[320][240];
-
-        freemem = System.freeMemory();
-        Log.trace("Performance tests. Free mem: %d", freemem);
-
-        long start = millis();
-        for (int i=0; i<320; i++) {
-          for (int j=0; j<240;j++) {
-            display[i][j] = 0xFF;
-          }
-        }
-        long stop = millis();
-        Log.trace("Iterating over display array and setting value: %d ms", (stop-start));
-
-        start = millis();
-        long counter = 0;
-        for (int i=0; i<320; i++) {
-          for (int j=0; j<240;j++) {
-            if (display_change[i][j]==true) {
-//              counter++;
-            }
-          }
-        }
-        stop = millis();
-        Log.trace("Checking display change (hits %d): %d ms", counter, (stop-start));
-
-
-        freemem = System.freeMemory();
-        Log.trace("Done. Free mem: %d", freemem);
-      }
+      windowManager->openWindow(WindowManager::Windows::WINDOW_FERMENTING);
       break;
     case Action::W_BOLING:
 //      tft->test();

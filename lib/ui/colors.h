@@ -13,6 +13,8 @@ const static uint16_t colorButtonNormal = color565(198,206,45);
 const static uint16_t colorButtonSelected = color565(250,255,0);
 //const static uint16_t colorComponentBackground = color565(131,181,61);
 const static uint16_t colorComponentBackground = color565(49,224,198);
+const static uint16_t colorComponentBackground1 = color565(131,181,61);
+
 
 /*
 const static uint16_t colorBackground = 0;

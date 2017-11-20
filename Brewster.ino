@@ -79,6 +79,8 @@ void setup() {
 
 	if (BrewsterController::get()->getActiveProcess() == BrewProcesses::MASHING)
 		windowManager->openWindow(WindowManager::Windows::WINDOW_MASHING);
+	else if (BrewsterController::get()->getActiveProcess() == BrewProcesses::FERMENTING)
+		windowManager->openWindow(WindowManager::Windows::WINDOW_FERMENTING);
 	else
 		windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
 

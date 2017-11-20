@@ -8,6 +8,7 @@
 #include "MainWindow.h"
 #include "SettingsWindow.h"
 #include "MashingWindow.h"
+#include "FermentationWindow.h"
 
 #include "icons.h"
 #include "../lib/ui/colors.h"

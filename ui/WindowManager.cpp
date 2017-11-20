@@ -24,6 +24,11 @@ void WindowManager::openWindow(uint8_t windowId) {
       currentWindow = new MashingWindow(tft, this);
       break;
 
+    case Windows::WINDOW_FERMENTING:
+      Log.trace("Opening Fermenting Window");
+      currentWindow = new FermentationWindow(tft, this);
+      break;
+
     default:
       Log.error("Could not find window with ID %d", windowId);
       break;
