@@ -1,6 +1,8 @@
 #ifndef WINDOW_MANAGER_H
 #define WINDOW_MANAGER_H
 
+#include <map>
+
 #include "../lib/ui/AWindow.h"
 #include "../lib/ui/AWindowManager.h"
 #include "../lib/lcd/Adafruit_ILI9341.h"
@@ -32,6 +34,7 @@ protected:
 private:
   Logger logger;
   AWindow *currentWindow = NULL;
+  std::map<Windows, AWindow *> windows;
 };
 
 #endif // WINDOW_MANAGER_H

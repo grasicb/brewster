@@ -32,9 +32,17 @@ void MashingWindow::initScreen() {
   tft->setCursor(195, 20);
 	tft->print("Izhod");
 
+  //Initialize temperature buffer
+  for (int i = 0; i<10; i++) {
+    lastTemp[i] = -1000;
+  }
+  timeInProcess = -1;
+  lastMinute = 100;
+
   //Define and draw buttons
   //buttons.push_back( Button(tft, 215, 180, 90, 35, "Nazaj", Action::W_MAIN_MENU));
 
+  buttons.clear();
   buttons.push_back( Button(tft, 3, 190, 50, 50, icon_play_40x40_bits, icon_play_40x40_width, icon_play_40x40_height, Action::A_START));
   buttons.push_back( Button(tft, 56, 190, 50, 50, icon_stop_bits, icon_stop_width, icon_stop_height, Action::A_STOP));
   buttons.push_back( Button(tft, 109, 190, 50, 50, icon_pump_bits, icon_pump_width, icon_pump_height, Action::A_PUMP1));
@@ -130,7 +138,11 @@ void MashingWindow::process(void* param) {
 	  tft->print("     ");
   }
 
-  refreshScreen();
+  //Refresh data on screen based on defined interval (refreshRate)
+  if ((lastRefresh + refreshRate) < millis()) {
+    refreshScreen();
+    lastRefresh = millis();
+  }
 }
 
 void MashingWindow::processAction(uint8_t action) {

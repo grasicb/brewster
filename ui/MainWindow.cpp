@@ -11,6 +11,7 @@ void MainWindow::initScreen() {
   tft->print("Brewster Homebrewing System");
 
   tft->setFont(font_small);
+  buttons.clear();
   buttons.push_back( Button(tft, 25, 25, 125, 35, "Drozganje", Action::W_MASHING));
   buttons.push_back( Button(tft, 170, 25, 125, 35, "Kuhanje", Action::W_BOLING));
   buttons.push_back( Button(tft, 25, 80, 125, 35, "Fermentiranje", Action::W_FERMENTING));

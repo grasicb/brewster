@@ -26,6 +26,8 @@ private:
   int lastLoggedTime = 0;
   uint16_t backgroundColor = 0xD687;
   float lastTemp[10];
+  static const uint16_t refreshRate = 100;
+  unsigned long lastRefresh = 0;
 
   boolean statusPump1 = false;
   boolean statusPump2 = false;

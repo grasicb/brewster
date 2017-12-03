@@ -21,7 +21,7 @@ protected:
 private:
   uint8_t lastMinute = 100;
   float lastTemp[10];
-  const uint16_t refreshRate = 100;
+  static const uint16_t refreshRate = 100;
   unsigned long lastRefresh = 0;
 
   BrewsterController *controller;

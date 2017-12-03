@@ -8,6 +8,9 @@ TemperatureSensors::TemperatureSensors() {
     activeSensors.push_front(3);
 
     lastRead = 0;
+    for (int i = 0; i<10; i++) {
+      temperature[i] = 0;
+    }
 
     ds18Sensor = new DS18(BrewsterGlobals::get()->pinOneWire);
 }

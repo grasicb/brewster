@@ -11,6 +11,7 @@ void SettingsWindow::initScreen() {
   tft->setCursor(15, 225);
   tft->print("Brewster Homebrewing System");
 
+  buttons.clear();
   buttons.push_back( Button(tft, 25, 25, 125, 35, "Kalibracija ekrana", Action::SCREEN_CALIBRATION));
   buttons.push_back( Button(tft, 170, 25, 125, 35, "Test izhodov", Action::TEST_OUTPUT));
   buttons.push_back( Button(tft, 25, 80, 125, 35, "Iskanje senzorjev", Action::FIND_SENSORS));

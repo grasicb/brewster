@@ -17,7 +17,16 @@ void FermentationWindow::initScreen() {
   tft->setCursor(175, 45);
 	tft->print("Prostor");
 
+  //Initialize temperature buffer
+  for (int i = 0; i<10; i++) {
+    lastTemp[i] = -1000;
+  }
+  timeInProcess = -1;
+  lastMinute = 100;
+
+
   //Define and draw buttons
+  buttons.clear();
   buttons.push_back( Button(tft, 35, 190, 50, 50, icon_play_40x40_bits, icon_play_40x40_width, icon_play_40x40_height, Action::A_START));
   buttons.push_back( Button(tft, 88, 190, 50, 50, icon_stop_bits, icon_stop_width, icon_stop_height, Action::A_STOP));
   buttons.push_back( Button(tft, 192, 190, 50, 50, icon_settings_bits, icon_settings_width, icon_settings_height, Action::W_SETTINGS));
@@ -62,7 +71,7 @@ void FermentationWindow::process(void* param) {
   if (controller->getActiveProcess() == BrewProcesses::FERMENTING) {
 
     /////////////////////////////////
-    //Timer of the mashing time
+    //Timer of the fermentation time
     int deltaTime = (Time.now() - controller->getProcessStartTime())/60/60/24;
 
     if (deltaTime != timeInProcess) {
@@ -93,7 +102,7 @@ void FermentationWindow::process(void* param) {
     tft->setTextSize(2);
     tft->setFont(NULL);
     tft->setCursor(42, 130);
-	  tft->print("     ");
+	  tft->print("         ");
   }
 
   refreshScreen();

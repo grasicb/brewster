@@ -8,38 +8,53 @@ void WindowManager::openWindow(uint8_t windowId) {
     currentWindow = NULL;
   }
 
-  switch (windowId) {
-    case Windows::MAIN_WINDOW:
-      Log.trace("Opening Main Window");
-      currentWindow = new MainWindow(tft, this);
-      break;
+  std::map<Windows, AWindow *>::iterator it;
+  it = windows.find((Windows)windowId);
 
-    case Windows::WINDOW_SETTINGS:
-      Log.trace("Opening Settings Window");
-      currentWindow = new SettingsWindow(tft, this);
-      break;
+  //If window is found in the map, then set it as current window and open it later
+  if (it != windows.end()) {
+    currentWindow = it->second;
 
-    case Windows::WINDOW_MASHING:
-      Log.trace("Opening Mashing Window");
-      currentWindow = new MashingWindow(tft, this);
-      break;
+  //If window is not found, then create a new instance
+  }else{
+    switch (windowId) {
+      case Windows::MAIN_WINDOW:
+        Log.trace("Initializing Main Window");
+        currentWindow = new MainWindow(tft, this);
+        break;
 
-    case Windows::WINDOW_FERMENTING:
-      Log.trace("Opening Fermenting Window");
-      currentWindow = new FermentationWindow(tft, this);
-      break;
+      case Windows::WINDOW_SETTINGS:
+        Log.trace("Initializing Settings Window");
+        currentWindow = new SettingsWindow(tft, this);
+        break;
 
-    case Windows::WINDOW_TEMP_SENSORS_TEST:
-      Log.trace("Opening Temp Sensors Test Window");
-      currentWindow = new TempSensorsTestWindow(tft, this);
-      break;
+      case Windows::WINDOW_MASHING:
+        Log.trace("Initializing Mashing Window");
+        currentWindow = new MashingWindow(tft, this);
+        break;
 
-    default:
-      Log.error("Could not find window with ID %d", windowId);
-      break;
+      case Windows::WINDOW_FERMENTING:
+        Log.trace("Initializing Fermenting Window");
+        currentWindow = new FermentationWindow(tft, this);
+        break;
+
+      case Windows::WINDOW_TEMP_SENSORS_TEST:
+        Log.trace("Initializing Temp Sensors Test Window");
+        currentWindow = new TempSensorsTestWindow(tft, this);
+        break;
+
+      default:
+        Log.error("Could not find window with ID %d", windowId);
+        break;
+    }
+
+    if (currentWindow != NULL) {
+      windows[(Windows)windowId] = currentWindow;
+    }
   }
 
   if (currentWindow != NULL) {
+    Log.trace("Opening window id: %d", windowId);
     currentWindow->initScreen();
   }
 }

@@ -14,9 +14,12 @@ void TempSensorsTestWindow::initScreen() {
   for (int i = 0; i<10; i++) {
     tft->setCursor(10, 12+(i*16));
   	tft->print(String::format("%2i: ", i+1));
+    lastTemp[i] = -1000;
   }
+  lastMinute = 100;
 
   //Define and draw buttons
+  buttons.clear();
   buttons.push_back( Button(tft, 270, 190, 50, 50, icon_menu_bits, icon_menu_width, icon_menu_height, Action::W_MAIN_MENU));
 
   for(Button b:buttons) {
@@ -34,6 +37,7 @@ void TempSensorsTestWindow::refreshScreen() {
       lastTemp[i] = BrewsterController::get()->temperatureSensors->temperature[i];
       tft->setCursor(55, 12+(i*16));
       tft->printf("%3.2f", lastTemp[i]);
+      Log.trace("Temp %d: %3.2f", i, lastTemp[i]);
     }
   }
 }
