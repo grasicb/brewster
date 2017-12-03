@@ -15,9 +15,6 @@
 #include "controller/BrewsterController.h"
 
 
-
-#define TFT_GRID
-
 //Globals
 SYSTEM_MODE(SEMI_AUTOMATIC);
 LogCategoryFilters logFilters;

@@ -3,6 +3,7 @@
 
 #include "application.h"
 #include "TemperatureSensors.h"
+#include "../lib/pid/PID.h"
 
 #define EEPROM_ACTIVE_PROCESS 0
 #define EEPROM_PROCESS_START 4
