@@ -4,9 +4,7 @@
 #include "mutex"
 #include "application.h"
 
-static Mutex lcdMutex;
-static Mutex i2cMutex;
-static String test = "test";
+//static Mutex lcdMutex;
 
 
 class BrewsterGlobals {
@@ -32,6 +30,7 @@ public:
                                         {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x3, 0x6A},
                                         {0x28, 0xFF, 0xB7, 0xC3, 0x51, 0x17, 0x4, 0xD4}};
     static const uint8_t tempSensorsNo = 4;
+    Mutex i2cMutex;
 
 private:
     BrewsterGlobals() {};

@@ -16,7 +16,7 @@ TemperatureSensors::TemperatureSensors() {
 void TemperatureSensors::readSensors() {
   if (millis() > lastRead + 200) {
 
-    i2cMutex.lock();
+    BrewsterGlobals::get()->i2cMutex.lock();
     for(uint8_t i: activeSensors) {
       //fetch results from previous refresh
       if (lastRead != 0 && ds18Sensor->asyncReadFetchData(BrewsterGlobals::get()->tempSensors[i])) {
@@ -29,7 +29,7 @@ void TemperatureSensors::readSensors() {
       //request sensor refresh
       ds18Sensor->asyncReadRequest(BrewsterGlobals::get()->tempSensors[i]);
     }
-    i2cMutex.unlock();
+    BrewsterGlobals::get()->i2cMutex.unlock();
 
     lastRead = millis();
   }

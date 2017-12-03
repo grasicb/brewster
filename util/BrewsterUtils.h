@@ -2,6 +2,7 @@
 #define BREWSTER_UTILS_H
 
 #include "application.h"
+#include "BrewsterGlobals.h"
 
 class BrewsterUtils {
 public:

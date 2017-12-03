@@ -4,14 +4,12 @@
 #include "../util/TempUtils.h"
 
 void SettingsWindow::initScreen() {
-  lcdMutex.lock();
   tft->fillScreen(ILI9341_BLACK);
 
   tft->setTextSize(1);
   tft->setTextColor(ILI9341_WHITE, ILI9341_BLACK);
   tft->setCursor(15, 225);
   tft->print("Brewster Homebrewing System");
-  lcdMutex.unlock();
 
   buttons.push_back( Button(tft, 25, 25, 125, 35, "Kalibracija ekrana", Action::SCREEN_CALIBRATION));
   buttons.push_back( Button(tft, 170, 25, 125, 35, "Test izhodov", Action::TEST_OUTPUT));
@@ -48,7 +46,7 @@ void SettingsWindow::processAction(uint8_t action) {
       TempUtils::setPrecision(DS18::PRECISION::BIT_10);
       delay(1000);
       TempUtils::listSensors();
-      
+
       break;
     case Action::TEST_SENSORS:
       TempUtils::readTemperature();

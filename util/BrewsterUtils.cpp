@@ -1,6 +1,7 @@
 #include "BrewsterUtils.h"
 
 void BrewsterUtils::i2c_scanner() {
+  BrewsterGlobals::get()->i2cMutex.lock();
   byte error, address;
   int nDevices;
 
@@ -38,4 +39,5 @@ void BrewsterUtils::i2c_scanner() {
   else
     Log.info("I2C scan complete");
 
+  BrewsterGlobals::get()->i2cMutex.unlock();
 }

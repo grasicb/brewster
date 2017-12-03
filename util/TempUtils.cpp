@@ -1,7 +1,7 @@
 #include "TempUtils.h"
 
 void TempUtils::listSensors() {
-  i2cMutex.lock();
+  BrewsterGlobals::get()->i2cMutex.lock();
 
   OneWire wire = OneWire(BrewsterGlobals::get()->pinOneWire);
 
@@ -42,20 +42,20 @@ void TempUtils::listSensors() {
     Log.info("Done");
   }
 
-  i2cMutex.unlock();
+  BrewsterGlobals::get()->i2cMutex.unlock();
 }
 
 void TempUtils::setPrecision(DS18::PRECISION p) {
-  i2cMutex.lock();
+  BrewsterGlobals::get()->i2cMutex.lock();
 
   DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
   ds18Sensor.setPrecision(p);
 
-  i2cMutex.unlock();
+  BrewsterGlobals::get()->i2cMutex.unlock();
 }
 
 void TempUtils::readTemperature() {
-  i2cMutex.lock();
+  BrewsterGlobals::get()->i2cMutex.lock();
 
   DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
 
@@ -65,5 +65,5 @@ void TempUtils::readTemperature() {
   	}
   }
 
-  i2cMutex.unlock();
+  BrewsterGlobals::get()->i2cMutex.unlock();
 }
