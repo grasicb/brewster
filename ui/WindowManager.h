@@ -9,6 +9,7 @@
 #include "SettingsWindow.h"
 #include "MashingWindow.h"
 #include "FermentationWindow.h"
+#include "TempSensorsTestWindow.h"
 
 #include "icons.h"
 #include "../lib/ui/colors.h"
@@ -16,7 +17,7 @@
 class WindowManager : public AWindowManager {
 
 public:
-  enum Windows {MAIN_WINDOW, WINDOW_MASHING, WINDOW_BOLING, WINDOW_FERMENTING, WINDOW_SETTINGS};
+  enum Windows {MAIN_WINDOW, WINDOW_MASHING, WINDOW_BOLING, WINDOW_FERMENTING, WINDOW_SETTINGS, WINDOW_TEMP_SENSORS_TEST};
   WindowManager(Adafruit_ILI9341 *tft) : AWindowManager(tft) {};
   void openWindow(uint8_t windowId);
   void destroyWindow(uint8_t windowId);

@@ -8,8 +8,7 @@
 #include "Button.h"
 #include "AWindowManager.h"
 #include <vector>
-#include <thread>
-#include <application.h>
+#include "application.h"
 
 
 class AWindow {

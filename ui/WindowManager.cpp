@@ -29,6 +29,11 @@ void WindowManager::openWindow(uint8_t windowId) {
       currentWindow = new FermentationWindow(tft, this);
       break;
 
+    case Windows::WINDOW_TEMP_SENSORS_TEST:
+      Log.trace("Opening Temp Sensors Test Window");
+      currentWindow = new TempSensorsTestWindow(tft, this);
+      break;
+
     default:
       Log.error("Could not find window with ID %d", windowId);
       break;

@@ -49,7 +49,8 @@ void SettingsWindow::processAction(uint8_t action) {
 
       break;
     case Action::TEST_SENSORS:
-      TempUtils::readTemperature();
+      //TempUtils::readTemperature();
+      windowManager->openWindow(WindowManager::Windows::WINDOW_TEMP_SENSORS_TEST);
       break;
     default:
       Log.warn("No all actions implemented in window Settings");

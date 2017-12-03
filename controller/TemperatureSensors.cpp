@@ -22,9 +22,9 @@ void TemperatureSensors::readSensors() {
       if (lastRead != 0 && ds18Sensor->asyncReadFetchData(BrewsterGlobals::get()->tempSensors[i])) {
         temperature[i] = ds18Sensor->celsius();
 
-        if (true && Log.isTraceEnabled()) {
-           logger->trace("Sensor %d: %.2f", i, ds18Sensor->celsius());
-        }
+        //if (Log.isTraceEnabled()) {
+        //   logger->trace("Sensor %d: %.2f", i, ds18Sensor->celsius());
+        //}
       }
       //request sensor refresh
       ds18Sensor->asyncReadRequest(BrewsterGlobals::get()->tempSensors[i]);
