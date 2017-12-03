@@ -21,4 +21,4 @@ private:
 
 };
 
-#endif A_WINDOW_MANAGER_H
+#endif // A_WINDOW_MANAGER_H

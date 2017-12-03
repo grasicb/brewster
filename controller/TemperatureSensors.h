@@ -23,4 +23,4 @@ private:
 };
 
 
-#endif TEMPERATURE_SENSORS_H
+#endif // TEMPERATURE_SENSORS_H

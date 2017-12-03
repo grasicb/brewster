@@ -22,4 +22,4 @@ private:
   uint8_t lastMinute = 100;
 };
 
-#endif SETTINGS_WINDOW_H
+#endif // SETTINGS_WINDOW_H

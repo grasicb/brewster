@@ -33,4 +33,4 @@ private:
   Logger logger;
 };
 
-#endif AWINDOW_H
+#endif // AWINDOW_H

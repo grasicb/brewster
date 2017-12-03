@@ -34,4 +34,4 @@ private:
   AWindow *currentWindow = NULL;
 };
 
-#endif WINDOW_MANAGER_H
+#endif // WINDOW_MANAGER_H

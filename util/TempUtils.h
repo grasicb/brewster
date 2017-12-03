@@ -12,4 +12,4 @@ public:
   static void readTemperature();
 };
 
-#endif TEMP_UTILS_H
+#endif // TEMP_UTILS_H

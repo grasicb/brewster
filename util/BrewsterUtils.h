@@ -11,4 +11,4 @@ public:
 };
 
 
-#endif BREWSTER_UTILS_H
+#endif // BREWSTER_UTILS_H

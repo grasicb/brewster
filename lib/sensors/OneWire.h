@@ -97,4 +97,4 @@ private:
 	uint8_t searchLastDeviceFlag;
 };
 
-#endif
+#endif // __ONEWIRE_H__

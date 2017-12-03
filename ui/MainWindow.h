@@ -25,4 +25,4 @@ private:
   BrewsterController *controller;
 };
 
-#endif MAIN_WINDOW_H
+#endif // MAIN_WINDOW_H

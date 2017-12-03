@@ -40,4 +40,4 @@ private:
 };
 
 
-#endif BREWSTER_GLOBALS_H
+#endif // BREWSTER_GLOBALS_H

@@ -85,4 +85,4 @@ class PID {
 	double outMin, outMax;
 	bool inAuto, pOnE;
 };
-#endif PID_v1_h
+#endif // PID_v1_h

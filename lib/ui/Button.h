@@ -47,4 +47,4 @@ private:
   //uint16_t fontColorActive = NULL;
 };
 
-#endif BUTTON_H
+#endif //BUTTON_H
