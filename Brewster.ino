@@ -55,8 +55,11 @@ void setup() {
 	pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
 
-	analogWrite(BrewsterGlobals::get()->pinDC1, 255,70);
+	analogWrite(BrewsterGlobals::get()->pinDC1, 80,70);
 	analogWrite(BrewsterGlobals::get()->pinDC2, 150,70);
+
+	//digitalWrite(BrewsterGlobals::get()->pinAC1, true);
+	//digitalWrite(BrewsterGlobals::get()->pinAC2, true);
 
 	//I2C Setup
 	if (!Wire.isEnabled()) {

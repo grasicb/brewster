@@ -39,6 +39,14 @@ void BrewsterController::controllerLoop() {
 //    logger.trace("Loop iteration: %ld", i);
 
     temperatureSensors->readSensors();
+
+    if (lastStateChange + 1000 < millis()) {
+      lastStateChange = millis();
+      outputAC = !outputAC;
+
+      digitalWrite(BrewsterGlobals::get()->pinAC1, outputAC);
+      digitalWrite(BrewsterGlobals::get()->pinAC2, !outputAC);
+    }
 }
 
 

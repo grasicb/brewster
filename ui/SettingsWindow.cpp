@@ -43,11 +43,12 @@ void SettingsWindow::processAction(uint8_t action) {
       windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
       break;
     case Action::FIND_SENSORS:
+      BrewsterUtils::i2c_scanner();
+
       TempUtils::setPrecision(DS18::PRECISION::BIT_10);
       delay(1000);
       TempUtils::listSensors();
-
-      BrewsterUtils::i2c_scanner();
+      
       break;
     case Action::TEST_SENSORS:
       TempUtils::readTemperature();

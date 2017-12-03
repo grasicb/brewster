@@ -29,6 +29,9 @@ private:
     Logger logger;
     BrewProcesses processActive;
     int processStarted;
+
+    boolean outputAC = false;
+    unsigned long lastStateChange = millis();
 };
 
 

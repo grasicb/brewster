@@ -1,12 +1,15 @@
 #include "TempUtils.h"
 
 void TempUtils::listSensors() {
+  i2cMutex.lock();
+
   OneWire wire = OneWire(BrewsterGlobals::get()->pinOneWire);
 
   uint8_t addr[8];
   uint8_t i = 0;
 
   Log.info("Listing sensors:");
+  wire.wireResetSearch();
 
   //wire.search(addr);
   while (wire.search(addr)) {
@@ -32,15 +35,28 @@ void TempUtils::listSensors() {
 
     Log.info("\tSensor %d: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X (type: %s)", i, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], type);
   }
+
+  if (i == 0) {
+    Log.info("No sensors found.");
+  }else{
+    Log.info("Done");
+  }
+
+  i2cMutex.unlock();
 }
 
 void TempUtils::setPrecision(DS18::PRECISION p) {
-  DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
+  i2cMutex.lock();
 
+  DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
   ds18Sensor.setPrecision(p);
+
+  i2cMutex.unlock();
 }
 
 void TempUtils::readTemperature() {
+  i2cMutex.lock();
+
   DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
 
   for (int i=0; i<BrewsterGlobals::tempSensorsNo; i++) {
@@ -48,4 +64,6 @@ void TempUtils::readTemperature() {
   		Serial.printf("Sensor %d: %.1f\n", i, ds18Sensor.celsius());
   	}
   }
+
+  i2cMutex.unlock();
 }
