@@ -9,6 +9,7 @@
 class Button {
 public:
   Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t action);
+  Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t fontSize, uint8_t action);
   Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t imageBitmap[], int16_t imageWidth, int16_t imageHeight, uint8_t action);
   boolean isClicked(uint16_t x_pos, uint16_t y_pos);
   boolean isPressed();
@@ -45,6 +46,7 @@ private:
 //  GFXfont *font = NULL;
   uint16_t fontColor = NULL;
   //uint16_t fontColorActive = NULL;
+  uint8_t fontSize = 1;
 };
 
 #endif //BUTTON_H

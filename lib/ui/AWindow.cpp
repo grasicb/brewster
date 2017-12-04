@@ -16,6 +16,7 @@ void AWindow::screenReleased() {
   if (buttonPressed != -1) {
     uint8_t action = buttons[buttonPressed].getAction();
     buttons[buttonPressed].deactivateButton();
+    buttonPressed = -1;
 
     if (Log.isTraceEnabled()) {
       logger.trace("Trigger action: %03d", action);

@@ -43,6 +43,11 @@ void WindowManager::openWindow(uint8_t windowId) {
         currentWindow = new TempSensorsTestWindow(tft, this);
         break;
 
+      case Windows::ENTER_VALUE:
+        Log.trace("Initializing Enter Value Window");
+        currentWindow = new EnterValueWindow(tft, this);
+        break;
+
       default:
         Log.error("Could not find window with ID %d", windowId);
         break;
