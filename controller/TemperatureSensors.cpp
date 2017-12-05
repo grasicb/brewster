@@ -6,6 +6,7 @@ TemperatureSensors::TemperatureSensors() {
     activeSensors.push_front(1);
     activeSensors.push_front(2);
     activeSensors.push_front(3);
+    activeSensors.push_front(4);
 
     lastRead = 0;
     for (int i = 0; i<10; i++) {
