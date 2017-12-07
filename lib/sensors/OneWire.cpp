@@ -8,6 +8,7 @@ OneWire::OneWire()
 	// Pass 0b00, 0b01, 0b10 or 0b11
 	mAddress = 0x18;
 	mError = 0;
+	Wire.setSpeed(400000);
 	Wire.begin();
 }
 

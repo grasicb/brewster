@@ -2,6 +2,7 @@
 #include "../util/BrewsterGlobals.h"
 #include "../util/BrewsterUtils.h"
 #include "../util/TempUtils.h"
+#include "../controller/BrewsterController.h"
 
 void SettingsWindow::initScreen() {
   tft->fillScreen(ILI9341_BLACK);
@@ -44,7 +45,7 @@ void SettingsWindow::processAction(uint8_t action) {
     case Action::FIND_SENSORS:
       BrewsterUtils::i2c_scanner();
 
-      TempUtils::setPrecision(DS18::PRECISION::BIT_10);
+      TempUtils::setPrecision(DS18::PRECISION::BIT_11);
       delay(1000);
       TempUtils::listSensors();
 
@@ -55,7 +56,14 @@ void SettingsWindow::processAction(uint8_t action) {
       break;
     case Action::TEST_OUTPUT:
       //TempUtils::readTemperature();
-      windowManager->openWindow(WindowManager::Windows::ENTER_VALUE);
+      //windowManager->openWindow(WindowManager::Windows::ENTER_VALUE);
+      if (AC1_Power ==100) {
+        AC1_Power = 0;
+      }else{
+        AC1_Power += 10;
+      }
+      BrewsterController::get()->getOutput(Outputs::AC1)->setOutput(AC1_Power);
+
       break;
     default:
       Log.warn("No all actions implemented in window Settings");

@@ -36,8 +36,12 @@ void TempSensorsTestWindow::refreshScreen() {
     if (BrewsterController::get()->temperatureSensors->temperature[i] != lastTemp[i]) {
       lastTemp[i] = BrewsterController::get()->temperatureSensors->temperature[i];
       tft->setCursor(55, 12+(i*16));
-      tft->printf("%3.2f", lastTemp[i]);
-      Log.trace("Temp %d: %3.2f", i, lastTemp[i]);
+      if(lastTemp[i] == 0) {
+        tft->printf("     ");
+      }else{
+        tft->printf("%5.2f", lastTemp[i]);
+      }
+      Log.trace("Temp %d: %5.2f", i, lastTemp[i]);
     }
   }
 }

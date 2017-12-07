@@ -45,13 +45,13 @@ void FermentationWindow::refreshScreen() {
   if (BrewsterController::get()->temperatureSensors->temperature[0] != lastTemp[0]) {
     lastTemp[0] = BrewsterController::get()->temperatureSensors->temperature[0];
     tft->setCursor(42, 70);
-  	tft->printf("%.02f", BrewsterController::get()->temperatureSensors->temperature[0]);
+  	tft->printf("%4.1f", BrewsterController::get()->temperatureSensors->temperature[0]);
   }
 
   if (BrewsterController::get()->temperatureSensors->temperature[1] != lastTemp[1]) {
     lastTemp[1] = BrewsterController::get()->temperatureSensors->temperature[1];
     tft->setCursor(177, 70);
-    tft->printf("%.02f", BrewsterController::get()->temperatureSensors->temperature[1]);
+    tft->printf("%4.1f", BrewsterController::get()->temperatureSensors->temperature[1]);
   }
 }
 
@@ -89,9 +89,9 @@ void FermentationWindow::process(void* param) {
     if ((lastLoggedTime + LOG_INTERVAL) < Time.now()) {
       //Log.trace("%d, %d, %d, %d", lastLoggedTime, Time.now(), controller->getProcessStartTime(), (lastLoggedTime + MASH_LOG_INTERVAL));
       lastLoggedTime = Time.now();
-      Log.trace("Fermenting: %d minutes, %.02f", (lastLoggedTime - controller->getProcessStartTime())/60, BrewsterController::get()->temperatureSensors->temperature[1]);
+      Log.trace("Fermenting: %d minutes, %5.2f", (lastLoggedTime - controller->getProcessStartTime())/60, BrewsterController::get()->temperatureSensors->temperature[1]);
 
-      Particle.publish("FEMENTING", String::format("Ferment|%d|%.02f|%.02f|%d:%d", (lastLoggedTime - controller->getProcessStartTime())/60, BrewsterController::get()->temperatureSensors->temperature[0], BrewsterController::get()->temperatureSensors->temperature[1], Time.hour(), Time.minute()));
+      Particle.publish("FEMENTING", String::format("Ferment|%d|%.2f|%.2f|%d:%d", (lastLoggedTime - controller->getProcessStartTime())/60, BrewsterController::get()->temperatureSensors->temperature[0], BrewsterController::get()->temperatureSensors->temperature[1], Time.hour(), Time.minute()));
     }
 
 

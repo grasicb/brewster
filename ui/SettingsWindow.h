@@ -20,6 +20,7 @@ protected:
 
 private:
   uint8_t lastMinute = 100;
+  uint8_t AC1_Power = 0;
 };
 
 #endif // SETTINGS_WINDOW_H

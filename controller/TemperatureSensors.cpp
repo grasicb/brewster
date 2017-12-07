@@ -18,8 +18,8 @@ TemperatureSensors::TemperatureSensors() {
 
 
 void TemperatureSensors::readSensors() {
-  if (millis() > lastRead + 200) {
-
+  if (millis() > lastRead + 400) {
+    lastRead = millis();
     BrewsterGlobals::get()->i2cMutex.lock();
     for(uint8_t i: activeSensors) {
       //fetch results from previous refresh
@@ -34,7 +34,8 @@ void TemperatureSensors::readSensors() {
       ds18Sensor->asyncReadRequest(BrewsterGlobals::get()->tempSensors[i]);
     }
     BrewsterGlobals::get()->i2cMutex.unlock();
-
-    lastRead = millis();
+//    if (Log.isTraceEnabled()) {
+//      logger->trace("Reading temperature sensors (%u ms)", (millis()-lastRead));
+//    }
   }
 }

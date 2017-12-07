@@ -19,7 +19,7 @@ private:
   std::forward_list<uint8_t> activeSensors;
   DS18 *ds18Sensor;
   Logger *logger;
-  long lastRead;
+  unsigned long lastRead;
 };
 
 

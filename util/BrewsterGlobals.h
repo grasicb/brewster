@@ -18,7 +18,13 @@ public:
     static const uint8_t pinAC2 = A6;
     static const uint8_t pinDC1 = D2;
     static const uint8_t pinDC2 = D3;
+    static const uint8_t pinSpeaker = D4;
     //static const uint8_t pinDC3 = D4;
+    static const uint8_t tftCS = A2;
+    static const uint8_t tftDC = A0;
+    static const uint8_t tftRST = A1;
+    static const uint8_t touchCS = D6;
+    static const uint8_t touchIRQ = D7;
 
     static const uint8_t addrOneWire = 0x18;
 

@@ -27,6 +27,7 @@ protected:
   Adafruit_ILI9341 *tft;
   std::vector<Button> buttons;
   int8_t buttonPressed = -1;
+  int8_t lastButtonPressed = -1;
   AWindowManager *windowManager;
 
 private:

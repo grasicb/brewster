@@ -13,6 +13,7 @@
 #include "ui/MainWindow.h"
 
 #include "controller/BrewsterController.h"
+#include "controller/Speaker.h"
 
 
 //Globals
@@ -21,7 +22,7 @@ LogCategoryFilters logFilters;
 SerialLogHandler logHandler(9600, LOG_LEVEL_ALL, logFilters);
 
 //LCD
-Adafruit_ILI9341 tft = Adafruit_ILI9341(A2, A0, A1);
+Adafruit_ILI9341 tft = Adafruit_ILI9341(BrewsterGlobals::get()->tftCS, BrewsterGlobals::get()->tftDC, BrewsterGlobals::get()->tftRST);
 
 //Window Management
 AWindow *currentWindow;
@@ -29,34 +30,43 @@ WindowManager *windowManager;
 
 //Threads
 Thread *controllerThread;
+Thread *controllerThreadTemperature;
+Thread *controllerThreadOutput;
 //BrewsterController controller;
 
 //Touch Sensor Variables
-BrewPiTouch ts(GlobalSPIArbiter, D6, D7);
+BrewPiTouch ts(GlobalSPIArbiter, BrewsterGlobals::get()->touchCS, BrewsterGlobals::get()->touchIRQ);
 uint16_t ts_x, ts_y;
 bool touchPressed = false;
 
 
 void setup() {
-	//LCD Setup
-	Serial.begin(9600);
-	Log.trace("Starting application setup");
-	tft.begin();
-	showLoadingScreen();
-
-	Particle.connect();
-
 	//Init PINS
 	pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
+	digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
+	digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
+	digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
+	digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
 
-	analogWrite(BrewsterGlobals::get()->pinDC1, 80,70);
-	analogWrite(BrewsterGlobals::get()->pinDC2, 150,70);
+	//LCD Setup
+	Serial.begin(9600);
+	Log.trace("Starting application setup");
+	BrewsterController::get();
+	tft.begin();
+	showLoadingScreen();
 
-	//digitalWrite(BrewsterGlobals::get()->pinAC1, true);
-	//digitalWrite(BrewsterGlobals::get()->pinAC2, true);
+	///////////////////////////////////////////////////
+	//Speaker::playTheme();
+	Speaker::playShortTone();
+	///////////////////////////////////////////////////
+
+	Particle.connect();
+
+	analogWrite(BrewsterGlobals::get()->pinDC1, 80,30);
+	analogWrite(BrewsterGlobals::get()->pinDC2, 80,70);
 
 	//I2C Setup
 	if (!Wire.isEnabled()) {
@@ -72,7 +82,9 @@ void setup() {
 	Time.zone(2);
 
 	//Start controller thread
-	controllerThread = new Thread(NULL, controllerLoop);
+	//controllerThread = new Thread(NULL, controllerLoop);
+	controllerThreadTemperature = new Thread(NULL, controllerLoopTemperature);
+	controllerThreadOutput = new Thread(NULL, controllerLoopOutput);
 
 	//Initialize first window
 	windowManager = new WindowManager(&tft);
@@ -84,6 +96,7 @@ void setup() {
 	else
 		windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
 
+	Speaker::playComplete();
 	Log.info("Setup done. Brewster is ready");
 }
 
@@ -95,7 +108,6 @@ void readTouch() {
 }
 
 void loop(void) {
-
 	//Handling touch sensor
 	if (ts.isTouched()) {
 		touchPressed = true;
@@ -114,10 +126,23 @@ void loop(void) {
 	windowManager->process();
 }
 
-
+/*
 os_thread_return_t controllerLoop(void* param) {
 	for(;;) {
 		BrewsterController::get()->controllerLoop();
+	}
+}
+*/
+
+os_thread_return_t controllerLoopTemperature(void* param) {
+	for(;;) {
+		BrewsterController::get()->controllerLoopTemperature();
+	}
+}
+
+os_thread_return_t controllerLoopOutput(void* param) {
+	for(;;) {
+		BrewsterController::get()->controllerLoopOutput();
 	}
 }
 
