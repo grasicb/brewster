@@ -17,10 +17,10 @@ BrewsterController::BrewsterController() {
     temperatureSensors = new TemperatureSensors();
 
     //Initialize Outputs
-    outputs[Outputs::AC1] = new Output(OutputNames[Outputs::AC1], BrewsterGlobals::get()->pinAC1, false);
-    outputs[Outputs::AC2] = new Output(OutputNames[Outputs::AC2], BrewsterGlobals::get()->pinAC2, false);
-    outputs[Outputs::DC1] = new Output(OutputNames[Outputs::DC1], BrewsterGlobals::get()->pinDC1, true);
-    outputs[Outputs::DC2] = new Output(OutputNames[Outputs::DC2], BrewsterGlobals::get()->pinDC2, true);
+    outputs[ControllerOutput::AC1] = new Output(OutputNames[ControllerOutput::AC1], BrewsterGlobals::get()->pinAC1, false);
+    outputs[ControllerOutput::AC2] = new Output(OutputNames[ControllerOutput::AC2], BrewsterGlobals::get()->pinAC2, false);
+    outputs[ControllerOutput::DC1] = new Output(OutputNames[ControllerOutput::DC1], BrewsterGlobals::get()->pinDC1, true);
+    outputs[ControllerOutput::DC2] = new Output(OutputNames[ControllerOutput::DC2], BrewsterGlobals::get()->pinDC2, true);
 
     //reading configuration from EEPROM
     int value_int;
@@ -50,18 +50,18 @@ void BrewsterController::controllerLoopTemperature() {
 
 void BrewsterController::controllerLoopOutput() {
   if (lastStateChange + 5 < millis()) {
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<OUTPUT_NUMBER; i++) {
       outputs[i]->process();
     }
     lastStateChange = millis();
   }
 }
 
-Output* BrewsterController::getOutput(Outputs outputID) {
+Output* BrewsterController::getOutput(ControllerOutput outputID) {
   return outputs[outputID];
 }
 
-boolean BrewsterController::isOutputActive(Outputs outputID) {
+boolean BrewsterController::isOutputActive(ControllerOutput outputID) {
   return outputs[outputID]->isActive();
 }
 

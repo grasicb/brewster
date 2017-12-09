@@ -7,6 +7,7 @@
 class EnterValueWindow : public AWindow {
 
 public:
+  enum IncrementMode {PRECISE, COARSE};
   EnterValueWindow(Adafruit_ILI9341 *tft, AWindowManager *windowManager) : AWindow(tft, windowManager) { controller = BrewsterController::get(); };
   ~EnterValueWindow() {};
   void initScreen();
@@ -14,6 +15,11 @@ public:
   void process(void* param);
   void processAction(uint8_t action);
   enum Action {A_OK, A_CANCEL};
+  void setLimits(double lowerLimit, double upperLimit);
+  void setOutputValue(int *value);
+  void setOutputValue(float *value);
+  void setOutputValue(double *value);
+  void setIncrementMode(IncrementMode mode);
 
 protected:
 
@@ -28,7 +34,14 @@ private:
   unsigned long lastRefresh = 0;
   unsigned long increaseStarted = 0;
   unsigned long lastIncrease = 0;
-  float value = 50;
+  double value = 50;
+
+  double lowerLimit = 0;
+  double upperLimit = 100;
+
+  int *refIntValue = NULL;
+  float *refFloatValue = NULL;
+  double *refDoubleValue = NULL;
 
   BrewsterController *controller;
 };

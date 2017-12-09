@@ -26,20 +26,20 @@ void Speaker::playTheme() {
 
 void Speaker::playBeep() {
     int speakerPin = BrewsterGlobals::get()->pinSpeaker;
-    tone(speakerPin, g,750);
+    tone(speakerPin, tone_g,750);
 }
 
 void Speaker::playComplete() {
     int speakerPin = BrewsterGlobals::get()->pinSpeaker;
-    tone(speakerPin, b,500);
+    tone(speakerPin, tone_b,500);
 }
 
 void Speaker::playShortTone() {
     int speakerPin = BrewsterGlobals::get()->pinSpeaker;
-    tone(speakerPin, b,150);
+    tone(speakerPin, tone_b,150);
 }
 
 void Speaker::playAlarm() {
     int speakerPin = BrewsterGlobals::get()->pinSpeaker;
-    tone(speakerPin, c,900);
+    tone(speakerPin, tone_c,900);
 }

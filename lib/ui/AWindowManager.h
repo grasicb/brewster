@@ -11,6 +11,9 @@ class AWindowManager {
 public:
   AWindowManager(Adafruit_ILI9341 *tft) { this->tft = tft;};
   virtual void openWindow(uint8_t windowId);
+  virtual void openWindow(void* window);
+  virtual void openPreviousWindow();
+  virtual void* getWindow(uint8_t windowId);
   virtual void destroyWindow(uint8_t windowId);
   virtual void process();
 

@@ -36,3 +36,9 @@ void AWindow::screenReleased() {
     processAction(action);
   }
 }
+
+void AWindow::drawButtons() {
+  for(Button b:buttons) {
+    b.draw();
+  }
+}

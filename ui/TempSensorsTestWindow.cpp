@@ -21,10 +21,7 @@ void TempSensorsTestWindow::initScreen() {
   //Define and draw buttons
   buttons.clear();
   buttons.push_back( Button(tft, 270, 190, 50, 50, icon_menu_bits, icon_menu_width, icon_menu_height, Action::W_MAIN_MENU));
-
-  for(Button b:buttons) {
-    b.draw();
-  }
+  drawButtons();
 }
 
 void TempSensorsTestWindow::refreshScreen() {

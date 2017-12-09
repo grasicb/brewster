@@ -13,6 +13,7 @@
 #include "FermentationWindow.h"
 #include "TempSensorsTestWindow.h"
 #include "EnterValueWindow.h"
+#include "OutputTestWindow.h"
 
 #include "icons.h"
 #include "../lib/ui/colors.h"
@@ -20,9 +21,13 @@
 class WindowManager : public AWindowManager {
 
 public:
-  enum Windows {MAIN_WINDOW, WINDOW_MASHING, WINDOW_BOLING, WINDOW_FERMENTING, WINDOW_SETTINGS, WINDOW_TEMP_SENSORS_TEST, ENTER_VALUE};
+  enum Windows {MAIN_WINDOW, WINDOW_MASHING, WINDOW_BOLING, WINDOW_FERMENTING, WINDOW_SETTINGS, WINDOW_TEMP_SENSORS_TEST, OUTPUT_TEST, ENTER_VALUE};
   WindowManager(Adafruit_ILI9341 *tft) : AWindowManager(tft) {};
   void openWindow(uint8_t windowId);
+  void openWindow(void* window);
+  void openPreviousWindow();
+  void *getWindow(uint8_t windowId);
+  AWindow *getWindowReference(uint8_t windowId);
   void destroyWindow(uint8_t windowId);
   void process();
   void screenTouched(uint16_t x, uint16_t y);
@@ -35,6 +40,7 @@ protected:
 private:
   Logger logger;
   AWindow *currentWindow = NULL;
+  AWindow *previousWindow = NULL;
   std::map<Windows, AWindow *> windows;
 };
 

@@ -10,12 +10,13 @@ Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, ui
   this->width = width;
   this->height = height;
   this->caption = caption;
+  this->fontSize = 1;
   this->action = action;
 
   //Initialize calculated values
   type = ButtonType::BTN_TEXT;
   contentX = x + 6;
-  contentY = y + ((height/2)-6);
+  contentY = y + ((height/2)-3);
 }
 
 Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, String caption, uint8_t fontSize, uint8_t action) {
@@ -31,7 +32,7 @@ Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, ui
   //Initialize calculated values
   type = ButtonType::BTN_TEXT;
   contentX = x + 6;
-  contentY = y + ((height/2)-6);
+  contentY = y + ((height/2)-3);
 }
 
 Button::Button(Adafruit_ILI9341* tft, uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t imageBitmap[], int16_t imageWidth, int16_t imageHeight, uint8_t action) {
@@ -67,7 +68,7 @@ void Button::draw() {
       tft->setTextColor(fontColor, colorButtonSelected);
     else
       tft->setTextColor(fontColor, colorButtonNormal);
-    tft->setFont(font_tiny);
+    tft->setFont(font_button);
     tft->setTextSize(fontSize);
     tft->print(caption);
 

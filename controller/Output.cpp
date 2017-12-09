@@ -31,13 +31,14 @@ void Output::setOutput(uint8_t percentage) {
     }
 }
 
-void Output::setTargetValue(double target, double* input) {
+void Output::setTargetValue(double target, float* input) {
   _logger->info("Setting target value to %4.1f°", target);
 
   //If the reference to input is changed, we need to instantiate a new PID
   if (input != _input) {
     if (_pid != NULL) {
-      delete _pid;
+      //delete _pid;
+      _pid->SetMode(MANUAL);
     }
     _pid = new PID(input, &_output, &_target, 2, 5, 1, DIRECT);
     _pid->SetMode(AUTOMATIC);
@@ -45,12 +46,21 @@ void Output::setTargetValue(double target, double* input) {
   //If just the target value is changed, then we just adapt the target value
   }else{
     _target = target;
+    _pid->SetMode(AUTOMATIC);
   }
 
   //set local variables
   _target = target;
   _input = input;
   _pidOn = true;
+}
+
+void Output::changeTargetValue(double target) {
+  if (_input == NULL)
+    _logger->warn("Changing set value on an object with input not set");
+  if (!_pidOn)
+    _logger->warn("Changing set value on an object with disabled PID");
+  _target = target;
 }
 
 void Output::process() {
@@ -87,8 +97,17 @@ void Output::process() {
 }
 
 boolean Output::isActive() {
-  if (_output == 0)
+  //_logger->trace("isActive - pidOn:%i, output:%3f, isActive:%i", _pidOn, _output, !(_output == 0 && _pidOn == false));
+  if (_output == 0 && _pidOn == false)
     return false;
   else
     return true;
+}
+
+boolean Output::isPID() {
+  return _pidOn;
+}
+
+uint8_t Output::getOutput() {
+  return _output / 255;
 }

@@ -44,7 +44,7 @@ private:
   boolean isActivated = false;
   boolean lastState = false;
 //  GFXfont *font = NULL;
-  uint16_t fontColor = NULL;
+  uint16_t fontColor = ILI9341_BLACK;
   //uint16_t fontColorActive = NULL;
   uint8_t fontSize = 1;
 };

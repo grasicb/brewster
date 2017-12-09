@@ -11,7 +11,7 @@
 enum BrewProcesses {NONE, MASHING, BOILING, CHILLING, FERMENTING};
 const static String BrewProcessNames[] = {"None", "Mashing", "Boiling", "Chilling", "Fermenting"};
 
-enum Outputs {AC1, AC2, DC1, DC2};
+enum ControllerOutput {AC1, AC2, DC1, DC2};
 const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
 
 
@@ -26,8 +26,8 @@ public:
     void stopProcess();
     BrewProcesses getActiveProcess();
     int getProcessStartTime();
-    Output* getOutput(Outputs outputID);
-    boolean isOutputActive(Outputs outputID);
+    Output* getOutput(ControllerOutput outputID);
+    boolean isOutputActive(ControllerOutput outputID);
 
     TemperatureSensors *temperatureSensors;
 
@@ -39,7 +39,7 @@ private:
     Logger logger;
     BrewProcesses processActive;
     int processStarted;
-    Output *outputs[4];
+    Output *outputs[OUTPUT_NUMBER];
 
     //boolean outputAC = false;
     unsigned long lastStateChange = millis();

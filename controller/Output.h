@@ -10,9 +10,13 @@ public:
     Output(String name, uint8_t pin, boolean enablePWM);
     ~Output() {};
     void setOutput(uint8_t percentage);
-    void setTargetValue(double target, double* input);
+    uint8_t getOutput();
+    void setTargetValue(double target, float* input);
+    void changeTargetValue(double target);
     void process();
     boolean isActive();
+    boolean isPID();
+
 
 
 private:
@@ -24,7 +28,7 @@ private:
   int _frequency;
   const static unsigned long _timeWindow = 500;
   unsigned long _windowStartTime = 0;
-  double* _input;
+  float* _input;
   double _target;
   PID* _pid = NULL;
   String _name;

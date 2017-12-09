@@ -22,6 +22,7 @@ public:
 
   void screenTouched(uint16_t x, uint16_t y);
   void screenReleased();
+  void drawButtons();
 
 protected:
   Adafruit_ILI9341 *tft;

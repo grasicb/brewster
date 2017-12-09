@@ -3,14 +3,18 @@
 
 #include "mutex"
 #include "application.h"
+#include "../lib/ui/AWindowManager.h"
 
 //static Mutex lcdMutex;
 
+#define BUTTON_TONE 0
+#define OUTPUT_NUMBER 4
 
 class BrewsterGlobals {
 public:
     static BrewsterGlobals* get();
     ~BrewsterGlobals( );
+    void setWindowManager(AWindowManager *windowManager) {this->windowManager = windowManager;};
 
     //PIN Assignment
     static const uint8_t pinOneWire = 0x18; //0x18 - this is via i2c BUS
@@ -44,6 +48,7 @@ private:
     BrewsterGlobals(BrewsterGlobals const&);  // Don't Implement
     void operator=(BrewsterGlobals const&);   // Don't implement
     static BrewsterGlobals* instance;
+    AWindowManager *windowManager = NULL;
 };
 
 

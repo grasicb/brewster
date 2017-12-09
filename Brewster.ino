@@ -88,6 +88,7 @@ void setup() {
 
 	//Initialize first window
 	windowManager = new WindowManager(&tft);
+	BrewsterGlobals::get()->setWindowManager(windowManager);
 
 	if (BrewsterController::get()->getActiveProcess() == BrewProcesses::MASHING)
 		windowManager->openWindow(WindowManager::Windows::WINDOW_MASHING);
@@ -151,7 +152,7 @@ void showLoadingScreen() {
 	tft.fillScreen(ILI9341_WHITE);
 	tft.setCursor(50, 110);
 	tft.setTextColor(ILI9341_BLACK, ILI9341_WHITE);
-	tft.setTextSize(2);
-	//tft.setFont(windowManager->font_standard);
+	//tft.setTextSize(2);
+	tft.setFont(font_standard);
 	tft.println("Zaganjam aplikacijo");
 }

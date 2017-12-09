@@ -57,12 +57,15 @@ void SettingsWindow::processAction(uint8_t action) {
     case Action::TEST_OUTPUT:
       //TempUtils::readTemperature();
       //windowManager->openWindow(WindowManager::Windows::ENTER_VALUE);
+      windowManager->openWindow(WindowManager::Windows::OUTPUT_TEST);
+      /*
       if (AC1_Power ==100) {
         AC1_Power = 0;
       }else{
         AC1_Power += 10;
       }
       BrewsterController::get()->getOutput(Outputs::AC1)->setOutput(AC1_Power);
+      */
 
       break;
     default:
