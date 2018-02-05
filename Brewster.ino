@@ -14,6 +14,7 @@
 
 #include "controller/BrewsterController.h"
 #include "controller/Speaker.h"
+#include "controller/LcdController.h"
 
 
 //Globals
@@ -53,6 +54,8 @@ void setup() {
 
 	//LCD Setup
 	Serial.begin(9600);
+
+
 	Log.trace("Starting application setup");
 	BrewsterController::get();
 	tft.begin();
@@ -98,6 +101,7 @@ void setup() {
 		windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
 
 	Speaker::playComplete();
+	LcdController::get();
 	Log.info("Setup done. Brewster is ready");
 }
 
@@ -109,6 +113,7 @@ void readTouch() {
 }
 
 void loop(void) {
+/*
 	//Handling touch sensor
 	if (ts.isTouched()) {
 		touchPressed = true;
@@ -123,8 +128,13 @@ void loop(void) {
 		windowManager->screenReleased();
 	}
 
+
 //	BrewsterController::get()->controllerLoop();
 	windowManager->process();
+*/
+
+	//BrewsterController::get()->controllerLoop();
+	LcdController::get()->processMessages();
 }
 
 /*
