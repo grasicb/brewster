@@ -9,33 +9,23 @@ SensorSearchController::SensorSearchController() {
 void SensorSearchController::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
 
-  for (int i=0; i<10; i++) {
-    temperature[i] = BrewsterController::get()->temperatureSensors->temperature[i];
-    updateOutputText();
-  }
+  updateOutputText();
 }
 
 
 void SensorSearchController::process() {
-  boolean updateNeeded = false;
 
-  for (int i = 0; i<10; i++) {
-    if (BrewsterController::get()->temperatureSensors->temperature[i] != temperature[i]) {
-      temperature[i] = BrewsterController::get()->temperatureSensors->temperature[i];
-      updateNeeded = true;
-    }
-  }
-
-  if (updateNeeded)
-    updateOutputText();
 }
 
 void SensorSearchController::updateOutputText() {
   String output = "";
+  for (int i = 0; i<3; i++) {
+    //output.concat(String::format("%2i: %.2f %cC%c%c", i+1, temperature[i], 176, 13, 10));
 
-  for (int i = 0; i<10; i++) {
-    output.concat(String::format("%2i: %.2f %cC%c%c", i+1, temperature[i], 176, 13, 10));
+    uint8_t *ts = BrewsterGlobals::get()->tempSensors[i];
+
+    output.concat(String::format("%2i: %2X %2X %2X %2X %2X %2X %2X %2X %c%c", i+1, ts[0], ts[1], ts[2], ts[3], ts[4], ts[5], ts[6], ts[7], 13, 10));
   }
-
   outputText.setText(output);
+  logger->info("Update output: \n\r%s", (const char*)output);
 }

@@ -20,7 +20,7 @@
 //Globals
 SYSTEM_MODE(SEMI_AUTOMATIC);
 LogCategoryFilters logFilters;
-SerialLogHandler logHandler(9600, LOG_LEVEL_ALL, logFilters);
+SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
 
 //LCD
 USARTSerial& nexSerial = Serial1;

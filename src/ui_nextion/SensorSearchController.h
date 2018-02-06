@@ -15,7 +15,6 @@ protected:
 private:
   Logger *logger;
   NexText outputText = NexText(3, 1, "t0");
-  float temperature[10];
 
   void updateOutputText();
 };

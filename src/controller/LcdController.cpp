@@ -2,17 +2,19 @@
 
 #include "../ui_nextion/CommonWindowController.h"
 #include "../ui_nextion/SensorSearchController.h"
+#include "../ui_nextion/SensorTestController.h"
 
 LcdController* LcdController::instance = NULL;
 
 CommonWindowController commonWC;
 SensorSearchController sensorSearchWC;
+SensorTestController sensorTestWC;
 
 NexPage mainPage = NexPage(1, 0, "main_page");
 NexPage settingsPage = NexPage(2, 0, "settings_page");
 NexPage settingsSensorSearch = NexPage(3, 0, "set_sensor_search");
 NexPage settingsSensorsTest = NexPage(4, 0, "set_sensors_test");
-NexPage settingsOutputTest = NexPage(4, 0, "set_output_test");
+NexPage settingsOutputTest = NexPage(5, 0, "set_output_test");
 
 
 LcdController* LcdController::get() {
@@ -24,8 +26,12 @@ LcdController* LcdController::get() {
 
 void windowOpenCallback(void *ptr)
 {
-  if(ptr == &settingsSensorSearch) {
+  if(ptr == &settingsSensorsTest) {
+    sensorTestWC.initializeScreen(ptr);
+
+  }else if(ptr == &settingsSensorSearch) {
     sensorSearchWC.initializeScreen(ptr);
+
   }else {
     commonWC.initializeScreen(ptr);
   }
@@ -38,8 +44,8 @@ LcdController::LcdController() {
     currentWindowController = NULL;
     currentWindow = NULL;
 
+    //Save pages, which should be listened for events
     nex_listen_list = new NexTouch*[6];//malloc(sizeof(&mainPage)*4);
-
     nex_listen_list[0] = &mainPage;
     nex_listen_list[1] = &settingsPage;
     nex_listen_list[2] = &settingsSensorSearch;
@@ -47,20 +53,16 @@ LcdController::LcdController() {
     nex_listen_list[4] = &settingsOutputTest;
     nex_listen_list[5] = NULL;
 
-/*
-    nex_listen_list =
-    {
-        &mainPage,
-        &settingsPage,
-        &settingsSensorSearchPage,
-        NULL
-    };
-*/
-
-    //*nex_listen_list = (*NexTouch[]) { &mainPage, NULL };
-
+    //Init LCD
     nexInit();
+    //Set high speed of connection to LCD
+    setBaudrate(115200);
+    Serial1.flush();
+    Serial1.end();
+    Serial1.begin(115200);
+    delay(10);
 
+    //Register event handlers for pages
     mainPage.attachPop(windowOpenCallback, &mainPage);
     settingsPage.attachPop(windowOpenCallback, &settingsPage);
     settingsSensorSearch.attachPop(windowOpenCallback, &settingsSensorSearch);
