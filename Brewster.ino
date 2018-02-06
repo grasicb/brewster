@@ -23,6 +23,7 @@ LogCategoryFilters logFilters;
 SerialLogHandler logHandler(9600, LOG_LEVEL_ALL, logFilters);
 
 //LCD
+USARTSerial& nexSerial = Serial1;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(BrewsterGlobals::get()->tftCS, BrewsterGlobals::get()->tftDC, BrewsterGlobals::get()->tftRST);
 
 //Window Management

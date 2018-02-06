@@ -1,25 +1,29 @@
 #ifndef LCD_CONTROLLER_H
 #define LCD_CONTROLLER_H
 
-#include "application.h"
+#define DEBUG_SERIAL_ENABLE
 
+#include "application.h"
+#include "../lib/lcd_nextion/ITEADLIB_Nextion.h"
+
+#include "../ui_nextion/AWindowController.h"
 
 class LcdController {
 public:
     static LcdController *get();
     ~LcdController() {};
     void processMessages();
-    void updateTemperature();
+    void setCurrentWindowController(AWindowController *wc);
+    void setCurrentWindow(NexPage *w);
 
 private:
     LcdController();
     Logger *logger;
     static LcdController *instance;
 
-    static const size_t READ_BUF_SIZE = 64;
-    char readBuf[READ_BUF_SIZE];
-    String buffer;
-    size_t readBufOffset = 0;
+    NexTouch **nex_listen_list;
+    AWindowController *currentWindowController;
+    NexPage *currentWindow;
 };
 
 
