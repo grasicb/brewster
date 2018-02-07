@@ -1,16 +1,6 @@
-#include "lib/lcd/Adafruit_ILI9341.h"
-#include "lib/lcd/Adafruit_GFX.h"
-#include "lib/sensors/PietteTech_DHT.h"
-#include "lib/touch/SPIArbiter.h"
-#include "lib/touch/BrewPiTouch.h"
-#include "lib/ui/AWindow.h"
-
 #include "util/BrewsterGlobals.h"
 #include "util/BrewsterUtils.h"
 #include "util/TempUtils.h"
-
-#include "ui/WindowManager.h"
-#include "ui/MainWindow.h"
 
 #include "controller/BrewsterController.h"
 #include "controller/Speaker.h"
@@ -25,11 +15,6 @@ SerialLogHandler logHandler(9600, LOG_LEVEL_INFO, logFilters);
 
 //LCD
 USARTSerial& nexSerial = Serial1;
-Adafruit_ILI9341 tft = Adafruit_ILI9341(BrewsterGlobals::get()->tftCS, BrewsterGlobals::get()->tftDC, BrewsterGlobals::get()->tftRST);
-
-//Window Management
-AWindow *currentWindow;
-WindowManager *windowManager;
 
 //Threads
 Thread *controllerThread;
@@ -38,9 +23,6 @@ Thread *controllerThreadOutput;
 //BrewsterController controller;
 
 //Touch Sensor Variables
-BrewPiTouch ts(GlobalSPIArbiter, BrewsterGlobals::get()->touchCS, BrewsterGlobals::get()->touchIRQ);
-uint16_t ts_x, ts_y;
-bool touchPressed = false;
 
 
 void setup() {
@@ -60,8 +42,6 @@ void setup() {
 
 	Log.trace("Starting application setup");
 	BrewsterController::get();
-	tft.begin();
-	showLoadingScreen();
 
 	///////////////////////////////////////////////////
 	//Speaker::playTheme();
@@ -78,10 +58,6 @@ void setup() {
     Wire.begin();
 	}
 
-	//Init Touch sensor
-	ts.init();
-	//ts.calibrate(tempScreen.getTft());
-
 	//Connect to Cloud
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
@@ -92,60 +68,22 @@ void setup() {
 	controllerThreadOutput = new Thread(NULL, controllerLoopOutput);
 
 	//Initialize first window
-	windowManager = new WindowManager(&tft);
-	BrewsterGlobals::get()->setWindowManager(windowManager);
-
+	//TODO: Implement handling and move to lcd_nextion
 	if (BrewsterController::get()->getActiveProcess() == BrewProcesses::MASHING)
-		windowManager->openWindow(WindowManager::Windows::WINDOW_MASHING);
+		delay(1);
 	else if (BrewsterController::get()->getActiveProcess() == BrewProcesses::FERMENTING)
-		windowManager->openWindow(WindowManager::Windows::WINDOW_FERMENTING);
+		delay(1);
 	else
-		windowManager->openWindow(WindowManager::Windows::MAIN_WINDOW);
+		delay(1);
 
 	Speaker::playComplete();
 	LcdController::get();
 	Log.info("Setup done. Brewster is ready");
 }
 
-void readTouch() {
-	ts.update(10);
-	ts_x = ts.getX();
-	ts_y = ts.getY();
-	//Log.trace("Touch: x=%d, y=%d", ts_x, ts_y);
-}
-
 void loop(void) {
-/*
-	//Handling touch sensor
-	if (ts.isTouched()) {
-		touchPressed = true;
-		readTouch();
-
-		if (ts.isStable()) {
-			windowManager->screenTouched(ts_x, ts_y);
-		}
-	}
-	if (touchPressed && !ts.isTouched()) {
-		touchPressed = false;
-		windowManager->screenReleased();
-	}
-
-
-//	BrewsterController::get()->controllerLoop();
-	windowManager->process();
-*/
-
-	//BrewsterController::get()->controllerLoop();
 	LcdController::get()->processMessages();
 }
-
-/*
-os_thread_return_t controllerLoop(void* param) {
-	for(;;) {
-		BrewsterController::get()->controllerLoop();
-	}
-}
-*/
 
 os_thread_return_t controllerLoopTemperature(void* param) {
 	for(;;) {
@@ -157,14 +95,4 @@ os_thread_return_t controllerLoopOutput(void* param) {
 	for(;;) {
 		BrewsterController::get()->controllerLoopOutput();
 	}
-}
-
-void showLoadingScreen() {
-  tft.setRotation(3);
-	tft.fillScreen(ILI9341_WHITE);
-	tft.setCursor(50, 110);
-	tft.setTextColor(ILI9341_BLACK, ILI9341_WHITE);
-	//tft.setTextSize(2);
-	tft.setFont(font_standard);
-	tft.println("Zaganjam aplikacijo");
 }
