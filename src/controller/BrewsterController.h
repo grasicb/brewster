@@ -5,6 +5,8 @@
 #include "TemperatureSensors.h"
 #include "Output.h"
 
+#include "../lib/sensors/DS18.h"
+
 #define EEPROM_ACTIVE_PROCESS 0
 #define EEPROM_PROCESS_START 4
 
@@ -28,6 +30,7 @@ public:
     int getProcessStartTime();
     Output* getOutput(ControllerOutput outputID);
     boolean isOutputActive(ControllerOutput outputID);
+    DS18* getDS18Interface();
 
     TemperatureSensors *temperatureSensors;
 
@@ -43,6 +46,9 @@ private:
 
     //boolean outputAC = false;
     unsigned long lastStateChange = millis();
+
+    //HW Interfaces
+    DS18 *ds18Interface;
 };
 
 
