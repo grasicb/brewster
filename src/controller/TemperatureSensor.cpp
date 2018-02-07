@@ -1,4 +1,6 @@
 #include "TemperatureSensor.h"
+#include "BrewsterController.h"
+#include "../util/BrewsterGlobals.h"
 
 TemperatureSensor::TemperatureSensor(uint8_t sensorAddress[8], SensorLocation sensorLocation) {
     logger = new Logger("temp_sensor");

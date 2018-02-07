@@ -10,12 +10,12 @@ public:
     ~SensorManager() {};
     void readSensors();
     void readTemperatureSensors();
-    TemperatureSensor getTemperatureSensor(TemperatureSensor::SensorLocation sensorLocation);
-    TemperatureSensor *getAllTemperatureSensors();
+    TemperatureSensor *getTemperatureSensor(TemperatureSensor::SensorLocation sensorLocation);
+    TemperatureSensor **getAllTemperatureSensors();
     uint8_t getTemperatureSensorNumber();
 
 private:
   Logger *logger;
-  TemperatureSensor *temperatureSensors;
+  TemperatureSensor **temperatureSensors;
   uint8_t tempSensorsNo;
 };

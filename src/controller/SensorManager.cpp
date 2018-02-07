@@ -4,7 +4,9 @@ SensorManager::SensorManager() {
     logger = new Logger("sensor_mgmt");
     tempSensorsNo = TemperatureSensor::sensorLocationSize;
 
-    temperatureSensors = new TemperatureSensor[tempSensorsNo];
+    //temperatureSensors = new TemperatureSensor[tempSensorsNo];
+    temperatureSensors = (TemperatureSensor *) malloc(sizeof(new TemperatureSensor(NULL, TemperatureSensor::SensorLocation::HLT))*tempSensorsNo);
+
     for (int i = 0; i<tempSensorsNo; i++) {
       temperatureSensors[i] = NULL;
     }
@@ -29,11 +31,11 @@ void SensorManager::readTemperatureSensors() {
   }
 }
 
-TemperatureSensor SensorManager::getTemperatureSensor(TemperatureSensor::SensorLocation sensorLocation) {
+TemperatureSensor *SensorManager::getTemperatureSensor(TemperatureSensor::SensorLocation sensorLocation) {
   return temperatureSensors[sensorLocation];
 }
 
-TemperatureSensor *SensorManager::getAllTemperatureSensors() {
+TemperatureSensor **SensorManager::getAllTemperatureSensors() {
   return temperatureSensors;
 }
 

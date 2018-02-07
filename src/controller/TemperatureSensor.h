@@ -3,13 +3,9 @@
 
 #include "application.h"
 
-#include "../util/BrewsterGlobals.h"
-#include "BrewsterController.h"
-
-
 class TemperatureSensor {
 public:
-    enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENT, FRIDGE, ROOM};
+    enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENTOR, FRIDGE, ROOM};
     static const uint8_t sensorLocationSize = 8;
     static String sensorNames[8];
 

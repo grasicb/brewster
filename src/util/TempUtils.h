@@ -9,7 +9,7 @@ class TempUtils {
 public:
   static void listSensors();
   static void setPrecision(DS18::PRECISION p);
-  static void readTemperature();
+//  static void readTemperature();
 };
 
 #endif // TEMP_UTILS_H
