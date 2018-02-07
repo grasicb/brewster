@@ -1,6 +1,7 @@
 #include "TemperatureSensor.h"
 
 TemperatureSensor::TemperatureSensor(uint8_t sensorAddress[8], SensorLocation sensorLocation) {
+    logger = new Logger("temp_sensor");
     value = 0;
     location = sensorLocation;
     memcpy(address, sensorAddress, sizeof(address)); //address = sensorAddress;
