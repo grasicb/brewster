@@ -2,7 +2,7 @@
 #define BREWSTER_CONTROLLER_H
 
 #include "application.h"
-#include "TemperatureSensors.h"
+#include "SensorManager.h"
 #include "Output.h"
 
 #include "../lib/sensors/DS18.h"
@@ -32,7 +32,7 @@ public:
     boolean isOutputActive(ControllerOutput outputID);
     DS18* getDS18Interface();
 
-    TemperatureSensors *temperatureSensors;
+    SensorManager *sensorManger;
 
 private:
     BrewsterController();
