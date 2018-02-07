@@ -53,7 +53,7 @@ void TempUtils::setPrecision(DS18::PRECISION p) {
 
   BrewsterGlobals::get()->i2cMutex.unlock();
 }
-
+/*
 void TempUtils::readTemperature() {
   BrewsterGlobals::get()->i2cMutex.lock();
 
@@ -67,3 +67,4 @@ void TempUtils::readTemperature() {
 
   BrewsterGlobals::get()->i2cMutex.unlock();
 }
+*/

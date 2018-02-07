@@ -13,8 +13,11 @@ BrewsterController* BrewsterController::get() {
 
 BrewsterController::BrewsterController() {
     Logger logger("controller");
+
+    ds18Interface = new DS18(BrewsterGlobals::get()->pinOneWire);
+
     i = 0;
-    temperatureSensors = new TemperatureSensors();
+    sensorManger = new SensorManager();
 
     //Initialize Outputs
     outputs[ControllerOutput::AC1] = new Output(OutputNames[ControllerOutput::AC1], BrewsterGlobals::get()->pinAC1, false);
@@ -45,7 +48,7 @@ void BrewsterController::controllerLoop() {
 }
 
 void BrewsterController::controllerLoopTemperature() {
-  temperatureSensors->readSensors();
+  sensorManger->readTemperatureSensors();
 }
 
 void BrewsterController::controllerLoopOutput() {
@@ -59,6 +62,10 @@ void BrewsterController::controllerLoopOutput() {
 
 Output* BrewsterController::getOutput(ControllerOutput outputID) {
   return outputs[outputID];
+}
+
+DS18* BrewsterController::getDS18Interface() {
+  return ds18Interface;
 }
 
 boolean BrewsterController::isOutputActive(ControllerOutput outputID) {

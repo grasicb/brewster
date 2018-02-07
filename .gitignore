@@ -1,6 +1,8 @@
 #Ignored single files & directories
 /build
 /*.bin
+/src/build
+/src/*.bin
 
 # Prerequisites
 *.d
