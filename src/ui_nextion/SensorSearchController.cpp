@@ -1,10 +1,17 @@
 #include "SensorSearchController.h"
 #include "../controller/BrewsterController.h"
 #include "../controller/TemperatureSensor.h"
+#include "UIEvent.h"
 #include <map>
 
 SensorSearchController::SensorSearchController() {
   logger = new Logger("SensorSearchController");
+
+  bSearch.attachPop(bSearchCallback, new UIEvent(this, &bSearch));
+
+  listenerList = new NexTouch*[6];
+  listenerList[0] = &bSearch;
+  listenerList[1] = NULL;
 }
 
 
@@ -30,15 +37,12 @@ void SensorSearchController::updateOutputText() {
   output = output.substring(0, 249);
   outputText.setText(output);
   logger->info("Update output: \n\r%s", (const char*)output);
+}
 
-  /*
-  for (int i = 0; i<3; i++) {
-    //output.concat(String::format("%2i: %.2f %cC%c%c", i+1, temperature[i], 176, 13, 10));
-
-    uint8_t *ts = BrewsterGlobals::get()->tempSensors[i];
-
-    output.concat(String::format("%2i: %2X %2X %2X %2X %2X %2X %2X %2X %c%c", i+1, ts[0], ts[1], ts[2], ts[3], ts[4], ts[5], ts[6], ts[7], 13, 10));
-  }
-  */
-
+void SensorSearchController::bSearchCallback(void *ptr)
+{
+    //logger->info("Search sensors button pressed");
+    Log.info("Search sensors button pressed");
+    SensorSearchController *obj = (SensorSearchController *) ptr;
+    obj->logger->info("Take 2");
 }

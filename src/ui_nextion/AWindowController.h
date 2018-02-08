@@ -1,5 +1,4 @@
-#ifndef A_WINDOW_CONTROLLER_H
-#define A_WINDOW_CONTROLLER_H
+#pragma once
 
 #include "application.h"
 #include "../lib/lcd_nextion/ITEADLIB_Nextion.h"
@@ -15,10 +14,8 @@ public:
   NexTouch **getListenerList() {return listenerList;};
 
 protected:
-  NexTouch *listenerList[];
+  NexTouch **listenerList;
 
 private:
 
 };
-
-#endif // A_WINDOW_CONTROLLER_H

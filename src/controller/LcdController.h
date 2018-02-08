@@ -15,6 +15,7 @@ public:
     void processMessages();
     void setCurrentWindowController(AWindowController *wc);
     void setCurrentWindow(NexPage *w);
+    void updateListenerList();
 
 private:
     LcdController();
@@ -22,8 +23,11 @@ private:
     static LcdController *instance;
 
     NexTouch **nex_listen_list;
+    NexTouch **page_list;
     AWindowController *currentWindowController;
     NexPage *currentWindow;
+
+    static void windowOpenCallback(void *ptr);
 };
 
 

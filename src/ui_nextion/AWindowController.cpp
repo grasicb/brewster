@@ -7,4 +7,5 @@ void AWindowController::initializeScreen(void *ptr) {
 
   LcdController::get()->setCurrentWindowController(this);
   LcdController::get()->setCurrentWindow(window);
+  LcdController::get()->updateListenerList();
 }

@@ -1,14 +1,17 @@
 #include "LcdController.h"
 
+#include "../ui_nextion/PageEvent.h"
 #include "../ui_nextion/CommonWindowController.h"
 #include "../ui_nextion/SensorSearchController.h"
 #include "../ui_nextion/SensorTestController.h"
+#include "../ui_nextion/OutputTestController.h"
 
 LcdController* LcdController::instance = NULL;
 
 CommonWindowController commonWC;
 SensorSearchController sensorSearchWC;
 SensorTestController sensorTestWC;
+OutputTestController outputTestWC;
 
 NexPage mainPage = NexPage(1, 0, "main_page");
 NexPage settingsPage = NexPage(2, 0, "settings_page");
@@ -24,17 +27,13 @@ LcdController* LcdController::get() {
   return instance;
 }
 
-void windowOpenCallback(void *ptr)
+void LcdController::windowOpenCallback(void *ptr)
 {
-  if(ptr == &settingsSensorsTest) {
-    sensorTestWC.initializeScreen(ptr);
+  PageEvent *event = (PageEvent *)ptr;
+  //LcdController *lcdController = (LcdController *)event->getSourceEntity();
 
-  }else if(ptr == &settingsSensorSearch) {
-    sensorSearchWC.initializeScreen(ptr);
-
-  }else {
-    commonWC.initializeScreen(ptr);
-  }
+  event->getWindowController()->initializeScreen(event->getPage());
+  //lcdController->updateListenerList();
 }
 
 LcdController::LcdController() {
@@ -45,13 +44,16 @@ LcdController::LcdController() {
     currentWindow = NULL;
 
     //Save pages, which should be listened for events
-    nex_listen_list = new NexTouch*[6];//malloc(sizeof(&mainPage)*4);
-    nex_listen_list[0] = &mainPage;
-    nex_listen_list[1] = &settingsPage;
-    nex_listen_list[2] = &settingsSensorSearch;
-    nex_listen_list[3] = &settingsSensorsTest;
-    nex_listen_list[4] = &settingsOutputTest;
-    nex_listen_list[5] = NULL;
+    page_list = new NexTouch*[6];//malloc(sizeof(&mainPage)*4);
+    page_list[0] = &mainPage;
+    page_list[1] = &settingsPage;
+    page_list[2] = &settingsSensorSearch;
+    page_list[3] = &settingsSensorsTest;
+    page_list[4] = &settingsOutputTest;
+    page_list[5] = NULL;
+
+    nex_listen_list = NULL;
+    updateListenerList();
 
     //Init LCD
     nexInit();
@@ -63,11 +65,11 @@ LcdController::LcdController() {
     delay(10);
 
     //Register event handlers for pages
-    mainPage.attachPop(windowOpenCallback, &mainPage);
-    settingsPage.attachPop(windowOpenCallback, &settingsPage);
-    settingsSensorSearch.attachPop(windowOpenCallback, &settingsSensorSearch);
-    settingsSensorsTest.attachPop(windowOpenCallback, &settingsSensorsTest);
-    settingsOutputTest.attachPop(windowOpenCallback, &settingsOutputTest);
+    mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, (AWindowController *)&commonWC));
+    settingsPage.attachPop(windowOpenCallback, new PageEvent(this, &settingsPage, &commonWC));
+    settingsSensorSearch.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorSearch, &sensorSearchWC));
+    settingsSensorsTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorsTest, &sensorTestWC));
+    settingsOutputTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsOutputTest, &commonWC));
 
     mainPage.show();
 }
@@ -78,6 +80,42 @@ void LcdController::setCurrentWindowController(AWindowController *wc) {
 
 void LcdController::setCurrentWindow(NexPage *w) {
   currentWindow = w;
+}
+
+void LcdController::updateListenerList() {
+  if (nex_listen_list != NULL)
+    delete []nex_listen_list;
+
+  uint8_t listenersNo = 0;
+  uint8_t i = 0;
+  uint8_t j = 0;
+  NexTouch *e = NULL;
+  NexTouch **windowListeners = NULL;
+
+  //Count the listeners
+  for(i = 0; (e = page_list[i]) != NULL; i++)
+    listenersNo++;
+
+  if(currentWindowController != NULL && currentWindowController->getListenerList() != NULL) {
+    windowListeners = currentWindowController->getListenerList();
+
+    for(i = 0; (e = windowListeners[i]) != NULL; i++)
+      listenersNo++;
+  }
+
+  //Copy listeners to the new array
+  nex_listen_list = new NexTouch *[listenersNo+1];
+  for(i = 0; (e = page_list[i]) != NULL; i++) {
+    nex_listen_list[j] = page_list[i];
+    j++;
+  }
+  if (windowListeners != NULL) {
+    for(i = 0; (e = windowListeners[i]) != NULL; i++) {
+      nex_listen_list[j] = page_list[i];
+      j++;
+    }
+  }
+  nex_listen_list[j] = NULL;
 }
 
 void LcdController::processMessages() {
