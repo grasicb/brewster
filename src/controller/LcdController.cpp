@@ -34,6 +34,15 @@ void LcdController::windowOpenCallback(void *ptr)
 
   event->getWindowController()->initializeScreen(event->getPage());
   //lcdController->updateListenerList();
+
+  if (event->getPage() == &settingsSensorSearch)
+    sensorSearchWC.initializeScreen(event->getPage());
+  else if (event->getPage() == &settingsSensorsTest)
+    sensorTestWC.initializeScreen(event->getPage());
+  else if (event->getPage() == &settingsOutputTest)
+    outputTestWC.initializeScreen(event->getPage());
+  else
+    commonWC.initializeScreen(event->getPage());
 }
 
 LcdController::LcdController() {
@@ -65,7 +74,7 @@ LcdController::LcdController() {
     delay(10);
 
     //Register event handlers for pages
-    mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, (AWindowController *)&commonWC));
+    mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, &commonWC));
     settingsPage.attachPop(windowOpenCallback, new PageEvent(this, &settingsPage, &commonWC));
     settingsSensorSearch.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorSearch, &sensorSearchWC));
     settingsSensorsTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorsTest, &sensorTestWC));
@@ -106,13 +115,15 @@ void LcdController::updateListenerList() {
   //Copy listeners to the new array
   nex_listen_list = new NexTouch *[listenersNo+1];
   for(i = 0; (e = page_list[i]) != NULL; i++) {
-    nex_listen_list[j] = page_list[i];
+    nex_listen_list[j] = e;
     j++;
+//    Log.trace("Page listener: 0x%X", e);
   }
   if (windowListeners != NULL) {
     for(i = 0; (e = windowListeners[i]) != NULL; i++) {
-      nex_listen_list[j] = page_list[i];
+      nex_listen_list[j] = e;
       j++;
+//      Log.trace("Window listener: 0x%X", e);
     }
   }
   nex_listen_list[j] = NULL;

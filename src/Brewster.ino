@@ -25,6 +25,8 @@ Thread *controllerThreadOutput;
 
 
 void setup() {
+	Serial.begin(115200);
+
 	//Init PINS
 	pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
 	pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
@@ -34,9 +36,6 @@ void setup() {
 	digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
 	digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
 	digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
-
-	//LCD Setup
-	Serial.begin(115200);
 
 	Log.trace("Starting application setup");
 	BrewsterController::get();

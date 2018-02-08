@@ -27,11 +27,11 @@ void TemperatureSensor::readSensor() {
     //Read processed sensor value (async reading of values)
     if (lastRead > 0 && sensor->asyncReadFetchData(address)) {
         value = sensor->celsius();
-
+/*
         if (Log.isTraceEnabled()) {
            logger->trace("Sensor %s: %.2f - Ref: 0x%X", (const char *)sensorNames[location], getValue(),  this);
-//           logger->trace("Sensor: %.2f", value);
         }
+*/
     }
 
     //request sensor refresh
