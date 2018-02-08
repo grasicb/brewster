@@ -2,10 +2,19 @@
 #include "BrewsterController.h"
 #include "../util/BrewsterGlobals.h"
 
+TemperatureSensor::TemperatureSensor() {
+  logger = new Logger("temp_sensor");
+  value = 0;
+  active = false;
+  lastRead = 0;
+}
+
 TemperatureSensor::TemperatureSensor(uint8_t sensorAddress[8], SensorLocation sensorLocation) {
     logger = new Logger("temp_sensor");
     value = 0;
     location = sensorLocation;
+    active = true;
+    lastRead = 0;
     memcpy(address, sensorAddress, sizeof(address)); //address = sensorAddress;
 }
 
@@ -20,7 +29,8 @@ void TemperatureSensor::readSensor() {
         value = sensor->celsius();
 
         if (Log.isTraceEnabled()) {
-           logger->trace("Sensor %s: %.2f", (const char *)sensorNames[location], value);
+           logger->trace("Sensor %s: %.2f - Ref: 0x%X", (const char *)sensorNames[location], getValue(),  this);
+//           logger->trace("Sensor: %.2f", value);
         }
     }
 
@@ -35,7 +45,7 @@ float TemperatureSensor::getValue() {
     if (lastRead+valueValidity > millis()) {
       return value;
     }else{
-      return 0;
+      return value;
     }
 }
 
@@ -50,6 +60,6 @@ boolean TemperatureSensor::isActive() {
   return active;
 }
 
-TemperatureSensor::SensorLocation TemperatureSensor::getLocation() {
+SensorLocation TemperatureSensor::getLocation() {
   return location;
 }

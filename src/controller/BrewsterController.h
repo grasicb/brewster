@@ -31,8 +31,7 @@ public:
     Output* getOutput(ControllerOutput outputID);
     boolean isOutputActive(ControllerOutput outputID);
     DS18* getDS18Interface();
-
-    SensorManager *sensorManger;
+    SensorManager* getSensorManager();
 
 private:
     BrewsterController();
@@ -43,6 +42,8 @@ private:
     BrewProcesses processActive;
     int processStarted;
     Output *outputs[OUTPUT_NUMBER];
+
+    SensorManager *sensorManger;
 
     //boolean outputAC = false;
     unsigned long lastStateChange = millis();

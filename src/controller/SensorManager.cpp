@@ -2,20 +2,24 @@
 
 SensorManager::SensorManager() {
     logger = new Logger("sensor_mgmt");
-    tempSensorsNo = TemperatureSensor::sensorLocationSize;
+    //tempSensorsNo = TemperatureSensor::sensorLocationSize;
 
-    //temperatureSensors = new TemperatureSensor[tempSensorsNo];
-    temperatureSensors = (TemperatureSensor *) malloc(sizeof(new TemperatureSensor(NULL, TemperatureSensor::SensorLocation::HLT))*tempSensorsNo);
+    //temperatureSensors = std::vector<TemperatureSensor> (tempSensorsNo);
+    //temperatureSensors = new TemperatureSensor *[tempSensorsNo];
+    //temperatureSensors = (TemperatureSensor **) malloc(sizeof(new TemperatureSensor(NULL, TemperatureSensor::SensorLocation::HLT))*tempSensorsNo);
+    //temperatureSensors = (TemperatureSensor **) malloc(sizeof(new TemperatureSensor(NULL, TemperatureSensor::SensorLocation::HLT))*tempSensorsNo);
 
+    /*
     for (int i = 0; i<tempSensorsNo; i++) {
       temperatureSensors[i] = NULL;
     }
+    */
 
-    temperatureSensors[TemperatureSensor::SensorLocation::HLT] = new TemperatureSensor({0x28, 0xFF, 0x60, 0xA0, 0x64, 0x16, 0x3, 0x6F}, TemperatureSensor::SensorLocation::HLT);
-    temperatureSensors[TemperatureSensor::SensorLocation::MT] = new TemperatureSensor({0x28, 0xFF, 0xD0, 0x50, 0x63, 0x16, 0x4, 0xA8}, TemperatureSensor::SensorLocation::MT);
-    temperatureSensors[TemperatureSensor::SensorLocation::BK] = new TemperatureSensor({0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x3, 0x6A}, TemperatureSensor::SensorLocation::BK);
-    temperatureSensors[TemperatureSensor::SensorLocation::COOLER_OUT] = new TemperatureSensor({0x28, 0xFF, 0xB7, 0xC3, 0x51, 0x17, 0x4, 0xD4}, TemperatureSensor::SensorLocation::COOLER_OUT);
-    temperatureSensors[TemperatureSensor::SensorLocation::FERMENTOR] = new TemperatureSensor({0x28, 0xFF, 0xDF, 0x8E, 0xC1, 0x16, 0x04, 0x6A}, TemperatureSensor::SensorLocation::FERMENTOR);
+    temperatureSensors[SensorLocation::HLT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x60, 0xA0, 0x64, 0x16, 0x3, 0x6F}, SensorLocation::HLT);
+    temperatureSensors[SensorLocation::MT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xD0, 0x50, 0x63, 0x16, 0x4, 0xA8}, SensorLocation::MT);
+    temperatureSensors[SensorLocation::BK] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x3, 0x6A}, SensorLocation::BK);
+    temperatureSensors[SensorLocation::COOLER_OUT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xB7, 0xC3, 0x51, 0x17, 0x4, 0xD4}, SensorLocation::COOLER_OUT);
+    temperatureSensors[SensorLocation::FERMENTOR] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xDF, 0x8E, 0xC1, 0x16, 0x04, 0x6A}, SensorLocation::FERMENTOR);
 }
 
 
@@ -24,21 +28,29 @@ void SensorManager::readSensors() {
 }
 
 void SensorManager::readTemperatureSensors() {
+
+  for ( auto &p : temperatureSensors ) {
+    p.second.readSensor();
+    //logger->trace("%i - %.2f -  Ref: 0x%X", p.second.getLocation(), p.second.getValue(), &p.second);
+  }
+
+  /*
   for (int i = 0; i < tempSensorsNo; i++) {
     if (temperatureSensors[i] != NULL) {
       temperatureSensors[i]->readSensor();
     }
   }
+  */
 }
 
-TemperatureSensor *SensorManager::getTemperatureSensor(TemperatureSensor::SensorLocation sensorLocation) {
+TemperatureSensor& SensorManager::getTemperatureSensor(SensorLocation sensorLocation) {
   return temperatureSensors[sensorLocation];
 }
 
-TemperatureSensor **SensorManager::getAllTemperatureSensors() {
+std::map<SensorLocation, TemperatureSensor>& SensorManager::getAllTemperatureSensors() {
   return temperatureSensors;
 }
 
 uint8_t SensorManager::getTemperatureSensorNumber() {
-  return tempSensorsNo;
+  return temperatureSensors.size();
 }

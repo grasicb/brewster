@@ -10,12 +10,7 @@
 //Globals
 SYSTEM_MODE(SEMI_AUTOMATIC);
 LogCategoryFilters logFilters;
-<<<<<<< HEAD
 SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
-=======
-//SerialLogHandler logHandler(9600, LOG_LEVEL_ALL, logFilters);
-SerialLogHandler logHandler(9600, LOG_LEVEL_INFO, logFilters);
->>>>>>> 55f50279de218d0302a7c318d4db8f0f7abe7580
 
 //LCD
 USARTSerial& nexSerial = Serial1;
@@ -41,8 +36,7 @@ void setup() {
 	digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
 
 	//LCD Setup
-	Serial.begin(9600);
-
+	Serial.begin(115200);
 
 	Log.trace("Starting application setup");
 	BrewsterController::get();

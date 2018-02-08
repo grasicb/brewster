@@ -2,7 +2,7 @@
 
 #include "application.h"
 #include "TemperatureSensor.h"
-
+#include <map>
 
 class SensorManager {
 public:
@@ -10,12 +10,11 @@ public:
     ~SensorManager() {};
     void readSensors();
     void readTemperatureSensors();
-    TemperatureSensor *getTemperatureSensor(TemperatureSensor::SensorLocation sensorLocation);
-    TemperatureSensor **getAllTemperatureSensors();
+    TemperatureSensor& getTemperatureSensor(SensorLocation sensorLocation);
+    std::map<SensorLocation, TemperatureSensor>& getAllTemperatureSensors();
     uint8_t getTemperatureSensorNumber();
 
 private:
   Logger *logger;
-  TemperatureSensor **temperatureSensors;
-  uint8_t tempSensorsNo;
+  std::map<SensorLocation, TemperatureSensor> temperatureSensors;
 };

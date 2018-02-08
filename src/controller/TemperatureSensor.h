@@ -1,16 +1,16 @@
-#ifndef TEMPERATURE_SENSOR_H
-#define TEMPERATURE_SENSOR_H
-
+#pragma once
 #include "application.h"
+
+static const uint8_t sensorLocationSize = 8;
+enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENTOR, FRIDGE, ROOM};
+const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};
+const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
 
 class TemperatureSensor {
 public:
-    enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENTOR, FRIDGE, ROOM};
-    static const uint8_t sensorLocationSize = 8;
-    static String sensorNames[8];
-
+    TemperatureSensor();
     TemperatureSensor(uint8_t sensorAddress[8], SensorLocation sensorLocation);
-    ~TemperatureSensor() { delete address;};
+    ~TemperatureSensor() { };
     void readSensor();
 
     float getValue();
@@ -33,5 +33,4 @@ private:
   const static unsigned long readInterval = 400; //Value is requested from sensor every 400 ms - this is the time DS18 needs for processing 11 bit precision value
 };
 
-String TemperatureSensor::sensorNames[] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};
-#endif // TEMPERATURE_SENSOR_H
+//String TemperatureSensor::sensorNames[] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};

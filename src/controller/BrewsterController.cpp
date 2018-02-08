@@ -91,3 +91,7 @@ BrewProcesses BrewsterController::getActiveProcess() {
 int BrewsterController::getProcessStartTime() {
   return processStarted;
 }
+
+SensorManager* BrewsterController::getSensorManager() {
+  return sensorManger;
+}

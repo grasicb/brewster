@@ -15,7 +15,7 @@ void TempUtils::listSensors() {
   while (wire.search(addr)) {
     i++;
 
-    char *type;
+    String type;
     switch (addr[0]) {
       case 0x10:
         type = "DS1820/DS18S20";
@@ -33,7 +33,7 @@ void TempUtils::listSensors() {
         type = "unknown";
     }
 
-    Log.info("\tSensor %d: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X (type: %s)", i, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], type);
+    Log.info("\tSensor %d: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X (type: %s)", i, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7], (const char*) type);
   }
 
   if (i == 0) {
