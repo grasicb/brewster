@@ -51,19 +51,19 @@ void SensorTestController::updateOutputText() {
   unsigned long start = millis();
 
   String output = "";
-  for (int i = 0; i<sensorNo/2; i++) {
-    //output.concat(String::format("%2i: %.2f %cC%c%c", i+1, temperature[i], 176, 13, 10));
-    output.concat(String::format("%2i: %.2f (%s)%c%c", i+1, temperature[i], (const char*)sensorShortNames[i], 13, 10));
+  for (int i = 0; i<sensorNo; i++) {
+    output.concat(String::format("%2i - %s: %.2f%c%c", i+1, (const char*)sensorNames[i], temperature[i], 13, 10));
   }
   outputText1.setText(output);
 
 
+  /* Legacy code - from the time when test screen was split in 2
   output = "";
   for (int i = sensorNo/2; i<sensorNo; i++) {
-    //output.concat(String::format("%2i: %.2f %cC%c%c", i+1, temperature[i], 176, 13, 10));
     output.concat(String::format("%2i: %.2f (%s)%c%c", i+1, temperature[i], (const char*)sensorShortNames[i], 13, 10));
   }
   outputText2.setText(output);
+  */
 
   unsigned long duration = millis() - start;
   if(logger->isTraceEnabled())
