@@ -4,6 +4,9 @@
 #include "UIEvent.h"
 #include <map>
 
+#include "../util/BrewsterUtils.h"
+#include "../util/TempUtils.h"
+
 SensorSearchController::SensorSearchController() {
   logger = new Logger("SensorSearchController");
 
@@ -43,6 +46,19 @@ void SensorSearchController::bSearchCallback(void *ptr)
 {
     //logger->info("Search sensors button pressed");
     Log.info("Search sensors button pressed");
-    SensorSearchController *obj = (SensorSearchController *) ptr;
-    obj->logger->info("Take 2");
+    Particle.process();
+    UIEvent *obj = (UIEvent *) ptr;
+    SensorSearchController *window = (SensorSearchController *) obj->getWindowController();
+
+    delay(50);
+    Particle.process();
+
+    //BrewsterUtils::i2c_scanner();
+    TempUtils::setPrecision(DS18::PRECISION::BIT_11);
+
+    delay(1000);
+    Particle.process();
+    
+    TempUtils::listSensors();
+//*/
 }

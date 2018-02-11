@@ -70,8 +70,9 @@ LcdController::LcdController() {
     setBaudrate(115200);
     Serial1.flush();
     Serial1.end();
-    Serial1.begin(115200);
     delay(10);
+    Serial1.begin(115200);
+    delay(50);
 
     //Register event handlers for pages
     mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, &commonWC));

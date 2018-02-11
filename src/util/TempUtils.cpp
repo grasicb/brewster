@@ -46,6 +46,7 @@ void TempUtils::listSensors() {
 }
 
 void TempUtils::setPrecision(DS18::PRECISION p) {
+  Log.info("Setting precision of all sensors.");
   BrewsterGlobals::get()->i2cMutex.lock();
 
   DS18 ds18Sensor(BrewsterGlobals::get()->pinOneWire);
