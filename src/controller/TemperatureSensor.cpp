@@ -45,8 +45,12 @@ float TemperatureSensor::getValue() {
     if (lastRead+valueValidity > millis()) {
       return value;
     }else{
-      return value;
+      return 0;
     }
+}
+
+float *TemperatureSensor::getValueReference() {
+    return &value;
 }
 
 String TemperatureSensor::getAddressString() {

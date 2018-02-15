@@ -10,6 +10,8 @@ void CommonWindowController::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
 }
 
+void CommonWindowController::deactivateScreen() {
+}
 
 void CommonWindowController::process() {
 

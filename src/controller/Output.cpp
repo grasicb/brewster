@@ -63,6 +63,10 @@ void Output::changeTargetValue(double target) {
   _target = target;
 }
 
+double Output::getTargetValue() {
+  return _target;
+}
+
 void Output::process() {
   if (_pidOn) {
     _pid->Compute();

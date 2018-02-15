@@ -10,6 +10,7 @@ class SensorTestController : public AWindowController {
 public:
   SensorTestController();
   void initializeScreen(void *ptr);
+  void deactivateScreen();
   void process();
 
 protected:

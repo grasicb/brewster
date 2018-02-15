@@ -9,6 +9,7 @@ class CommonWindowController : public AWindowController {
 public:
   CommonWindowController();
   void initializeScreen(void *ptr);
+  void deactivateScreen();
   void process();
 
 protected:

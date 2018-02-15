@@ -13,6 +13,7 @@ public:
     uint8_t getOutput();
     void setTargetValue(double target, float* input);
     void changeTargetValue(double target);
+    double getTargetValue();
     void process();
     boolean isActive();
     boolean isPID();

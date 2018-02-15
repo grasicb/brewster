@@ -89,6 +89,10 @@ void LcdController::setCurrentWindowController(AWindowController *wc) {
     currentWindowController = wc;
 }
 
+AWindowController *LcdController::getCurrentWindowController() {
+    return currentWindowController;
+}
+
 void LcdController::setCurrentWindow(NexPage *w) {
   currentWindow = w;
 }
