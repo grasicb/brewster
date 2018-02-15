@@ -1,6 +1,6 @@
 #include "UIEvent.h"
 
-UIEvent::UIEvent(void *windowController, NexButton *button) {
+UIEvent::UIEvent(void *windowController, NexObject *button) {
   this->windowController=windowController;
   this->button=button;
 }
@@ -9,6 +9,6 @@ void *UIEvent::getWindowController() {
   return windowController;
 }
 
-NexButton *UIEvent::getButton() {
+NexObject *UIEvent::getButton() {
   return button;
 }

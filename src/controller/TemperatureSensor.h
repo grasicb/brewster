@@ -14,6 +14,7 @@ public:
     void readSensor();
 
     float getValue();
+    float *getValueReference();
     String getAddressString();
     void setActive(boolean active);
     boolean isActive();

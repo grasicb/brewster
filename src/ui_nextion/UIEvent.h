@@ -7,14 +7,13 @@
 class UIEvent {
 
 public:
-  UIEvent(void *windowController, NexButton *button);
+  UIEvent(void *windowController, NexObject *button);
   void *getWindowController();
-  NexButton *getButton();
+  NexObject *getButton();
 
 protected:
 
 private:
   void *windowController;
-  NexButton *button;
-
+  NexObject *button;
 };

@@ -14,6 +14,7 @@ public:
     ~LcdController() {};
     void processMessages();
     void setCurrentWindowController(AWindowController *wc);
+    AWindowController *getCurrentWindowController();
     void setCurrentWindow(NexPage *w);
     void updateListenerList();
 

@@ -12,7 +12,7 @@ SensorSearchController::SensorSearchController() {
 
   bSearch.attachPop(bSearchCallback, new UIEvent(this, &bSearch));
 
-  listenerList = new NexTouch*[6];
+  listenerList = new NexTouch*[2];
   listenerList[0] = &bSearch;
   listenerList[1] = NULL;
 }
@@ -22,6 +22,9 @@ void SensorSearchController::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
 
   updateOutputText();
+}
+
+void SensorSearchController::deactivateScreen() {
 }
 
 
@@ -58,7 +61,7 @@ void SensorSearchController::bSearchCallback(void *ptr)
 
     delay(1000);
     Particle.process();
-    
+
     TempUtils::listSensors();
 //*/
 }

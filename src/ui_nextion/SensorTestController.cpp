@@ -24,6 +24,9 @@ void SensorTestController::initializeScreen(void *ptr) {
   updateOutputText();
 }
 
+void SensorTestController::deactivateScreen() {
+}
+
 
 void SensorTestController::process() {
   boolean updateNeeded = false;

@@ -7,6 +7,7 @@ class SensorSearchController : public AWindowController {
 public:
   SensorSearchController();
   void initializeScreen(void *ptr);
+  void deactivateScreen();
   void process();
 
 protected:
