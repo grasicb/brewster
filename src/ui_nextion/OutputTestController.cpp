@@ -112,10 +112,11 @@ void OutputTestController::refreshScreen() {
 
     //Setting value of the out (in case of PID this is target value, in case of standard output it is percentage turned on)
     if(valNum != NULL) {
-      if(o->isPID())
+      if(o->isPID()) {
         valNum->setValue(static_cast<uint32_t>(o->getTargetValue()));
-      else
+      }else{
         valNum->setValue(static_cast<uint32_t>(o->getOutput()));
+      }
     }else
       valNum->setValue(-1);
   }
@@ -172,22 +173,22 @@ void OutputTestController::cbPowerSwitchTriggered(void *ptr) {
   NexNumber *valNum = NULL;
 
   //Get the correct references to output and buttons based on which button has been pressed
-  if(button = &w->bO1PowerSwitch) {
+  if(button == &w->bO1PowerSwitch) {
     pwrBtn = &w->bO1PowerSwitch;
     atBtn = &w->bO1AutoSwitch;
     valNum = &w->nO1Value;
     o = BrewsterController::get()->getOutput(ControllerOutput::AC1);
-  } else if (button = &w->bO2PowerSwitch) {
+  } else if (button == &w->bO2PowerSwitch) {
     pwrBtn = &w->bO2PowerSwitch;
     atBtn = &w->bO2AutoSwitch;
     valNum = &w->nO2Value;
     o = BrewsterController::get()->getOutput(ControllerOutput::AC2);
-  } else if (button = &w->bO3PowerSwitch) {
+  } else if (button == &w->bO3PowerSwitch) {
     pwrBtn = &w->bO3PowerSwitch;
     atBtn = &w->bO3AutoSwitch;
     valNum = &w->nO3Value;
     o = BrewsterController::get()->getOutput(ControllerOutput::DC1);
-  } else if (button = &w->bO4PowerSwitch) {
+  } else if (button == &w->bO4PowerSwitch) {
     pwrBtn = &w->bO4PowerSwitch;
     atBtn = &w->bO4AutoSwitch;
     valNum = &w->nO4Value;
@@ -245,16 +246,16 @@ void OutputTestController::cbAutoSwitchTriggered(void *ptr) {
 
   //////////////////
   //Get the correct references to output and buttons based on which button has been pressed
-  if(button = &w->bO1AutoSwitch) {
+  if(button == &w->bO1AutoSwitch) {
     pwrBtn = &w->bO1PowerSwitch;
     atBtn = &w->bO1AutoSwitch;
-  } else if (button = &w->bO2AutoSwitch) {
+  } else if (button == &w->bO2AutoSwitch) {
     pwrBtn = &w->bO2PowerSwitch;
     atBtn = &w->bO2AutoSwitch;
-  } else if (button = &w->bO3AutoSwitch) {
+  } else if (button == &w->bO3AutoSwitch) {
     pwrBtn = &w->bO3PowerSwitch;
     atBtn = &w->bO3AutoSwitch;
-  } else if (button = &w->bO4AutoSwitch) {
+  } else if (button == &w->bO4AutoSwitch) {
     pwrBtn = &w->bO4PowerSwitch;
     atBtn = &w->bO4AutoSwitch;
   } else {
@@ -296,22 +297,22 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
 
   //////////////////
   //Get the correct references to output and buttons based on which button has been pressed
-  if(button = &w->bO1Settings) {
+  if(button == &w->bO1Settings) {
     pwrBtn = &w->bO1PowerSwitch;
     atBtn = &w->bO1AutoSwitch;
     valNum = &w->nO1Value;
     o = BrewsterController::get()->getOutput(ControllerOutput::AC1);
-  } else if (button = &w->bO2Settings) {
+  } else if (button == &w->bO2Settings) {
     pwrBtn = &w->bO2PowerSwitch;
     atBtn = &w->bO2AutoSwitch;
     valNum = &w->nO2Value;
     o = BrewsterController::get()->getOutput(ControllerOutput::AC2);
-  } else if (button = &w->bO3Settings) {
+  } else if (button == &w->bO3Settings) {
     pwrBtn = &w->bO3PowerSwitch;
     atBtn = &w->bO3AutoSwitch;
     valNum = &w->nO3Value;
     o = BrewsterController::get()->getOutput(ControllerOutput::DC1);
-  } else if (button = &w->bO4Settings) {
+  } else if (button == &w->bO4Settings) {
     pwrBtn = &w->bO4PowerSwitch;
     atBtn = &w->bO4AutoSwitch;
     valNum = &w->nO4Value;

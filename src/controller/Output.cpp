@@ -60,6 +60,8 @@ void Output::changeTargetValue(double target) {
     _logger->warn("Changing set value on an object with input not set");
   if (!_pidOn)
     _logger->warn("Changing set value on an object with disabled PID");
+
+  _logger->info("Changing target value to %4.1f°", target);
   _target = target;
 }
 
@@ -113,5 +115,5 @@ boolean Output::isPID() {
 }
 
 uint8_t Output::getOutput() {
-  return _output / 255;
+  return static_cast<uint8_t>(_output / 2.55);
 }
