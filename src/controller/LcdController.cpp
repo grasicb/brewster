@@ -67,12 +67,13 @@ LcdController::LcdController() {
     //Init LCD
     nexInit();
     //Set high speed of connection to LCD
+    mainPage.show();
     setBaudrate(115200);
     Serial1.flush();
     Serial1.end();
-    delay(10);
-    Serial1.begin(115200);
     delay(50);
+    Serial1.begin(115200);
+    delay(150);
 
     //Register event handlers for pages
     mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, &commonWC));
