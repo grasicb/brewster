@@ -2,6 +2,7 @@
 
 #include "AWindowController.h"
 #include "../controller/TemperatureSensor.h"
+#include "../controller/Output.h"
 #include <map>
 
 class OutputTestController : public AWindowController {
@@ -65,4 +66,7 @@ private:
   static void cbPowerSwitchTriggered(void *ptr);
   static void cbAutoSwitchTriggered(void *ptr);
   static void cbSettingsTriggered(void *ptr);
+
+  //Brewster Callback functions
+  static void outputChangedEvent(void* callingObject, void* outputIdentifier, OutputChangeEvent event);
 };

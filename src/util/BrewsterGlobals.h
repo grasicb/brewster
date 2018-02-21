@@ -4,14 +4,17 @@
 #include "mutex"
 #include "application.h"
 
-//static Mutex lcdMutex;
-
+//Global switches
 #define BUTTON_TONE 0
 #define OUTPUT_NUMBER 4
 
+//EEPROM Locations
 #define EEPROM_ACTIVE_PROCESS 0
 #define EEPROM_PROCESS_START 4
 #define EEPROM_RECIPE 1000
+
+//Global type definitions
+
 
 class BrewsterGlobals {
 public:

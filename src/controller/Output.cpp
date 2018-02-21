@@ -1,12 +1,8 @@
 #include "Output.h"
 
 Output::Output(String name, uint8_t pin, boolean enablePWM) {
-    String loggerName = String("Output "+name);
-    char* buff = (char*)malloc(loggerName.length()+1);
-    loggerName.toCharArray(buff, loggerName.length()+1);
-
-    _logger = new Logger(buff);
-    _logger->trace(loggerName);
+    _logger = new Logger((const char*) String::format("Output %s:", (const char*) name));
+    _logger->trace("Initializing output");
     _output = 0;
     _lastOutput = 0;
     _name = name;
@@ -29,6 +25,8 @@ void Output::setOutput(uint8_t percentage) {
     if (_pid != NULL) {
       _pid->SetMode(MANUAL);
     }
+
+    triggerChangeEvent();
 }
 
 void Output::setTargetValue(double target, float* input) {
@@ -53,6 +51,8 @@ void Output::setTargetValue(double target, float* input) {
   _target = target;
   _input = input;
   _pidOn = true;
+
+  triggerChangeEvent();
 }
 
 void Output::changeTargetValue(double target) {
@@ -61,6 +61,8 @@ void Output::changeTargetValue(double target) {
   if (!_pidOn)
     _logger->warn("Changing set value on an object with disabled PID");
   _target = target;
+
+  triggerChangeEvent();
 }
 
 double Output::getTargetValue() {
@@ -114,4 +116,46 @@ boolean Output::isPID() {
 
 uint8_t Output::getOutput() {
   return _output / 255;
+}
+
+///////////////////////////
+// Event handling
+///////////////////////////
+void Output::addListener(f_outputCB_t function, void* callingObject, void* outputIdentifier) {
+  OutputListener listener;
+  listener.function = function;
+  listener.callingObject = callingObject;
+  listener.outputIdentifier = outputIdentifier;
+
+  listeners[function] = listener;
+
+  _logger->trace("Added new listener. Total listeners: %i.", listeners.size());
+}
+
+void Output::removeListener(f_outputCB_t function) {
+  int removed = listeners.erase(function);
+
+  _logger->trace("Removed %i listener(s). Total listeners after removal: %i.", removed, listeners.size());
+}
+
+void Output::removeAllListeners() {
+  listeners.clear();
+
+  _logger->trace("Removed all listeners.");
+}
+
+void Output::triggerChangeEvent() {
+  //Prepare event data
+  OutputChangeEvent event;
+  event.isActive = isActive();
+  event.isPID = isPID();
+  if(event.isPID) {
+    event.targetValue = getTargetValue();
+  }else {
+    event.targetValue = (double) getOutput();
+  }
+
+  //call events
+  for (std::map<f_outputCB_t, OutputListener>::iterator it=listeners.begin(); it!=listeners.end(); ++it)
+    it->first(it->second.callingObject, it->second.outputIdentifier, event);
 }

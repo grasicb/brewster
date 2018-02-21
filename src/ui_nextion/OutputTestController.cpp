@@ -3,7 +3,7 @@
 #include "../controller/BrewsterController.h"
 #include "../controller/SensorManager.h"
 #include "../controller/TemperatureSensor.h"
-#include "../controller/Output.h"
+
 
 ///////////////////////////
 //Inherited functions
@@ -336,4 +336,9 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
       o->setOutput(value);
     }
   }
+}
+
+//Brewster Callback functions
+void OutputTestController::outputChangedEvent(void* callingObject, void* outputIdentifier, OutputChangeEvent event) {
+
 }
