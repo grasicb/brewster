@@ -133,7 +133,6 @@ AdditionDO *Recipe::getBoilAddition(int i) {
   return &recipe.boilAdditions[i];
 }
 
-<<<<<<< HEAD
 std::vector<AdditionDO>& Recipe::getPreviousBoilAdditions(unsigned long boilStartTime) {
   unsigned long accTime = boilStartTime;
   unsigned long curTime = Time.now();
@@ -159,51 +158,13 @@ std::vector<AdditionDO>& Recipe::getNextBoilAdditions(unsigned long boilStartTim
   for (std::vector<AdditionDO>::iterator it = recipe.boilAdditions.begin() ; it != recipe.boilAdditions.end(); ++it) {
     unsigned int t = boilStartTime + getSeconds(it->time, it->timeUOM);
 
-    //If the addition is from the past 5 minutes
+    //If the step is in the future, then add it to the list
     if(t > curTime) {
       additions.push_back(*it);
     }
   }
 
   return additions;
-=======
-AdditionDO *Recipe::getCurrentBoilAddition(unsigned long boilStartTime) {
-  unsigned long accTime = boilStartTime;
-  unsigned long curTime = Time.now();
-  int i=0;
-
-  for(AdditionDO add : recipe.boilAdditions) {
-    accTime += getSeconds(add.time, add.timeUOM);
-    if(accTime > curTime)
-      break;
-    i++;
-  }
-
-  if(recipe.boilAdditions.size()==0)
-    return NULL;
-  else
-    return &recipe.boilAdditions[i];
-}
-
-AdditionDO *Recipe::getNextBoilAddition(unsigned long boilStartTime) {
-  unsigned long accTime = boilStartTime;
-  unsigned long curTime = Time.now();
-  int i=0;
-
-  for(AdditionDO add : recipe.boilAdditions) {
-    accTime += getSeconds(add.time, add.timeUOM);
-    if(accTime > curTime)
-      break;
-    i++;
-  }
-
-  if(recipe.boilAdditions.size()==0)
-    return NULL;
-  else if (i==recipe.boilAdditions.size()-1)
-    return NULL;
-  else
-    return &recipe.boilAdditions[i+1];
->>>>>>> 0bb47e50f9ecb1f19126e200e9c4f21f5623844e
 }
 
 /************************
