@@ -139,7 +139,7 @@ std::vector<AdditionDO>& Recipe::getPreviousBoilAdditions(unsigned long boilStar
   std::vector<AdditionDO> additions;
 
   for (std::vector<AdditionDO>::iterator it = recipe.boilAdditions.begin() ; it != recipe.boilAdditions.end(); ++it) {
-    unsigned int dt = curTime - boilStartTime - getSeconds(it->time, it->timeUOM);
+    unsigned int dt = curTime - boilStartTime - BrewsterUtils::getSeconds(it->time, it->timeUOM);
 
     //If the addition is from the past 5 minutes
     if(dt > 0 && dt < 300) {
@@ -156,7 +156,7 @@ std::vector<AdditionDO>& Recipe::getNextBoilAdditions(unsigned long boilStartTim
   std::vector<AdditionDO> additions;
 
   for (std::vector<AdditionDO>::iterator it = recipe.boilAdditions.begin() ; it != recipe.boilAdditions.end(); ++it) {
-    unsigned int t = boilStartTime + getSeconds(it->time, it->timeUOM);
+    unsigned int t = boilStartTime + BrewsterUtils::getSeconds(it->time, it->timeUOM);
 
     //If the step is in the future, then add it to the list
     if(t > curTime) {
@@ -234,30 +234,6 @@ StepDO* Recipe::getNextFermentationPhase(unsigned long startTime) {
 }
 
 /************************
-** Private functions
-*************************/
-
-unsigned long Recipe::getSeconds(uint8_t time, TimeUOM timeUOM) {
-  switch (timeUOM) {
-    case TimeUOM::second :
-      return ((unsigned long)time);
-
-    case TimeUOM::minute :
-      return ((unsigned long)time)*60;
-
-    case TimeUOM::hour :
-      return ((unsigned long)time)*3600;
-
-    case TimeUOM::day :
-      return ((unsigned long)time)*86400;
-
-    default:
-      Log.error("Recipe::getSeconds - missing conversion for TimeUOM enum %i", (int)timeUOM);
-      return 0;
-  }
-}
-
-/************************
 ** Help functions for step manipulation
 *************************/
 
@@ -290,7 +266,7 @@ StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTi
   int i=0;
 
   for(StepDO step : steps) {
-    accTime += getSeconds(step.time, step.timeUOM);
+    accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
     if(accTime > curTime)
       break;
     i++;
@@ -311,7 +287,7 @@ StepDO* Recipe::getNextStep(std::vector<StepDO>& steps, unsigned long startTime)
   int i=0;
 
   for(StepDO step : steps) {
-    accTime += getSeconds(step.time, step.timeUOM);
+    accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
     if(accTime > curTime)
       break;
     i++;

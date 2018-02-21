@@ -2,13 +2,9 @@
 
 #include "application.h"
 #include "../util/BrewsterGlobals.h"
+#include "../util/BrewsterUtils.h"
 #include <vector>
 
-
-enum TimeUOM {second, minute, hour, day};
-static const String TimeUOMNames[4] = {"s", "min", "h", "day(s)"};
-enum QtyUOM {g, kg, ml, l};
-static const String QtyUOMNames[4] = {"g", "kg", "ml", "l"};
 #define MAX_STR_LEN 20
 
 struct AdditionDO { //24
@@ -79,8 +75,6 @@ public:
   StepDO* getFermentationPhase(int i);
   StepDO* getCurrentFermentationPhase(unsigned long startTime);
   StepDO* getNextFermentationPhase(unsigned long startTime);
-
-  static unsigned long getSeconds(uint8_t time, TimeUOM timeUOM);
 
 private:
   RecipeDO recipe;

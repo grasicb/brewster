@@ -1,17 +1,38 @@
-  #ifndef BREWSTER_GLOBALS_H
+#ifndef BREWSTER_GLOBALS_H
 #define BREWSTER_GLOBALS_H
 
-#include "mutex"
 #include "application.h"
+#include "mutex"
+#include "map"
 
 //Global switches
 #define BUTTON_TONE 0
 #define OUTPUT_NUMBER 4
 
+//Global structures
+static const uint8_t sensorLocationSize = 8;
+
+enum BrewProcess {NONE, MASHING, BOILING, CHILLING, FERMENTING};
+enum ProcessState {STOPPED, STARTED, PAUSED};
+enum TimeUOM {second, minute, hour, day};
+enum QtyUOM {g, kg, ml, l};
+enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENTOR, FRIDGE, ROOM};
+enum ControllerOutput {AC1, AC2, DC1, DC2};
+
+static const String ProcessStateNames[] = {"Stopped", "Started", "Paused"};
+static const String TimeUOMNames[4] = {"s", "min", "h", "day(s)"};
+static const String QtyUOMNames[4] = {"g", "kg", "ml", "l"};
+const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};
+const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
+const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
+
+
 //EEPROM Locations
 #define EEPROM_ACTIVE_PROCESS 0
 #define EEPROM_PROCESS_START 4
 #define EEPROM_RECIPE 1000
+static std::map<BrewProcess, int> EEPROM_PROCESS_DATA; //Defined in BrewsterGlobals constructor
+
 
 //Global type definitions
 
@@ -25,15 +46,17 @@ public:
     static const uint8_t pinOneWire = 0x18; //0x18 - this is via i2c BUS
     static const uint8_t pinAC1 = WKP;
     static const uint8_t pinAC2 = A6;
-    static const uint8_t pinDC1 = D2;
-    static const uint8_t pinDC2 = D3;
+    static const uint8_t pinDC1 = D3;
+    static const uint8_t pinDC2 = D2;
     static const uint8_t pinSpeaker = D4;
-    //static const uint8_t pinDC3 = D4;
+
+    /* Not used anymore
     static const uint8_t tftCS = A2;
     static const uint8_t tftDC = A0;
     static const uint8_t tftRST = A1;
     static const uint8_t touchCS = D6;
     static const uint8_t touchIRQ = D7;
+    */
 
     static const uint8_t addrOneWire = 0x18;
 
@@ -42,11 +65,10 @@ public:
     Mutex i2cMutex;
 
 private:
-    BrewsterGlobals() {};
+    BrewsterGlobals();
     BrewsterGlobals(BrewsterGlobals const&);  // Don't Implement
     void operator=(BrewsterGlobals const&);   // Don't implement
     static BrewsterGlobals* instance;
 };
-
 
 #endif // BREWSTER_GLOBALS_H

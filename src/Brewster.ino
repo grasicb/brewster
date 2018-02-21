@@ -17,7 +17,7 @@ USARTSerial& nexSerial = Serial1;
 
 //Threads
 Thread *controllerThread;
-Thread *controllerThreadTemperature;
+Thread *controllerThreadController;
 Thread *controllerThreadOutput;
 //BrewsterController controller;
 
@@ -49,7 +49,7 @@ void setup() {
 	//Connect to Cloud
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
-	
+
 	//I2C Setup
 	if (!Wire.isEnabled()) {
     Wire.begin();
@@ -57,17 +57,11 @@ void setup() {
 
 	//Start controller thread
 	//controllerThread = new Thread(NULL, controllerLoop);
-	controllerThreadTemperature = new Thread(NULL, controllerLoopTemperature);
+	controllerThreadController = new Thread(NULL, controllerLoopController);
 	controllerThreadOutput = new Thread(NULL, controllerLoopOutput);
 
 	//Initialize first window
 	//TODO: Implement handling and move to lcd_nextion
-	if (BrewsterController::get()->getActiveProcess() == BrewProcesses::MASHING)
-		delay(1);
-	else if (BrewsterController::get()->getActiveProcess() == BrewProcesses::FERMENTING)
-		delay(1);
-	else
-		delay(1);
 
 	Speaker::playComplete();
 	LcdController::get();
@@ -80,9 +74,9 @@ void loop(void) {
 	LcdController::get()->processMessages();
 }
 
-os_thread_return_t controllerLoopTemperature(void* param) {
+os_thread_return_t controllerLoopController(void* param) {
 	for(;;) {
-		BrewsterController::get()->controllerLoopTemperature();
+		BrewsterController::get()->controllerLoopOther();
 	}
 }
 
