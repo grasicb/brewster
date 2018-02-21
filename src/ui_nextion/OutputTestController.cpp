@@ -247,7 +247,9 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
   }
 }
 
-//Brewster Callback functions
+/////////////////////////////////
+// Output Callback functions
+/////////////////////////////////
 void OutputTestController::outputChangedEvent(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
   OutputTestController *w = (OutputTestController *) callingObject;
 
