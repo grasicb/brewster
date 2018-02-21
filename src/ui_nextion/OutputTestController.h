@@ -35,32 +35,32 @@ private:
 
   //UI Components
   NexDSButton bPowerSwitches[4] = {
-              NexDSButton(5, 11, "bt1"),
-              NexDSButton(5, 12, "bt2"),
-              NexDSButton(5, 13, "bt3"),
-              NexDSButton(5, 14, "bt4")};
+              NexDSButton(5, 7, "bt1"),
+              NexDSButton(5, 8, "bt2"),
+              NexDSButton(5, 9, "bt3"),
+              NexDSButton(5, 10, "bt4")};
 
   NexDSButton bAutoSwitches[4] = {
-              NexDSButton(5, 15, "bt5"),
-              NexDSButton(5, 16, "bt6"),
-              NexDSButton(5, 17, "bt7"),
-              NexDSButton(5, 18, "bt8")};
+              NexDSButton(5, 11, "bt5"),
+              NexDSButton(5, 12, "bt6"),
+              NexDSButton(5, 13, "bt7"),
+              NexDSButton(5, 14, "bt8")};
 
   NexDSButton bSettings[4] = {
-              NexDSButton(5, 23, "bt9"),
-              NexDSButton(5, 24, "bt10"),
-              NexDSButton(5, 25, "bt11"),
-              NexDSButton(5, 26, "bt12")};
+              NexDSButton(5, 19, "bt9"),
+              NexDSButton(5, 20, "bt10"),
+              NexDSButton(5, 21, "bt11"),
+              NexDSButton(5, 22, "bt12")};
 
   NexNumber nValues[4] = {
-              NexNumber(5, 27, "n1"),
-              NexNumber(5, 28, "n2"),
-              NexNumber(5, 29, "n3"),
-              NexNumber(5, 30, "n4")};
+              NexNumber(5, 23, "n1"),
+              NexNumber(5, 24, "n2"),
+              NexNumber(5, 25, "n3"),
+              NexNumber(5, 26, "n4")};
 
-  NexNumber nTemperature = NexNumber(5, 31, "n_temp");
-  NexText tLocation = NexText(5, 33, "t_temp_loc");
-  NexButton bNextLocation = NexButton(5, 34, "b_next_sensor");
+  NexNumber nTemperature = NexNumber(5, 27, "n_temp");
+  NexText tLocation = NexText(5, 29, "t_temp_loc");
+  NexButton bNextLocation = NexButton(5, 30, "b_next_sensor");
   NexVar vPreviousPage = NexVar(1, 6, "previous_page");
 
   //UI Callback functions
