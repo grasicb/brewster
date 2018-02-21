@@ -9,6 +9,10 @@
 #define BUTTON_TONE 0
 #define OUTPUT_NUMBER 4
 
+#define EEPROM_ACTIVE_PROCESS 0
+#define EEPROM_PROCESS_START 4
+#define EEPROM_RECIPE 1000
+
 class BrewsterGlobals {
 public:
     static BrewsterGlobals* get();

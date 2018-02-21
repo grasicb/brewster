@@ -47,6 +47,31 @@ void BrewsterController::controllerLoop() {
     controllerLoopOutput();
 }
 
+void BrewsterController::initRecipe() {
+  logger.info("Creating a recipe");
+
+  recipe.setName("Spring ale");
+
+  recipe.addMashingStep("Step 1", 20, TimeUOM::minute, 40);
+  recipe.addMashingStep("Step 2", 30, TimeUOM::minute, 64);
+  recipe.addMashingStep("Step 3", 25, TimeUOM::minute, 66);
+  recipe.addMashingStep("Step 4", 5, TimeUOM::minute, 74);
+
+  recipe.setBoilingTime(60);
+  recipe.addBoilAddition("Styrian Golding", 20, QtyUOM::g, 0, TimeUOM::minute);
+  recipe.addBoilAddition("Amarillo", 15, QtyUOM::g, 30, TimeUOM::minute);
+  recipe.addBoilAddition("Cascade", 20, QtyUOM::g, 45, TimeUOM::minute);
+  recipe.addBoilAddition("Amarillo", 15, QtyUOM::g, 45, TimeUOM::minute);
+  recipe.addBoilAddition("Irish moss", 11, QtyUOM::g, 45, TimeUOM::minute);
+
+  recipe.printRecipe();
+  recipe.storeToEEPROM();
+}
+
+Recipe BrewsterController::getRecipe() {
+    return recipe;
+}
+
 void BrewsterController::controllerLoopTemperature() {
   sensorManger->readTemperatureSensors();
 }
