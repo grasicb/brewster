@@ -56,8 +56,13 @@ public:
   void addBoilAddition(String name, float qty, QtyUOM qtyUOM, uint8_t time, TimeUOM timeUOM);
   int getBoilAdditionsCount();
   AdditionDO* getBoilAddition(int i);
+<<<<<<< HEAD
   std::vector<AdditionDO>& getPreviousBoilAdditions(unsigned long boilStartTime);
   std::vector<AdditionDO>& getNextBoilAdditions(unsigned long boilStartTime);
+=======
+  AdditionDO* getCurrentBoilAddition(unsigned long boilStartTime);
+  AdditionDO* getNextBoilAddition(unsigned long boilStartTime);
+>>>>>>> 0bb47e50f9ecb1f19126e200e9c4f21f5623844e
 
   void addMashingStep(StepDO& step);
   void addMashingStep(String name, uint8_t time, TimeUOM timeUOM, uint8_t temperature);

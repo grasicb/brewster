@@ -69,7 +69,10 @@ void SensorSearchController::bSearchCallback(void *ptr)
   r.loadFromEEPROM();
   r.printRecipe();
 
+<<<<<<< HEAD
 /*
+=======
+>>>>>>> 0bb47e50f9ecb1f19126e200e9c4f21f5623844e
   AdditionDO *a1;
   AdditionDO *a2;
 
@@ -99,7 +102,10 @@ void SensorSearchController::bSearchCallback(void *ptr)
   a2 = r.getNextBoilAddition(Time.now()-(61*60));
   window->logger->info("Current step t4 - 61m: %s %.1f %s @ %i %s.", (const char *) a1->name, a1->qty, (const char *) QtyUOMNames[a1->qtyUOM], a1->time, (const char *) TimeUOMNames[a1->timeUOM]);
   window->logger->info("Next step t4 - 61m: %s %.1f %s @ %i %s.", (const char *) a2->name, a2->qty, (const char *) QtyUOMNames[a2->qtyUOM], a2->time, (const char *) TimeUOMNames[a2->timeUOM]);
+<<<<<<< HEAD
 */
+=======
+>>>>>>> 0bb47e50f9ecb1f19126e200e9c4f21f5623844e
 
   window->logger->info("Printing mashing steps.");
 
