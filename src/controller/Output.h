@@ -12,7 +12,7 @@ struct OutputChangeEvent {
 };
 
 //Type definitions
-using f_outputCB_t = void(*)(void* callingObject, void* outputIdentifier, OutputChangeEvent event);
+using f_outputCB_t = void(*)(void* callingObject, int outputIdentifier, OutputChangeEvent event);
 
 class Output {
 public:
@@ -27,7 +27,7 @@ public:
     boolean isActive();
     boolean isPID();
 
-    void addListener(f_outputCB_t function, void* callingObject, void* outputIdentifier);
+    void addListener(f_outputCB_t function, void* callingObject, int outputIdentifier);
     void removeListener(f_outputCB_t function);
     void removeAllListeners();
 
@@ -35,7 +35,7 @@ protected:
   struct OutputListener {
     f_outputCB_t function;
     void* callingObject;
-    void* outputIdentifier;
+    int outputIdentifier;
   };
 
 private:

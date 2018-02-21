@@ -121,7 +121,7 @@ uint8_t Output::getOutput() {
 ///////////////////////////
 // Event handling
 ///////////////////////////
-void Output::addListener(f_outputCB_t function, void* callingObject, void* outputIdentifier) {
+void Output::addListener(f_outputCB_t function, void* callingObject, int outputIdentifier) {
   OutputListener listener;
   listener.function = function;
   listener.callingObject = callingObject;
