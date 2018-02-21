@@ -39,6 +39,11 @@ protected:
     void* callingObject;
   };
 
+  virtual void processStarted() = 0;
+  virtual void processStopped() = 0;
+  virtual void processPaused() = 0;
+  virtual void processResumed() = 0;
+
   Logger *logger;
   BrewProcess type;
   String name;

@@ -162,6 +162,15 @@ void Process::removeAllListeners() {
 }
 
 void Process::triggerStateChangeEvent(ProcessStateChangeEvent& event)  {
+  if(event.newState == ProcessState::STARTED && event.oldState == ProcessState::STOPPED)
+    processStarted();
+  else if(event.newState == ProcessState::STARTED && event.oldState == ProcessState::PAUSED)
+    processResumed();
+  else if(event.newState == ProcessState::STOPPED)
+    processStopped();
+  else if(event.newState == ProcessState::PAUSED)
+    processPaused();
+
   for (std::map<f_processStateChange_t, StateChageListener>::iterator it=listeners.begin(); it!=listeners.end(); ++it)
     it->first(it->second.callingObject, event);
 }

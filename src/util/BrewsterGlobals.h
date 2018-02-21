@@ -35,6 +35,9 @@ static std::map<BrewProcess, int> EEPROM_PROCESS_DATA; //Defined in BrewsterGlob
 
 
 //Global type definitions
+const static ControllerOutput mashHeater = ControllerOutput::AC1;
+const static ControllerOutput mashPump = ControllerOutput::DC1;
+const static uint8_t mashPumpFlowRate = 80;
 
 
 class BrewsterGlobals {

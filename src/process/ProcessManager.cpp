@@ -1,5 +1,7 @@
 #include "ProcessManager.h"
 #include "GenericProcess.h"
+#include "MashingProcess.h"
+#include "../controller/BrewsterController.h"
 
 ProcessManager::ProcessManager() {
   logger = new Logger("ProcessManager");
@@ -9,7 +11,7 @@ ProcessManager::ProcessManager() {
 void ProcessManager::initProcesses() {
   logger->info("Initializing brewing processes");
 
-  processes[BrewProcess::MASHING] = new GenericProcess(BrewProcess::MASHING, "Mashing");
+  processes[BrewProcess::MASHING] = new MashingProcess(BrewProcess::MASHING, "Mashing", BrewsterController::get()->getRecipe());
   processes[BrewProcess::BOILING] = new GenericProcess(BrewProcess::BOILING, "Boilin");
   processes[BrewProcess::CHILLING] = new GenericProcess(BrewProcess::CHILLING, "Chilling");
   processes[BrewProcess::FERMENTING] = new GenericProcess(BrewProcess::FERMENTING, "Fermenting");

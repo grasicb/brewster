@@ -26,7 +26,7 @@ public:
     ProcessManager* getProcessManager();
 
     void initRecipe();
-    Recipe getRecipe();
+    Recipe *getRecipe();
 
 private:
     BrewsterController();
@@ -35,7 +35,7 @@ private:
     long i;
     Logger logger;
     Output *outputs[OUTPUT_NUMBER];
-    Recipe recipe;
+    Recipe *recipe;
 
     SensorManager *sensorManger;
     ProcessManager *processManager;

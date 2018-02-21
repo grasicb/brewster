@@ -7,8 +7,24 @@ GenericProcess::GenericProcess(BrewProcess type, String name): Process(type, nam
 }
 
 void GenericProcess::process() {
-  if (Time.now() - lastTick < 1000) {
+  if (Time.now() - lastTick < 5) {
     lastTick = Time.now();
     logger->info("Hearthbeat for process %s.", (const char*) name);
   }
+}
+
+void GenericProcess::processStarted() {
+  logger->info("Process %s started.", (const char*) name);
+}
+
+void GenericProcess::processStopped() {
+  logger->info("Process %s stopped.", (const char*) name);
+}
+
+void GenericProcess::processPaused() {
+  logger->info("Process %s paused.", (const char*) name);
+}
+
+void GenericProcess::processResumed() {
+  logger->info("Process %s resumed.", (const char*) name);
 }

@@ -63,7 +63,7 @@ void SensorSearchController::bSearchCallback(void *ptr)
 
   TempUtils::listSensors();
 
-  Recipe r = BrewsterController::get()->getRecipe();
+  Recipe r = *BrewsterController::get()->getRecipe();
   r.clearRecipe();
   r.printRecipe();
   r.loadFromEEPROM();
