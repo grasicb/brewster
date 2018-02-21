@@ -37,6 +37,7 @@ OutputTestController::OutputTestController() {
   listenerList[j++] = NULL;
 
   //Register callback for output changes
+  logger->info("Registering output listeners for OutputTestController");
   for (int i=0; i<OUTPUT_NUMBER; i++) {
     Output *o = BrewsterController::get()->getOutput((ControllerOutput)i);
     o->addListener(outputChangedEvent, this, i);
@@ -50,6 +51,12 @@ void OutputTestController::initializeScreen(void *ptr) {
 }
 
 void OutputTestController::deactivateScreen() {
+  //Register callback for output changes
+  logger->info("Deregistering output listeners for OutputTestController");
+  for (int i=0; i<OUTPUT_NUMBER; i++) {
+    Output *o = BrewsterController::get()->getOutput((ControllerOutput)i);
+    o->removeListener(outputChangedEvent);
+  }
 }
 
 void OutputTestController::process() {
