@@ -46,18 +46,14 @@ void setup() {
 	///////////////////////////////////////////////////
 
 	Particle.connect();
-
-	analogWrite(BrewsterGlobals::get()->pinDC1, 80,30);
-	analogWrite(BrewsterGlobals::get()->pinDC2, 80,70);
-
+	//Connect to Cloud
+	waitFor(Particle.connected, 30000);
+	Time.zone(2);
+	
 	//I2C Setup
 	if (!Wire.isEnabled()) {
     Wire.begin();
 	}
-
-	//Connect to Cloud
-	waitFor(Particle.connected, 30000);
-	Time.zone(2);
 
 	//Start controller thread
 	//controllerThread = new Thread(NULL, controllerLoop);
@@ -76,6 +72,8 @@ void setup() {
 	Speaker::playComplete();
 	LcdController::get();
 	Log.info("Setup done. Brewster is ready");
+
+	BrewsterController::get()->initRecipe();
 }
 
 void loop(void) {

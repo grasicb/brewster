@@ -4,11 +4,9 @@
 #include "application.h"
 #include "SensorManager.h"
 #include "Output.h"
+#include "../model/Recipe.h"
 
 #include "../lib/sensors/DS18.h"
-
-#define EEPROM_ACTIVE_PROCESS 0
-#define EEPROM_PROCESS_START 4
 
 enum BrewProcesses {NONE, MASHING, BOILING, CHILLING, FERMENTING};
 const static String BrewProcessNames[] = {"None", "Mashing", "Boiling", "Chilling", "Fermenting"};
@@ -32,6 +30,8 @@ public:
     boolean isOutputActive(ControllerOutput outputID);
     DS18* getDS18Interface();
     SensorManager* getSensorManager();
+    void initRecipe();
+    Recipe getRecipe();
 
 private:
     BrewsterController();
@@ -42,6 +42,7 @@ private:
     BrewProcesses processActive;
     int processStarted;
     Output *outputs[OUTPUT_NUMBER];
+    Recipe recipe;
 
     SensorManager *sensorManger;
 
