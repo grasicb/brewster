@@ -75,12 +75,30 @@ void OutputTestController::refreshScreen() {
   for(int i=0; i<arraySize(bPowerSwitches); i++) {
     Output *o = BrewsterController::get()->getOutput((ControllerOutput)i);
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    //Setting value of the out (in case of PID this is target value, in case of standard output it is percentage turned on)
+    if(valNum != NULL) {
+      if(o->isPID()) {
+        valNum->setValue(static_cast<uint32_t>(o->getTargetValue()));
+      }else{
+        valNum->setValue(static_cast<uint32_t>(o->getOutput()));
+      }
+    }else
+      valNum->setValue(-1);
+=======
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
     bPowerSwitches[i].setValue(static_cast<uint32_t>(o->isActive()));
     bAutoSwitches[i].setValue(static_cast<uint32_t>(o->isPID()));
     if(o->isPID())
       nValues[i].setValue(static_cast<uint32_t>(o->getTargetValue()));
     else
       nValues[i].setValue(static_cast<uint32_t>(o->getOutput()));
+<<<<<<< HEAD
+=======
+>>>>>>> 9164678963c93486f46a05d84a3f71612b810ceb
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
   }
 
   updateTempSensorLocation();
@@ -132,6 +150,41 @@ void OutputTestController::cbPowerSwitchTriggered(void *ptr) {
   ///////////////////
   // Identifying the output associated to the button
   Output *o = NULL;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  NexDSButton *pwrBtn = NULL;
+  NexDSButton *atBtn = NULL;
+  NexNumber *valNum = NULL;
+
+  //Get the correct references to output and buttons based on which button has been pressed
+  if(button == &w->bO1PowerSwitch) {
+    pwrBtn = &w->bO1PowerSwitch;
+    atBtn = &w->bO1AutoSwitch;
+    valNum = &w->nO1Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::AC1);
+  } else if (button == &w->bO2PowerSwitch) {
+    pwrBtn = &w->bO2PowerSwitch;
+    atBtn = &w->bO2AutoSwitch;
+    valNum = &w->nO2Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::AC2);
+  } else if (button == &w->bO3PowerSwitch) {
+    pwrBtn = &w->bO3PowerSwitch;
+    atBtn = &w->bO3AutoSwitch;
+    valNum = &w->nO3Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::DC1);
+  } else if (button == &w->bO4PowerSwitch) {
+    pwrBtn = &w->bO4PowerSwitch;
+    atBtn = &w->bO4AutoSwitch;
+    valNum = &w->nO4Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::DC2);
+  } else {
+    pwrBtn = NULL;
+    atBtn = NULL;
+    valNum = NULL;
+    o = NULL;
+=======
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
   int i = -1;
 
   for(int j=0; j<arraySize(bPowerSwitches); j++) {
@@ -143,6 +196,10 @@ void OutputTestController::cbPowerSwitchTriggered(void *ptr) {
   }
 
   if(i == -1) {
+<<<<<<< HEAD
+=======
+>>>>>>> 9164678963c93486f46a05d84a3f71612b810ceb
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
     w->logger->error("cbPowerSwitchTriggered: Button ""%s"" is not mapped.", button->getObjName());
     return;
   }
@@ -186,6 +243,28 @@ void OutputTestController::cbAutoSwitchTriggered(void *ptr) {
   // Identifying the output associated to the button
   int i = -1;
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  //////////////////
+  //Get the correct references to output and buttons based on which button has been pressed
+  if(button == &w->bO1AutoSwitch) {
+    pwrBtn = &w->bO1PowerSwitch;
+    atBtn = &w->bO1AutoSwitch;
+  } else if (button == &w->bO2AutoSwitch) {
+    pwrBtn = &w->bO2PowerSwitch;
+    atBtn = &w->bO2AutoSwitch;
+  } else if (button == &w->bO3AutoSwitch) {
+    pwrBtn = &w->bO3PowerSwitch;
+    atBtn = &w->bO3AutoSwitch;
+  } else if (button == &w->bO4AutoSwitch) {
+    pwrBtn = &w->bO4PowerSwitch;
+    atBtn = &w->bO4AutoSwitch;
+  } else {
+    pwrBtn = NULL;
+    atBtn = NULL;
+=======
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
   for(int j=0; j<arraySize(bPowerSwitches); j++) {
     if(button == &w->bAutoSwitches[j]) {
       i = j;
@@ -194,6 +273,10 @@ void OutputTestController::cbAutoSwitchTriggered(void *ptr) {
   }
 
   if(i == -1) {
+<<<<<<< HEAD
+=======
+>>>>>>> 9164678963c93486f46a05d84a3f71612b810ceb
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
     w->logger->error("cbAutoSwitchTriggered: Button ""%s"" is not mapped.", button->getObjName());
     return;
   }
@@ -227,6 +310,38 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
   Output *o = NULL;
   int i = -1;
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  //////////////////
+  //Get the correct references to output and buttons based on which button has been pressed
+  if(button == &w->bO1Settings) {
+    pwrBtn = &w->bO1PowerSwitch;
+    atBtn = &w->bO1AutoSwitch;
+    valNum = &w->nO1Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::AC1);
+  } else if (button == &w->bO2Settings) {
+    pwrBtn = &w->bO2PowerSwitch;
+    atBtn = &w->bO2AutoSwitch;
+    valNum = &w->nO2Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::AC2);
+  } else if (button == &w->bO3Settings) {
+    pwrBtn = &w->bO3PowerSwitch;
+    atBtn = &w->bO3AutoSwitch;
+    valNum = &w->nO3Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::DC1);
+  } else if (button == &w->bO4Settings) {
+    pwrBtn = &w->bO4PowerSwitch;
+    atBtn = &w->bO4AutoSwitch;
+    valNum = &w->nO4Value;
+    o = BrewsterController::get()->getOutput(ControllerOutput::DC2);
+  } else {
+    pwrBtn = NULL;
+    atBtn = NULL;
+    valNum = NULL;
+    o = NULL;
+=======
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
   for(int j=0; j<arraySize(bPowerSwitches); j++) {
     if(button == &w->bSettings[j]) {
       i = j;
@@ -236,6 +351,10 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
   }
 
   if(i == -1) {
+<<<<<<< HEAD
+=======
+>>>>>>> 9164678963c93486f46a05d84a3f71612b810ceb
+>>>>>>> 7386eb45168845ea6e971e42f6b8b0a222d1779d
     w->logger->error("cbSettingsTriggered: Button ""%s"" is not mapped.", button->getObjName());
     return;
   }
