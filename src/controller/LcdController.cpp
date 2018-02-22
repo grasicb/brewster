@@ -5,6 +5,7 @@
 #include "../ui_nextion/SensorSearchController.h"
 #include "../ui_nextion/SensorTestController.h"
 #include "../ui_nextion/OutputTestController.h"
+#include "../ui_nextion/MashingController.h"
 
 LcdController* LcdController::instance = NULL;
 
@@ -12,12 +13,14 @@ CommonWindowController commonWC;
 SensorSearchController sensorSearchWC;
 SensorTestController sensorTestWC;
 OutputTestController outputTestWC;
+MashingController mashingWC;
 
 NexPage mainPage = NexPage(1, 0, "main_page");
 NexPage settingsPage = NexPage(2, 0, "settings_page");
 NexPage settingsSensorSearch = NexPage(3, 0, "set_sensor_search");
 NexPage settingsSensorsTest = NexPage(4, 0, "set_sensors_test");
 NexPage settingsOutputTest = NexPage(5, 0, "set_output_test");
+NexPage mashingPage = NexPage(6, 0, "mashing");
 
 
 LcdController* LcdController::get() {
@@ -41,6 +44,8 @@ void LcdController::windowOpenCallback(void *ptr)
     sensorTestWC.initializeScreen(event->getPage());
   else if (event->getPage() == &settingsOutputTest)
     outputTestWC.initializeScreen(event->getPage());
+  else if (event->getPage() == &mashingPage)
+    mashingWC.initializeScreen(event->getPage());
   else
     commonWC.initializeScreen(event->getPage());
 }
