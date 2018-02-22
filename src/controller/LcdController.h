@@ -17,6 +17,7 @@ public:
     AWindowController *getCurrentWindowController();
     void setCurrentWindow(NexPage *w);
     void updateListenerList();
+    void showMainPage();
 
 private:
     LcdController();

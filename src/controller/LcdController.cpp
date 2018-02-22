@@ -15,6 +15,7 @@ SensorTestController sensorTestWC;
 OutputTestController outputTestWC;
 MashingController mashingWC;
 
+NexPage loadingPage = NexPage(0, 0, "loading_page");
 NexPage mainPage = NexPage(1, 0, "main_page");
 NexPage settingsPage = NexPage(2, 0, "settings_page");
 NexPage settingsSensorSearch = NexPage(3, 0, "set_sensor_search");
@@ -33,11 +34,33 @@ LcdController* LcdController::get() {
 void LcdController::windowOpenCallback(void *ptr)
 {
   PageEvent *event = (PageEvent *)ptr;
-  //LcdController *lcdController = (LcdController *)event->getSourceEntity();
+  LcdController *lcdController = (LcdController *)event->getSourceEntity();
 
+  ///////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////
+
+  Log.info("Openning Window: %s", event->getPage()->getObjName());
+
+  //Deactivate previous screen
+  AWindowController *previousController = lcdController->getCurrentWindowController();
+  if (previousController != NULL) {
+    previousController->deactivateScreen();
+  }
+
+  //Activate new screen
+  lcdController->setCurrentWindowController(event->getWindowController());
+  lcdController->setCurrentWindow(event->getPage());
+  lcdController->updateListenerList();
   event->getWindowController()->initializeScreen(event->getPage());
+
+
+  ///////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////
+
+  //event->getWindowController()->initializeScreen(event->getPage());
   //lcdController->updateListenerList();
 
+/*
   if (event->getPage() == &settingsSensorSearch)
     sensorSearchWC.initializeScreen(event->getPage());
   else if (event->getPage() == &settingsSensorsTest)
@@ -48,6 +71,7 @@ void LcdController::windowOpenCallback(void *ptr)
     mashingWC.initializeScreen(event->getPage());
   else
     commonWC.initializeScreen(event->getPage());
+*/
 }
 
 LcdController::LcdController() {
@@ -57,6 +81,14 @@ LcdController::LcdController() {
     currentWindowController = NULL;
     currentWindow = NULL;
 
+    //Register event handlers for pages
+    mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, &commonWC));
+    settingsPage.attachPop(windowOpenCallback, new PageEvent(this, &settingsPage, &commonWC));
+    settingsSensorSearch.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorSearch, &sensorSearchWC));
+    settingsSensorsTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorsTest, &sensorTestWC));
+    settingsOutputTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsOutputTest, &outputTestWC));
+    mashingPage.attachPop(windowOpenCallback, new PageEvent(this, &mashingPage, &mashingWC));
+
     //Save pages, which should be listened for events
     page_list = new NexTouch*[6];//malloc(sizeof(&mainPage)*4);
     page_list[0] = &mainPage;
@@ -64,15 +96,16 @@ LcdController::LcdController() {
     page_list[2] = &settingsSensorSearch;
     page_list[3] = &settingsSensorsTest;
     page_list[4] = &settingsOutputTest;
-    page_list[5] = NULL;
+    page_list[5] = &mashingPage;
+    page_list[6] = NULL;
 
     nex_listen_list = NULL;
     updateListenerList();
 
     //Init LCD
     nexInit();
+    loadingPage.show();
     //Set high speed of connection to LCD
-    mainPage.show();
     setBaudrate(115200);
     Serial1.flush();
     Serial1.end();
@@ -80,13 +113,10 @@ LcdController::LcdController() {
     Serial1.begin(115200);
     delay(150);
 
-    //Register event handlers for pages
-    mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, &commonWC));
-    settingsPage.attachPop(windowOpenCallback, new PageEvent(this, &settingsPage, &commonWC));
-    settingsSensorSearch.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorSearch, &sensorSearchWC));
-    settingsSensorsTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorsTest, &sensorTestWC));
-    settingsOutputTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsOutputTest, &commonWC));
+    loadingPage.show();
+}
 
+void LcdController::showMainPage() {
     mainPage.show();
 }
 
@@ -146,31 +176,4 @@ void LcdController::processMessages() {
   if (currentWindowController != NULL) {
     currentWindowController->process();
   }
-
-  /*
-  // Read data from serial
-  	while(Serial1.available()) {
-
-      //logger->info("LCD data available");
-
-  		if (readBufOffset < READ_BUF_SIZE) {
-        char c = Serial1.read();
-        readBuf[readBufOffset++] = c;
-
-        buffer.concat(String(c, HEX) + " ");
-  		}
-  		else {
-  			Serial.println("readBuf overflow, emptying buffer");
-  			readBufOffset = 0;
-  		}
-  	}
-
-    if (readBufOffset>0) {
-      readBuf[readBufOffset] = 0;
-      //Serial.printlnf("Received from Nextion LCD: %s", buffer);
-      logger->info(buffer);
-      readBufOffset = 0;
-      buffer = "";
-    }
-    */
 }

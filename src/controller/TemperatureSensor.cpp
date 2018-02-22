@@ -54,7 +54,7 @@ float *TemperatureSensor::getValueReference() {
 }
 
 String TemperatureSensor::getAddressString() {
-  return String::format("%2X  %2X %2X  %2X %2X  %2X %2X  %2X", address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7]);
+  return String::format("%2X %2X %2X %2X %2X %2X %2X %2X", address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7]);
 }
 void TemperatureSensor::setActive(boolean active) {
   this->active = active;

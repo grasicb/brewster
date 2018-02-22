@@ -17,7 +17,7 @@ void SensorTestController::initializeScreen(void *ptr) {
   for ( auto &p : (*sensors) ) {
     temperature[p.second.getLocation()] = p.second.getValue();
     if (logger->isTraceEnabled()) {
-      logger->trace("Temperature Sensor - Location ID:%i  Value 1:%.2f  Value 2:%.2f Ref: 0x%X", p.second.getLocation(), p.second.getValue(), temperature[p.second.getLocation()], &p.second);
+      logger->trace("Temperature Sensor - Location ID:%i  Value 1:%.2f  Value 2:%.2f", p.second.getLocation(), p.second.getValue(), temperature[p.second.getLocation()]);
     }
   }
 

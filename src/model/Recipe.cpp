@@ -71,7 +71,7 @@ void Recipe::printRecipe() {
   if (recipe.fermentationPhases.size()>0) {
     logger->info("  Fermentation phases:");
     for(StepDO step : recipe.fermentationPhases) {
-       logger->info("    %s %i %s", (const char *) step.name, step.time, (const char *) TimeUOMNames[step.timeUOM], step.temperature);
+       logger->info("    %s %i %s", (const char *) step.name, step.time, (const char *) TimeUOMNames[step.timeUOM]);
      }
   }
 }
@@ -126,15 +126,14 @@ int Recipe::getBoilAdditionsCount() {
 }
 
 AdditionDO *Recipe::getBoilAddition(int i) {
-  if(i >= recipe.boilAdditions.size()) {
+  if(i >= (int)recipe.boilAdditions.size()) {
     logger->error("getBoildAddition: requested element beyond the size of array (size: %i, requested: %i)", recipe.boilAdditions.size(), i);
     i = recipe.boilAdditions.size()-1;
   }
   return &recipe.boilAdditions[i];
 }
 
-std::vector<AdditionDO>& Recipe::getPreviousBoilAdditions(unsigned long boilStartTime) {
-  unsigned long accTime = boilStartTime;
+std::vector<AdditionDO> Recipe::getPreviousBoilAdditions(unsigned long boilStartTime) {
   unsigned long curTime = Time.now();
   std::vector<AdditionDO> additions;
 
@@ -150,8 +149,7 @@ std::vector<AdditionDO>& Recipe::getPreviousBoilAdditions(unsigned long boilStar
   return additions;
 }
 
-std::vector<AdditionDO>& Recipe::getNextBoilAdditions(unsigned long boilStartTime) {
-  unsigned long accTime = boilStartTime;
+std::vector<AdditionDO> Recipe::getNextBoilAdditions(unsigned long boilStartTime) {
   unsigned long curTime = Time.now();
   std::vector<AdditionDO> additions;
 
@@ -261,7 +259,7 @@ void Recipe::addStep(std::vector<StepDO>& steps, String name, uint8_t time, Time
 }
 
 StepDO* Recipe::getStep(std::vector<StepDO>& steps, int i) {
-  if(i >= steps.size()) {
+  if(i >= (int)steps.size()) {
     logger->error("getStep: requested element beyond the size of array (size: %i, requested: %i)", steps.size(), i);
     i = steps.size()-1;
   }
@@ -272,7 +270,7 @@ StepDO* Recipe::getStep(std::vector<StepDO>& steps, int i) {
 StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTime) {
   unsigned long accTime = startTime;
   unsigned long curTime = Time.now();
-  int i=0;
+  uint i=0;
 
   for(StepDO& step : steps) {
     accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
@@ -293,7 +291,7 @@ StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTi
 StepDO* Recipe::getNextStep(std::vector<StepDO>& steps, unsigned long startTime) {
   unsigned long accTime = startTime;
   unsigned long curTime = Time.now();
-  int i=0;
+  uint i=0;
 
   for(StepDO& step : steps) {
     accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);

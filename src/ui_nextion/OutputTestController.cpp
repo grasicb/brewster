@@ -18,7 +18,7 @@ OutputTestController::OutputTestController() {
   selectedSensor = it->first;
 
   //Register callback functions for UI Events
-  for(int i=0; i<arraySize(bPowerSwitches); i++) {
+  for(uint i=0; i<arraySize(bPowerSwitches); i++) {
     bPowerSwitches[i].attachPop(cbPowerSwitchTriggered, new UIEvent(this, &bPowerSwitches[i]));
     bAutoSwitches[i].attachPop(cbAutoSwitchTriggered, new UIEvent(this, &bAutoSwitches[i]));
     bSettings[i].attachPop(cbSettingsTriggered, new UIEvent(this, &bSettings[i]));
@@ -28,13 +28,17 @@ OutputTestController::OutputTestController() {
   //Update listeners for UI Events
   int j=0;
   listenerList = new NexTouch*[(arraySize(bPowerSwitches)*3)+2];
-  for(int i=0; i<arraySize(bPowerSwitches); i++) {
+  for(uint i=0; i<arraySize(bPowerSwitches); i++) {
     listenerList[j++] = &bPowerSwitches[i];
     listenerList[j++] = &bAutoSwitches[i];
     listenerList[j++] = &bSettings[i];
   }
   listenerList[j++] = &bNextLocation;
   listenerList[j++] = NULL;
+}
+
+void OutputTestController::initializeScreen(void *ptr) {
+  AWindowController::initializeScreen(ptr);
 
   //Register callback for output changes
   logger->info("Registering output listeners for OutputTestController");
@@ -42,10 +46,6 @@ OutputTestController::OutputTestController() {
     Output *o = BrewsterController::get()->getOutput((ControllerOutput)i);
     o->addListener(outputChangedEvent, this, i);
   }
-}
-
-void OutputTestController::initializeScreen(void *ptr) {
-  AWindowController::initializeScreen(ptr);
 
   refreshScreen();
 }
@@ -72,7 +72,7 @@ void OutputTestController::process() {
 void OutputTestController::refreshScreen() {
   //BrewsterController::get()
 
-  for(int i=0; i<arraySize(bPowerSwitches); i++) {
+  for(uint i=0; i<arraySize(bPowerSwitches); i++) {
     Output *o = BrewsterController::get()->getOutput((ControllerOutput)i);
 
     bPowerSwitches[i].setValue(static_cast<uint32_t>(o->isActive()));
@@ -112,7 +112,7 @@ void OutputTestController::nextSensor() {
 
 void OutputTestController::cbNextLocation(void *ptr) {
   UIEvent *obj = (UIEvent *) ptr;
-  NexButton *button = (NexButton *)obj->getButton();
+  //NexButton *button = (NexButton *)obj->getButton();
   OutputTestController *window = (OutputTestController *) obj->getWindowController();
 
   if (Log.isTraceEnabled())
@@ -134,7 +134,7 @@ void OutputTestController::cbPowerSwitchTriggered(void *ptr) {
   Output *o = NULL;
   int i = -1;
 
-  for(int j=0; j<arraySize(bPowerSwitches); j++) {
+  for(uint j=0; j<arraySize(bPowerSwitches); j++) {
     if(button == &w->bPowerSwitches[j]) {
       i = j;
       o = BrewsterController::get()->getOutput((ControllerOutput)i);
@@ -186,7 +186,7 @@ void OutputTestController::cbAutoSwitchTriggered(void *ptr) {
   // Identifying the output associated to the button
   int i = -1;
 
-  for(int j=0; j<arraySize(bPowerSwitches); j++) {
+  for(uint j=0; j<arraySize(bPowerSwitches); j++) {
     if(button == &w->bAutoSwitches[j]) {
       i = j;
       break;
@@ -227,7 +227,7 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
   Output *o = NULL;
   int i = -1;
 
-  for(int j=0; j<arraySize(bPowerSwitches); j++) {
+  for(uint j=0; j<arraySize(bPowerSwitches); j++) {
     if(button == &w->bSettings[j]) {
       i = j;
       o = BrewsterController::get()->getOutput((ControllerOutput)i);

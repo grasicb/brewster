@@ -40,7 +40,6 @@ private:
     SensorManager *sensorManger;
     ProcessManager *processManager;
 
-    //boolean outputAC = false;
     unsigned long lastStateChange = millis();
 
     //HW Interfaces

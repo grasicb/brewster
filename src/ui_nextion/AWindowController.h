@@ -9,7 +9,7 @@ class AWindowController {
 public:
   AWindowController() { };
 
-  void initializeScreen(void *ptr);
+  virtual void initializeScreen(void *ptr);
   virtual void deactivateScreen();
   virtual void process();
   NexTouch **getListenerList() {return listenerList;};

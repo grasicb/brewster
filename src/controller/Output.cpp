@@ -1,7 +1,11 @@
 #include "Output.h"
 
 Output::Output(String name, uint8_t pin, boolean enablePWM) {
-    _logger = new Logger((const char*) String::format("Output %s:", (const char*) name));
+    String loggerName = String("Output "+name);
+    char* buff = (char*)malloc(loggerName.length()+1);
+    loggerName.toCharArray(buff, loggerName.length()+1);
+
+    _logger = new Logger(buff);
     _logger->trace("Initializing output");
     _output = 0;
     _lastOutput = 0;
