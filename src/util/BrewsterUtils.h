@@ -6,8 +6,9 @@
 
 class BrewsterUtils {
 public:
+    static unsigned long getSeconds(unsigned long time, TimeUOM timeUOM);
+    static unsigned long convertSeconds(unsigned long timeSeconds, TimeUOM timeUOM);
     static void i2c_scanner();
-
 };
 
 

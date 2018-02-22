@@ -1,10 +1,6 @@
 #pragma once
 #include "application.h"
-
-static const uint8_t sensorLocationSize = 8;
-enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENTOR, FRIDGE, ROOM};
-const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};
-const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
+#include "../util/BrewsterGlobals.h"
 
 class TemperatureSensor {
 public:

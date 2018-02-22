@@ -51,7 +51,7 @@ TemperatureSensor& SensorManager::getTemperatureSensor(SensorLocation sensorLoca
   return temperatureSensors[sensorLocation];
 }
 
-std::map<SensorLocation, TemperatureSensor>& SensorManager::getAllTemperatureSensors() {
+TempSensorMap& SensorManager::getAllTemperatureSensors() {
   return temperatureSensors;
 }
 

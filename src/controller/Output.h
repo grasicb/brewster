@@ -3,7 +3,16 @@
 #include "application.h"
 #include "../util/BrewsterGlobals.h"
 #include "../lib/pid/PID.h"
+#include <map>
 
+struct OutputChangeEvent {
+  boolean isActive;
+  boolean isPID;
+  double targetValue;
+};
+
+//Type definitions
+using f_outputCB_t = void(*)(void* callingObject, int outputIdentifier, OutputChangeEvent event);
 
 class Output {
 public:
@@ -18,7 +27,16 @@ public:
     boolean isActive();
     boolean isPID();
 
+    void addListener(f_outputCB_t function, void* callingObject, int outputIdentifier);
+    void removeListener(f_outputCB_t function);
+    void removeAllListeners();
 
+protected:
+  struct OutputListener {
+    f_outputCB_t function;
+    void* callingObject;
+    int outputIdentifier;
+  };
 
 private:
   Logger *_logger;
@@ -33,6 +51,8 @@ private:
   double _target;
   PID* _pid = NULL;
   String _name;
-
   uint8_t _pin;
+
+  std::map<f_outputCB_t, OutputListener> listeners;
+  void triggerChangeEvent();
 };

@@ -1,5 +1,45 @@
 #include "BrewsterUtils.h"
 
+unsigned long BrewsterUtils::getSeconds(unsigned long time, TimeUOM timeUOM) {
+  switch (timeUOM) {
+    case TimeUOM::second :
+      return ((unsigned long)time);
+
+    case TimeUOM::minute :
+      return ((unsigned long)time)*60;
+
+    case TimeUOM::hour :
+      return ((unsigned long)time)*3600;
+
+    case TimeUOM::day :
+      return ((unsigned long)time)*86400;
+
+    default:
+      Log.error("BrewsterUtils::getSeconds: Missing conversion for TimeUOM enum %i", (int)timeUOM);
+      return 0;
+  }
+}
+
+unsigned long BrewsterUtils::convertSeconds(unsigned long timeSeconds, TimeUOM timeUOM) {
+  switch (timeUOM) {
+    case TimeUOM::second :
+      return ((unsigned long)timeSeconds);
+
+    case TimeUOM::minute :
+      return ((unsigned long)timeSeconds)/60;
+
+    case TimeUOM::hour :
+      return ((unsigned long)timeSeconds)/3600;
+
+    case TimeUOM::day :
+      return ((unsigned long)timeSeconds)/86400;
+
+    default:
+      Log.error("BrewsterUtils::getSeconds: Missing conversion for TimeUOM enum %i", (int)timeUOM);
+      return 0;
+  }
+}
+
 void BrewsterUtils::i2c_scanner() {
   BrewsterGlobals::get()->i2cMutex.lock();
   byte error, address;
