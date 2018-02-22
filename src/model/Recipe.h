@@ -61,6 +61,7 @@ public:
   StepDO* getMashingStep(int i);
   StepDO* getCurrentMashingStep(unsigned long startTime);
   StepDO* getNextMashingStep(unsigned long startTime);
+  unsigned long getMashingStepStartTime(StepDO* selectedStep);
 
   void addFermentationStep(StepDO& step);
   void addFermentationStep(String name, uint8_t time, TimeUOM timeUOM, uint8_t temperature);
@@ -68,6 +69,7 @@ public:
   StepDO* getFermentationStep(int i);
   StepDO* getCurrentFermentationStep(unsigned long startTime);
   StepDO* getNextFermentationStep(unsigned long startTime);
+  unsigned long getFermentationStepStartTime(StepDO* selectedStep);
 
   void addFermentationPhase(StepDO& step);
   void addFermentationPhase(String name, uint8_t time, TimeUOM timeUOM);
@@ -75,6 +77,7 @@ public:
   StepDO* getFermentationPhase(int i);
   StepDO* getCurrentFermentationPhase(unsigned long startTime);
   StepDO* getNextFermentationPhase(unsigned long startTime);
+  unsigned long getFermentationPhaseStartTime(StepDO* selectedStep);
 
 private:
   RecipeDO recipe;
@@ -85,4 +88,5 @@ private:
   StepDO* getStep(std::vector<StepDO>& steps, int i);
   StepDO* getCurrentStep(std::vector<StepDO>& steps, unsigned long startTime);
   StepDO* getNextStep(std::vector<StepDO>& steps, unsigned long startTime);
+  unsigned long getStepStartTime(std::vector<StepDO>& steps, StepDO* selectedStep);
 };

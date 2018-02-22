@@ -1,8 +1,11 @@
 #pragma once
 
 #include "application.h"
+#include "../util/BrewsterGlobals.h"
 #include "TemperatureSensor.h"
 #include <map>
+
+typedef std::map<SensorLocation, TemperatureSensor> TempSensorMap;
 
 class SensorManager {
 public:
@@ -11,10 +14,10 @@ public:
     void readSensors();
     void readTemperatureSensors();
     TemperatureSensor& getTemperatureSensor(SensorLocation sensorLocation);
-    std::map<SensorLocation, TemperatureSensor>& getAllTemperatureSensors();
+    TempSensorMap& getAllTemperatureSensors();
     uint8_t getTemperatureSensorNumber();
 
 private:
   Logger *logger;
-  std::map<SensorLocation, TemperatureSensor> temperatureSensors;
+  TempSensorMap temperatureSensors;
 };

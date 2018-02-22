@@ -4,12 +4,12 @@
 MashingProcess::MashingProcess(BrewProcess type, String name): Process(type, name) {
   lastTick = Time.now();
   logger = new Logger("MashingProcess");
+  recipeMandatory = true;
   logger->warn("Initialized mashing process for proccess named: %s.", (const char*) name);
 }
 
-MashingProcess::MashingProcess(BrewProcess type, String name, Recipe* recipe): Process(type, name) {
+MashingProcess::MashingProcess(BrewProcess type, String name, Recipe* recipe): Process(type, name, recipe) {
   MashingProcess(type, name);
-  setRecipe(recipe);
 }
 
 void MashingProcess::process() {
@@ -53,14 +53,6 @@ void MashingProcess::processResumed() {
 
   updateOutput();
   BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
-}
-
-void MashingProcess::setRecipe(Recipe *recipe) {
-    this->recipe = recipe;
-}
-
-Recipe* MashingProcess::getRecipe() {
-  return recipe;
 }
 
 void MashingProcess::updateOutput() {

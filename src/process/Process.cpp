@@ -5,7 +5,12 @@ Process::Process(BrewProcess type, String name) {
     logger = new Logger("Process");
     this->type = type;
     this->name = name;
+    recipeMandatory = false;
     loadFromEEPROM();
+}
+
+Process::Process(BrewProcess type, String name, Recipe* recipe) :Process(type, name) {
+    setRecipe(recipe);
 }
 
 void Process::start() {
@@ -13,7 +18,9 @@ void Process::start() {
   event.oldState = state;
 
   //Business logic
-  if(state == ProcessState::STARTED)
+  if (recipeMandatory && recipe == NULL)
+    logger->error("Recipe is mandatory for this process, but is not set. Cannot start the process.");
+  else if(state == ProcessState::STARTED)
     logger->error("Cannot start process %s. Process already started.", (const char*) name);
   else if(state == ProcessState::PAUSED)
     logger->error("Cannot start process %s. Process is paused.", (const char*) name);
@@ -136,29 +143,44 @@ ProcessState Process::getState() {
   return state;
 }
 
+boolean Process::isActive() {
+  if(state == ProcessState::STOPPED)
+    return false;
+  else
+    return true;
+}
+
+void Process::setRecipe(Recipe *recipe) {
+    this->recipe = recipe;
+}
+
+Recipe* Process::getRecipe() {
+  return recipe;
+}
+
 ///////////////////////////
-// Event handling
+// Event handling - State Chage
 ///////////////////////////
 void Process::addListener(f_processStateChange_t function, void* callingObject) {
   StateChageListener listener;
   listener.function = function;
   listener.callingObject = callingObject;
 
-  listeners[function] = listener;
+  listenersStateChange[function] = listener;
 
-  logger->trace("Added new listener. Total listeners: %i.", listeners.size());
+  logger->trace("Added new state change listener. Total listeners: %i.", listenersStateChange.size());
 }
 
 void Process::removeListener(f_processStateChange_t function) {
-  int removed = listeners.erase(function);
+  int removed = listenersStateChange.erase(function);
 
-  logger->trace("Removed %i listener(s). Total listeners after removal: %i.", removed, listeners.size());
+  logger->trace("Removed %i state change listener(s). Total listeners after removal: %i.", removed, listenersStateChange.size());
 }
 
-void Process::removeAllListeners() {
-  listeners.clear();
+void Process::removeAllStateChangeListeners() {
+  listenersStateChange.clear();
 
-  logger->trace("Removed all listeners.");
+  logger->trace("Removed all state change listeners.");
 }
 
 void Process::triggerStateChangeEvent(ProcessStateChangeEvent& event)  {
@@ -171,6 +193,42 @@ void Process::triggerStateChangeEvent(ProcessStateChangeEvent& event)  {
   else if(event.newState == ProcessState::PAUSED)
     processPaused();
 
-  for (std::map<f_processStateChange_t, StateChageListener>::iterator it=listeners.begin(); it!=listeners.end(); ++it)
+  for (StateChangeListenerMap::iterator it=listenersStateChange.begin(); it!=listenersStateChange.end(); ++it)
     it->first(it->second.callingObject, event);
+}
+
+
+///////////////////////////
+// Event handling - Info Chage
+///////////////////////////
+void Process::addListener(f_processInfoChange_t function, void* callingObject) {
+  InfoChageListener listener;
+  listener.function = function;
+  listener.callingObject = callingObject;
+
+  listenersInfoChange[function] = listener;
+
+  logger->trace("Added new information change listener. Total listeners: %i.", listenersInfoChange.size());
+}
+
+void Process::removeListener(f_processInfoChange_t function) {
+  int removed = listenersInfoChange.erase(function);
+
+  logger->trace("Removed %i information change listener(s). Total listeners after removal: %i.", removed, listenersInfoChange.size());
+}
+
+void Process::removeAllListeners() {
+  removeAllStateChangeListeners();
+  removeAllInfoChangeListeners();
+}
+
+void Process::triggerInfoChangeEvent()  {
+  for (InfoChangeListenerMap::iterator it=listenersInfoChange.begin(); it!=listenersInfoChange.end(); ++it)
+    it->first(it->second.callingObject, this);
+}
+
+void Process::removeAllInfoChangeListeners() {
+  listenersInfoChange.clear();
+
+  logger->trace("Removed all information change listeners.");
 }

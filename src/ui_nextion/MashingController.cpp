@@ -5,44 +5,75 @@
 
 MashingController::MashingController() {
   logger = new Logger("MashingController");
-  sensorNo = sensorLocationSize;
-  temperature.resize(sensorNo, 0);
+  //temperature.resize(sensorNo, 0);
   sensors = &(BrewsterController::get()->getSensorManager()->getAllTemperatureSensors());
+
+  temperature[SensorLocation::HLT] = 0;
+  temperature[SensorLocation::MT] = 0;
+  temperature[SensorLocation::COOLER_OUT] = 0;
 }
 
 
 void MashingController::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
+  logger->info("Initializing mashing screen");
 
-  for ( auto &p : (*sensors) ) {
-    temperature[p.second.getLocation()] = p.second.getValue();
-    if (logger->isTraceEnabled()) {
-      logger->trace("Temperature Sensor - Location ID:%i  Value 1:%.2f  Value 2:%.2f Ref: 0x%X", p.second.getLocation(), p.second.getValue(), temperature[p.second.getLocation()], &p.second);
-    }
+  //Setting new recipe if the process is not running, otherwise retrieve recipe from running process
+  mashProcess = BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::MASHING);
+  if (mashProcess->isActive())
+    recipe = mashProcess->getRecipe();
+  else {
+    recipe = BrewsterController::get()->getRecipe();
+    mashProcess->setRecipe(recipe);
   }
 
-  updateOutputText();
+  //Adding listener for change in process
+  mashProcess->addListener(processInfoChangeHandler, this);
+
+  //Update recipe information (current & next steps)
+  getRecipeInformation();
+
+  //Init relevant temp sensors
+  temperature[SensorLocation::HLT] = (*sensors)[SensorLocation::HLT].getValue();
+  temperature[SensorLocation::MT] = (*sensors)[SensorLocation::MT].getValue();
+  temperature[SensorLocation::COOLER_OUT] = (*sensors)[SensorLocation::COOLER_OUT].getValue();
+
+  //Update screen
+  updateLcdTemp();
+  updateLcdProcessInfo();
 }
 
 void MashingController::deactivateScreen() {
+  mashProcess->removeListener(processInfoChangeHandler);
 }
 
 
 void MashingController::process() {
-  boolean updateNeeded = false;
+  boolean tempUpdate = false;
 
-  for ( auto &p : (*sensors) ) {
-    if(temperature[p.second.getLocation()] != p.second.getValue()) {
-      temperature[p.second.getLocation()] = p.second.getValue();
-      updateNeeded = true;
+  //Check if temperature update is needed
+  for ( auto &p : (temperature) ) {
+    if(p.second != (*sensors)[p.first].getValue()) {
+      //p.second = (*sensors)[p.first].getValue();
+      temperature[p.first] = (*sensors)[p.first].getValue();
+      tempUpdate = true;
     }
   }
 
-  if (updateNeeded)
-    updateOutputText();
+
+
+  if (tempUpdate)
+    updateLcdTemp();
 }
 
-void MashingController::updateOutputText() {
+void MashingController::updateLcdTemp() {
+  nTempMT.setValue(temperature[SensorLocation::MT]);
+  nTempHLT.setValue(temperature[SensorLocation::HLT]);
+  nTempCOut.setValue(temperature[SensorLocation::COOLER_OUT]);
+}
+
+void MashingController::updateLcdProcessInfo() {
+
   /*
   unsigned long start = millis();
 
@@ -56,4 +87,25 @@ void MashingController::updateOutputText() {
   if(logger->isTraceEnabled())
     logger->trace("Refreshed output of sensors in %lu ms", duration);
     */
+}
+
+void MashingController::getRecipeInformation() {
+  processStartTime = mashProcess->getStartTime();
+  currentStep = recipe->getCurrentMashingStep(processStartTime);
+  nextStep = recipe->getNextMashingStep(processStartTime);
+  currentStepStartTime = processStartTime + recipe->getMashingStepStartTime(currentStep);
+  nextStepStartTime = currentStepStartTime + BrewsterUtils::getSeconds(currentStep->time, currentStep->timeUOM);
+}
+
+void MashingController::triggerPumpButtonAH(void *ptr) {
+
+}
+
+void MashingController::triggerStartStopAH(void *ptr) {
+
+}
+
+void MashingController::processInfoChangeHandler(void* callingObject, void* process) {
+  MashingController* mc = (MashingController*) callingObject;
+  mc->updateLcdProcessInfo();
 }

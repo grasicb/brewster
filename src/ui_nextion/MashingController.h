@@ -2,6 +2,9 @@
 
 #include "AWindowController.h"
 #include "../controller/TemperatureSensor.h"
+#include "../controller/SensorManager.h"
+#include "../process/MashingProcess.h"
+#include "../process/Process.h"
 #include <vector>
 #include <map>
 
@@ -18,6 +21,8 @@ protected:
 
 private:
   Logger *logger;
+
+  //UI Components
   NexNumber nTempMT = NexNumber(6, 3, "n_mt");
   NexNumber nTempHLT = NexNumber(6, 4, "n_hlt");
   NexNumber nTempCOut = NexNumber(6, 5, "n_c_out");
@@ -32,11 +37,26 @@ private:
   NexDSButton bPump = NexDSButton(5, 18, "bt_pump");
   NexButton bStartStop = NexButton(6, 16, "b0");
 
-  std::vector<float> temperature;
-  std::map<SensorLocation, TemperatureSensor>* sensors;
-  uint8_t sensorNo;
+  //Temperature sensors
+  std::map<SensorLocation, float> temperature;
+  TempSensorMap* sensors;
 
-  void updateOutputText();
+  //Mash process information
+  Process* mashProcess;
+  Recipe* recipe;
+  StepDO* currentStep;
+  StepDO* nextStep;
+  unsigned long processStartTime;
+  unsigned long currentStepStartTime;
+  unsigned long nextStepStartTime;
+
+  //UI Refresh functions
+  void updateLcdTemp();
+  void updateLcdProcessInfo();
+  void getRecipeInformation();
+
+  //Callback functions
   static void triggerPumpButtonAH(void *ptr);
   static void triggerStartStopAH(void *ptr);
+  static void processInfoChangeHandler(void* callingObject, void* process);
 };

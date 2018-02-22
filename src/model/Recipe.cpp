@@ -188,6 +188,9 @@ StepDO* Recipe::getCurrentMashingStep(unsigned long startTime) {
 StepDO* Recipe::getNextMashingStep(unsigned long startTime) {
   return getNextStep(recipe.mashingSteps, startTime);
 }
+unsigned long Recipe::getMashingStepStartTime(StepDO* selectedStep) {
+  return getStepStartTime(recipe.mashingSteps, selectedStep);
+}
 
 /************************
 ** Fermentation step functions
@@ -210,6 +213,9 @@ StepDO* Recipe::getCurrentFermentationStep(unsigned long startTime) {
 StepDO* Recipe::getNextFermentationStep(unsigned long startTime) {
   return getNextStep(recipe.fermentationSteps, startTime);
 }
+unsigned long Recipe::getFermentationStepStartTime(StepDO* selectedStep) {
+  return getStepStartTime(recipe.fermentationSteps, selectedStep);
+}
 
 /************************
 ** Fermentation phase functions
@@ -231,6 +237,9 @@ StepDO* Recipe::getCurrentFermentationPhase(unsigned long startTime) {
 }
 StepDO* Recipe::getNextFermentationPhase(unsigned long startTime) {
   return getNextStep(recipe.fermentationPhases, startTime);
+}
+unsigned long Recipe::getFermentationPhaseStartTime(StepDO* selectedStep) {
+  return getStepStartTime(recipe.fermentationPhases, selectedStep);
 }
 
 /************************
@@ -265,7 +274,7 @@ StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTi
   unsigned long curTime = Time.now();
   int i=0;
 
-  for(StepDO step : steps) {
+  for(StepDO& step : steps) {
     accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
     if(accTime > curTime)
       break;
@@ -286,7 +295,7 @@ StepDO* Recipe::getNextStep(std::vector<StepDO>& steps, unsigned long startTime)
   unsigned long curTime = Time.now();
   int i=0;
 
-  for(StepDO step : steps) {
+  for(StepDO& step : steps) {
     accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
     if(accTime > curTime)
       break;
@@ -299,4 +308,24 @@ StepDO* Recipe::getNextStep(std::vector<StepDO>& steps, unsigned long startTime)
     return NULL;
   else
     return &steps[i+1];
+}
+
+unsigned long Recipe::getStepStartTime(std::vector<StepDO>& steps, StepDO* selectedStep) {
+  unsigned long totalTime=0;
+
+  for(StepDO& step : steps) {
+    if(&step == selectedStep)
+      return totalTime;
+    totalTime+=BrewsterUtils::getSeconds(step.time, step.timeUOM);
+  }
+  logger->warn("Step not found with the first approach");
+
+  for(std::vector<StepDO>::iterator it=steps.begin(); it!=steps.end(); ++it) {
+    if(&*it == selectedStep)
+      return totalTime;
+    totalTime+=BrewsterUtils::getSeconds(it->time, it->timeUOM);
+  }
+  logger->warn("Step not found with the second approach");
+
+  return 0;
 }
