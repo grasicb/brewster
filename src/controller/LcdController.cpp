@@ -106,6 +106,9 @@ LcdController::LcdController() {
     nexInit();
     sendCommand("bkcmd=1");
     setBaudrate(57600);
+    loadingPage.show();
+    delay(150);
+    loadingPage.show();
 
     //Set high speed of connection to LCD
     /*
@@ -116,8 +119,6 @@ LcdController::LcdController() {
     Serial1.begin(115200);
     delay(150);
     */
-
-    loadingPage.show();
 }
 
 void LcdController::showMainPage() {

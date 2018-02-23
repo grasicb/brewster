@@ -6,3 +6,5 @@
 /deprecated/lib/lcd/*
 /deprecated/lib/lcd/Fonts/*
 /deprecated/ui/*
+/lib/*/examples/*
+/lib/*/examples/*/*
