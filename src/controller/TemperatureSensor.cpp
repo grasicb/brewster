@@ -31,7 +31,7 @@ void TemperatureSensor::readSensor() {
         if (Log.isTraceEnabled()) {
            logger->trace("Sensor %s: %.2f - Ref: 0x%X", (const char *)sensorNames[location], getValue(),  this);
         }
-*/
+//*/
     }
 
     //request sensor refresh

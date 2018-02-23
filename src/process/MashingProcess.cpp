@@ -23,7 +23,7 @@ void MashingProcess::process() {
 }
 
 void MashingProcess::processStarted() {
-  logger->info("Process %s started.", (const char*) name);
+  logger->info("Starting process %s.", (const char*) name);
 
   if (recipe == NULL) {
     logger->error("Recipe is not set. Cannot start the mashing process.");
@@ -31,28 +31,35 @@ void MashingProcess::processStarted() {
   }else{
     updateOutput();
     BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
+    logger->info("Process %s started.", (const char*) name);
   }
 }
 
 void MashingProcess::processStopped() {
-  logger->info("Process %s stopped.", (const char*) name);
+  logger->info("Stopping process %s.", (const char*) name);
 
   BrewsterController::get()->getOutput(mashHeater)->setOutput(0);
   BrewsterController::get()->getOutput(mashPump)->setOutput(0);
+
+  logger->info("Process %s stopped.", (const char*) name);
 }
 
 void MashingProcess::processPaused() {
-  logger->info("Process %s paused.", (const char*) name);
+  logger->info("Pausing process %s.", (const char*) name);
 
   BrewsterController::get()->getOutput(mashHeater)->setOutput(0);
   BrewsterController::get()->getOutput(mashPump)->setOutput(0);
+
+  logger->info("Process %s paused.", (const char*) name);
 }
 
 void MashingProcess::processResumed() {
-  logger->info("Process %s resumed.", (const char*) name);
+  logger->info("Resuming process %s.", (const char*) name);
 
   updateOutput();
   BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
+
+  logger->info("Process %s resumed.", (const char*) name);
 }
 
 void MashingProcess::updateOutput() {

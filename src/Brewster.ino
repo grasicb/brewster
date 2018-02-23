@@ -23,6 +23,9 @@ Thread *controllerThread;
 Thread *controllerThreadController;
 Thread *controllerThreadOutput;
 
+//other
+unsigned long lastHearthBeat;
+
 void setup() {
 	Serial.begin(115200);
 
@@ -67,10 +70,15 @@ void setup() {
 	BrewsterController::get()->initRecipe();
 	LcdController::get()->showMainPage();
 	Speaker::playComplete();
+	lastHearthBeat = millis();
 	Log.info("Setup done. Brewster is ready");
 }
 
 void loop(void) {
+	if(millis()-lastHearthBeat > 5000) {
+		Log.info("brewster is active");
+		lastHearthBeat = millis();
+	}
 	LcdController::get()->processMessages();
 }
 

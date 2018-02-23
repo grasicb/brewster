@@ -189,6 +189,9 @@ StepDO* Recipe::getNextMashingStep(unsigned long startTime) {
 unsigned long Recipe::getMashingStepStartTime(StepDO* selectedStep) {
   return getStepStartTime(recipe.mashingSteps, selectedStep);
 }
+unsigned long Recipe::getMashingTime() {
+  return getTotalStepsTime(recipe.mashingSteps);
+}
 
 /************************
 ** Fermentation step functions
@@ -239,6 +242,9 @@ StepDO* Recipe::getNextFermentationPhase(unsigned long startTime) {
 unsigned long Recipe::getFermentationPhaseStartTime(StepDO* selectedStep) {
   return getStepStartTime(recipe.fermentationPhases, selectedStep);
 }
+unsigned long Recipe::getFermentationTime() {
+  return getTotalStepsTime(recipe.fermentationPhases);
+}
 
 /************************
 ** Help functions for step manipulation
@@ -268,9 +274,14 @@ StepDO* Recipe::getStep(std::vector<StepDO>& steps, int i) {
 }
 
 StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTime) {
+  logger->info("Get current step [start time=%u]", startTime);
+
   unsigned long accTime = startTime;
   unsigned long curTime = Time.now();
   uint i=0;
+
+  if(accTime == 0)
+    accTime = Time.now();
 
   for(StepDO& step : steps) {
     accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
@@ -289,9 +300,14 @@ StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTi
 }
 
 StepDO* Recipe::getNextStep(std::vector<StepDO>& steps, unsigned long startTime) {
+  logger->info("Get next step [start time=%u]", startTime);
+
   unsigned long accTime = startTime;
   unsigned long curTime = Time.now();
   uint i=0;
+
+  if(accTime == 0)
+    accTime = Time.now();
 
   for(StepDO& step : steps) {
     accTime += BrewsterUtils::getSeconds(step.time, step.timeUOM);
@@ -326,4 +342,14 @@ unsigned long Recipe::getStepStartTime(std::vector<StepDO>& steps, StepDO* selec
   logger->warn("Step not found with the second approach");
 
   return 0;
+}
+
+unsigned long Recipe::getTotalStepsTime(std::vector<StepDO>& steps) {
+  unsigned long totalTime=0;
+
+  for(StepDO& step : steps) {
+    totalTime+=BrewsterUtils::getSeconds(step.time, step.timeUOM);
+  }
+
+  return totalTime;
 }

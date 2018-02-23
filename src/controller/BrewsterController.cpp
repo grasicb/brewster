@@ -37,9 +37,9 @@ void BrewsterController::initRecipe() {
   recipe = new Recipe();
   recipe->setName("Spring ale");
 
-  recipe->addMashingStep("Step 1", 20, TimeUOM::minute, 40);
-  recipe->addMashingStep("Step 2", 30, TimeUOM::minute, 64);
-  recipe->addMashingStep("Step 3", 25, TimeUOM::minute, 66);
+  recipe->addMashingStep("Step 1", 2, TimeUOM::minute, 40);
+  recipe->addMashingStep("Step 2", 1, TimeUOM::minute, 55);
+  recipe->addMashingStep("Step 3", 3, TimeUOM::minute, 66);
   recipe->addMashingStep("Step 4", 5, TimeUOM::minute, 74);
 
   recipe->setBoilingTime(60);
