@@ -1,8 +1,6 @@
 #ifndef LCD_CONTROLLER_H
 #define LCD_CONTROLLER_H
 
-#define DEBUG_SERIAL_ENABLE
-
 #include "application.h"
 #include "../lib/lcd_nextion/ITEADLIB_Nextion.h"
 

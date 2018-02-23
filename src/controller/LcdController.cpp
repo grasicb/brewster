@@ -104,14 +104,18 @@ LcdController::LcdController() {
 
     //Init LCD
     nexInit();
-    loadingPage.show();
+    sendCommand("bkcmd=1");
+    setBaudrate(57600);
+
     //Set high speed of connection to LCD
+    /*
     setBaudrate(115200);
     Serial1.flush();
     Serial1.end();
     delay(50);
     Serial1.begin(115200);
     delay(150);
+    */
 
     loadingPage.show();
 }

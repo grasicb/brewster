@@ -1,3 +1,6 @@
+#define DEBUG_SERIAL_ENABLE
+#define TRACE_ENABLE
+
 #include "application.h"
 #include "lib/lcd_nextion/ITEADLIB_Nextion.h"
 #include "controller/LcdController.h"
@@ -13,7 +16,11 @@
 //Globals
 SYSTEM_MODE(SEMI_AUTOMATIC);
 LogCategoryFilters logFilters;
-SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
+#ifdef TRACE_ENABLE
+  SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
+#else
+  SerialLogHandler logHandler(115200, LOG_LEVEL_INFO, logFilters);
+#endif
 
 //LCD
 USARTSerial& nexSerial = Serial1;
@@ -47,7 +54,7 @@ void setup() {
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
 
-	Log.trace("Starting application setup");
+	Log.info("Starting application setup");
 	BrewsterController::get();
 
 	///////////////////////////////////////////////////

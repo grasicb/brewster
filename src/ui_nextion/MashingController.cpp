@@ -20,6 +20,9 @@ MashingController::MashingController() {
   listenerList[j++] = &bPump;
   listenerList[j++] = &bStartStop;
   listenerList[j++] = NULL;
+
+  //TO BE REMOVED
+  BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::MASHING)->stop();
 }
 
 
@@ -46,7 +49,8 @@ void MashingController::initializeScreen(void *ptr) {
   if(mashProcess->isActive()) {
     runTime = BrewsterUtils::convertSeconds(Time.now()-processStartTime, TimeUOM::minute);
     remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - Time.now(), TimeUOM::minute);
-    progress = (uint8_t)((Time.now()-processStartTime)/recipe->getMashingTime());
+    progress = (uint8_t)((Time.now()-processStartTime)/recipe->getMashingTime()*100);
+    logger->info("Progress: %i", progress);
   } else {
     runTime = 0;
     remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - currentStepStartTime, TimeUOM::minute);
@@ -169,8 +173,11 @@ void MashingController::pumpStateChanged(void* callingObject, int outputIdentifi
   MashingController *w = (MashingController *) callingObject;
 
   w->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);
-  if(event.isActive)
+  uint32_t value;
+  w->bPump.getValue(&value);
+
+  if(event.isActive && value == 0)
     w->bPump.setValue(1);
-  else
+  else if (!event.isActive && value == 1) 
     w->bPump.setValue(0);
 }
