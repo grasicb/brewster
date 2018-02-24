@@ -50,3 +50,8 @@ Process* ProcessManager::getProcess(BrewProcess process) {
 ProcessMap& ProcessManager::getActiveProcesses() {
   return activeProcesses;
 }
+
+void ProcessManager::restoreAllProcesses() {
+  for (ProcessMap::iterator it=activeProcesses.begin(); it!=activeProcesses.end(); ++it)
+    it->second->restoreProcess();
+}

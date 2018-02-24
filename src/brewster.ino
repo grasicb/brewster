@@ -63,12 +63,18 @@ void setup() {
 	waitFor(Particle.connected, 30000);
 	Time.zone(2);
 
+  //Wait that the time is being synchronized
+  waitFor(Time.isValid, 30000);
+
   //delay(10000);
   #ifdef TRACE_ENABLE
     papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster");
   #else
     papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster");
   #endif
+
+  if(!Time.isValid())
+    Log.error("Time could not be set in the given reserved timeframe.");
 
 	Log.info("Starting application setup");
 	BrewsterController::get();
@@ -79,6 +85,7 @@ void setup() {
 	///////////////////////////////////////////////////
 
 	//I2C Setup
+  Log.trace("Starting 1Wire protocol");
 	if (!Wire.isEnabled()) {
     Wire.begin();
 	}
@@ -86,17 +93,29 @@ void setup() {
 	//Initialize first window
 	//TODO: Implement handling and move to lcd_nextion
 
+  Log.trace("Initializing recipe");
 	BrewsterController::get()->initRecipe();
-  //Init LCD
-	lcd->showMainPage();
 	Speaker::playComplete();
 	lastHearthBeat = millis();
 
+  //Trigger processing loops to get temperature updates etc. before restoring processes
+  Log.trace("Process sensors & outputs");
+  BrewsterController::get()->controllerLoopOther();
+  BrewsterController::get()->controllerLoopOutput();
+
   //Start controller threads
+  Log.trace("Starting processing threads");
 	controllerThreadController = new Thread(NULL, controllerLoopController);
 	controllerThreadOutput = new Thread(NULL, controllerLoopOutput);
 
-	Log.info("Setup done. Brewster is ready");
+  //Restoring processes
+  Log.trace("Restoring processes");
+  BrewsterController::get()->getProcessManager()->restoreAllProcesses();
+
+  Log.trace("Opening main page on UI");
+	lcd->showMainPage();
+
+	Log.info("Setup done. Brewster is readya");
 }
 
 void loop(void) {

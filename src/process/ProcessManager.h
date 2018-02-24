@@ -15,6 +15,7 @@ public:
   void processActiveProcesses();
   Process* getProcess(BrewProcess process);
   ProcessMap& getActiveProcesses();
+  void restoreAllProcesses();
 
 private:
   void initProcesses();

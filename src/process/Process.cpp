@@ -6,7 +6,6 @@ Process::Process(BrewProcess type, String name) {
     this->type = type;
     this->name = name;
     recipeMandatory = false;
-    loadFromEEPROM();
 }
 
 Process::Process(BrewProcess type, String name, Recipe* recipe) :Process(type, name) {
@@ -116,6 +115,21 @@ void Process::loadFromEEPROM() {
   }else{
     state = ProcessState::STOPPED;
     startTime = 0;
+  }
+}
+
+void Process::restoreProcess() {
+  loadFromEEPROM();
+
+  if(state == ProcessState::STARTED)
+    processResumed();
+
+  if(state != ProcessState::STOPPED) {
+    ProcessStateChangeEvent event;
+    event.oldState = ProcessState::STOPPED;
+    event.newState = state;
+    event.process = this;
+    triggerStateChangeEvent(event);
   }
 }
 

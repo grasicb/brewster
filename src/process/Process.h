@@ -40,6 +40,7 @@ public:
   void removeAllStateChangeListeners();
   void removeAllInfoChangeListeners();
   void removeAllListeners();
+  void restoreProcess();
 
 protected:
   void storeToEEPROM();
@@ -67,7 +68,7 @@ protected:
 private:
   typedef std::map<f_processStateChange_t, StateChageListener> StateChangeListenerMap;
   typedef std::map<f_processInfoChange_t, InfoChageListener> InfoChangeListenerMap;
-  
+
   unsigned long startTime;
   ProcessState state;
 
