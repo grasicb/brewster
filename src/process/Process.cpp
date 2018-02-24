@@ -100,6 +100,7 @@ void Process::resume() {
 }
 
 void Process::storeToEEPROM() {
+  logger->trace("Saving process %s to EEPROM [state=%s, startTime=%u].", (const char*) name, (const char*)ProcessStateNames[state], startTime);
   EEPROM.put(EEPROM_PROCESS_DATA[type], (uint8_t) 1);
   EEPROM.put(EEPROM_PROCESS_DATA[type]+1, startTime);
   EEPROM.put(EEPROM_PROCESS_DATA[type]+5, state);
@@ -116,6 +117,8 @@ void Process::loadFromEEPROM() {
     state = ProcessState::STOPPED;
     startTime = 0;
   }
+
+  logger->trace("Process %s is restored from EEPROM [state=%s, startTime=%u].", (const char*)name, (const char*)ProcessStateNames[state], startTime);
 }
 
 void Process::restoreProcess() {

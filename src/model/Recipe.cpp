@@ -274,8 +274,6 @@ StepDO* Recipe::getStep(std::vector<StepDO>& steps, int i) {
 }
 
 StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTime) {
-  logger->info("Get current step [start time=%u]", startTime);
-
   unsigned long accTime = startTime;
   unsigned long curTime = Time.now();
   uint i=0;
@@ -300,8 +298,6 @@ StepDO* Recipe::getCurrentStep(std::vector<StepDO>& steps, unsigned long startTi
 }
 
 StepDO* Recipe::getNextStep(std::vector<StepDO>& steps, unsigned long startTime) {
-  logger->info("Get next step [start time=%u]", startTime);
-
   unsigned long accTime = startTime;
   unsigned long curTime = Time.now();
   uint i=0;

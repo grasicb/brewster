@@ -7,7 +7,7 @@ GenericProcess::GenericProcess(BrewProcess type, String name): Process(type, nam
 }
 
 void GenericProcess::process() {
-  if (Time.now() - lastTick < 5) {
+  if (Time.now() - lastTick > 30) {
     lastTick = Time.now();
     logger->info("Hearthbeat for process %s.", (const char*) name);
   }

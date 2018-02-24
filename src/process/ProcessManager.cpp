@@ -15,6 +15,9 @@ void ProcessManager::initProcesses() {
   processes[BrewProcess::BOILING] = new GenericProcess(BrewProcess::BOILING, "Boilin");
   processes[BrewProcess::CHILLING] = new GenericProcess(BrewProcess::CHILLING, "Chilling");
   processes[BrewProcess::FERMENTING] = new GenericProcess(BrewProcess::FERMENTING, "Fermenting");
+
+  for (ProcessMap::iterator it=processes.begin(); it!=processes.end(); ++it)
+    it->second->addListener(processChangeEventHandler, this);
 }
 
 void ProcessManager::processActiveProcesses() {
@@ -34,10 +37,13 @@ void ProcessManager::processChangeEventHandler(void* callingObject, ProcessState
   switch (event.newState) {
     case ProcessState::STOPPED:
       controller->activeProcesses.erase(process->getType());
+      break;
     case ProcessState::PAUSED:
       controller->activeProcesses.erase(process->getType());
+      break;
     case ProcessState::STARTED:
       controller->activeProcesses[process->getType()]=process;
+      break;
     default:
       controller->logger->error("processChangeEventHandler: State change handler for state %s is not implemented.", (const char*) ProcessStateNames[event.newState]);
   }
@@ -52,6 +58,13 @@ ProcessMap& ProcessManager::getActiveProcesses() {
 }
 
 void ProcessManager::restoreAllProcesses() {
-  for (ProcessMap::iterator it=activeProcesses.begin(); it!=activeProcesses.end(); ++it)
+  for (ProcessMap::iterator it=processes.begin(); it!=processes.end(); ++it)
     it->second->restoreProcess();
+}
+
+void ProcessManager::setRecipe(Recipe *recipe) {
+  for (ProcessMap::iterator it=processes.begin(); it!=processes.end(); ++it) {
+    if(!it->second->isActive() || it->second->getRecipe() == NULL)
+      it->second->setRecipe(recipe);
+  }
 }

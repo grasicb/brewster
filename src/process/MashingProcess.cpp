@@ -13,13 +13,21 @@ MashingProcess::MashingProcess(BrewProcess type, String name, Recipe* recipe): P
 }
 
 void MashingProcess::process() {
-  if (Time.now() - lastTick < 60) {
+  if (Time.now() - lastTick > 60) {
     lastTick = Time.now();
-    logger->info("Mashing process is active.");
+    logger->trace("Mashing process is active.");
   }
 
-  if (currentStep != recipe->getCurrentMashingStep(getStartTime()))
-    updateOutput();
+  if(Time.now() > nextStepStartTime) {
+    if(nextStep == NULL) {
+        logger->info("No further mashing steps. Stopping mashing process");
+        stop();
+    }else{
+      logger->info("Moving to next step[%s - %i %s @ %i °C]", (const char*)nextStep->name, nextStep->time, (const char*)TimeUOMNames[nextStep->timeUOM], nextStep->temperature);
+      updateOutput();
+      triggerInfoChangeEvent();
+    }
+  }
 }
 
 void MashingProcess::processStarted() {
@@ -65,15 +73,31 @@ void MashingProcess::processPaused() {
 void MashingProcess::processResumed() {
   logger->info("Resuming process %s.", (const char*) name);
 
-  updateOutput();
-  BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
+  if (recipe == NULL) {
+    logger->error("Recipe is not set. Cannot resume the mashing process.");
+    stop();
+  }else{
+    updateOutput();
+    BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
 
-  logger->info("Process %s resumed.", (const char*) name);
+    logger->info("Process %s resumed.", (const char*) name);
+  }
+}
+
+void MashingProcess::updateStepStatus() {
+  currentStep = recipe->getCurrentMashingStep(getStartTime());
+  nextStep = recipe->getNextMashingStep(getStartTime());
+
+  if(currentStep != NULL && recipe != NULL)
+    nextStepStartTime = getStartTime()+recipe->getMashingStepStartTime(currentStep)+BrewsterUtils::getSeconds(currentStep->time, currentStep->timeUOM);
+  else {
+    logger->error("Cannot set next step start time. Either recipe is not set or could not allocate current step.");
+    nextStepStartTime = 0;
+  }
 }
 
 void MashingProcess::updateOutput() {
-  currentStep = recipe->getCurrentMashingStep(getStartTime());
-  nextStep = recipe->getNextMashingStep(getStartTime());
+  updateStepStatus();
 
   float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
 

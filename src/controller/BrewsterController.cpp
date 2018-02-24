@@ -57,6 +57,11 @@ Recipe* BrewsterController::getRecipe() {
     return recipe;
 }
 
+void BrewsterController::initProcesses() {
+  processManager->setRecipe(getRecipe());
+  processManager->restoreAllProcesses();
+}
+
 void BrewsterController::controllerLoopOther() {
   sensorManger->readTemperatureSensors();
   processManager->processActiveProcesses();

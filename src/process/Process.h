@@ -45,6 +45,12 @@ public:
 protected:
   void storeToEEPROM();
   void loadFromEEPROM();
+  virtual void processStarted() = 0;
+  virtual void processStopped() = 0;
+  virtual void processPaused() = 0;
+  virtual void processResumed() = 0;
+  void triggerInfoChangeEvent();
+
   struct StateChageListener {
     f_processStateChange_t function;
     void* callingObject;
@@ -54,15 +60,10 @@ protected:
     void* callingObject;
   };
 
-  virtual void processStarted() = 0;
-  virtual void processStopped() = 0;
-  virtual void processPaused() = 0;
-  virtual void processResumed() = 0;
-
   Logger *logger;
   BrewProcess type;
   String name;
-  Recipe* recipe;
+  Recipe* recipe = NULL;
   boolean recipeMandatory;
 
 private:
@@ -75,5 +76,4 @@ private:
   StateChangeListenerMap listenersStateChange;
   InfoChangeListenerMap listenersInfoChange;
   void triggerStateChangeEvent(ProcessStateChangeEvent& event);
-  void triggerInfoChangeEvent();
 };

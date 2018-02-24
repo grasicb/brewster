@@ -16,6 +16,9 @@ protected:
   void processResumed();
 private:
   void updateOutput();
+  void updateStepStatus();
+
+  unsigned long nextStepStartTime;
 
   unsigned long lastTick;
   StepDO* currentStep;

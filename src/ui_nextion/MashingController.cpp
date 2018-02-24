@@ -92,7 +92,7 @@ void MashingController::process() {
 
   //Check if process progress update is needed
   unsigned long _runTime = runTime;
-  unsigned long _remainingTime = remainingTime;
+  int _remainingTime = remainingTime;
   uint8_t _progress = progress;
   updateRecipeValues();
 
@@ -109,12 +109,33 @@ void MashingController::updateLcdTemp() {
 }
 
 void MashingController::updateLcdProcessInfo() {
+  //Update runtime
   tCurrStepTime.setText(String::format("%i min", runTime));
-  tNextStepTime.setText(String::format("%i min", remainingTime));
-  if(currentStep != NULL)
+
+  //Update time to next step
+  if(remainingTime > 0)
+    tNextStepTime.setText(String::format("%i min", remainingTime));
+  else if (remainingTime == 0)
+    tNextStepTime.setText(String::format("<1 min"));
+  else
+    tNextStepTime.setText(String::format(""));
+
+
+  //Update current step temp
+  if(currentStep != NULL) {
     ncurrStepTemp.setValue(currentStep->temperature);
-  if(nextStep != NULL)
+  }else{
+    ncurrStepTemp.setValue(0);
+  }
+
+  //Update next step temp
+  if(nextStep != NULL) {
     nNextStepTemp.setValue(nextStep->temperature);
+  }else{
+    nNextStepTemp.setValue(0);
+  }
+
+  //Update progress bar
   pbProgress.setValue(progress);
 }
 
@@ -136,14 +157,23 @@ void MashingController::getRecipeInformation() {
 }
 
 void MashingController::updateRecipeValues() {
+
+  //If the process is running then calculates the values
   if(mashProcess->isActive()) {
     runTime = BrewsterUtils::convertSeconds(Time.now()-processStartTime, TimeUOM::minute);
-    if(nextStepStartTime >0)
-      remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - Time.now(), TimeUOM::minute);
+
+    if(nextStepStartTime >0 && nextStepStartTime>Time.now())
+      remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - Time.now(), TimeUOM::minute)+1;
     else
-      remainingTime = 0;
-    progress = (uint8_t)((Time.now()-processStartTime)*100/recipe->getMashingTime());
+      remainingTime = -1;
+
+    if(runTime > recipe->getMashingTime()/60)
+      progress = 100;
+    else
+      progress = (uint8_t)((Time.now()-processStartTime)*100/recipe->getMashingTime());
     //logger->info("Progress: %i [now:%u, processStartTime:%u, mashingTime:%u, runTime:%u]", progress, Time.now(), processStartTime, recipe->getMashingTime(), Time.now()-processStartTime);
+
+  //If the process is not running, then is sets dummy values
   } else {
     runTime = 0;
     remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - currentStepStartTime, TimeUOM::minute);

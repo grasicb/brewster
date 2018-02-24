@@ -68,9 +68,9 @@ void setup() {
 
   //delay(10000);
   #ifdef TRACE_ENABLE
-    papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster");
+    papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
   #else
-    papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster");
+    papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
   #endif
 
   if(!Time.isValid())
@@ -110,12 +110,12 @@ void setup() {
 
   //Restoring processes
   Log.trace("Restoring processes");
-  BrewsterController::get()->getProcessManager()->restoreAllProcesses();
+  BrewsterController::get()->initProcesses();
 
   Log.trace("Opening main page on UI");
 	lcd->showMainPage();
 
-	Log.info("Setup done. Brewster is readya");
+	Log.info("Setup done. Brewster is ready");
 }
 
 void loop(void) {

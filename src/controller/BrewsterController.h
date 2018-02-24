@@ -27,6 +27,7 @@ public:
 
     void initRecipe();
     Recipe *getRecipe();
+    void initProcesses();
 
 private:
     BrewsterController();

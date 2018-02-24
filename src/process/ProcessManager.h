@@ -3,6 +3,7 @@
 #include "application.h"
 #include "../util/BrewsterGlobals.h"
 #include "Process.h"
+#include "../model/Recipe.h"
 #include <map>
 
 const static String BrewProcessNames[] = {"None", "Mashing", "Boiling", "Chilling", "Fermenting"};
@@ -16,6 +17,7 @@ public:
   Process* getProcess(BrewProcess process);
   ProcessMap& getActiveProcesses();
   void restoreAllProcesses();
+  void setRecipe(Recipe *recipe);
 
 private:
   void initProcesses();

@@ -54,7 +54,7 @@ private:
   unsigned long currentStepStartTime;
   unsigned long nextStepStartTime;
   unsigned long runTime;
-  unsigned long remainingTime;
+  int remainingTime;
   uint8_t progress;
 
   //UI Refresh functions
