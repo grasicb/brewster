@@ -15,7 +15,7 @@ public:
   NexTouch **getListenerList() {return listenerList;};
 
 protected:
-  NexTouch **listenerList;
+  NexTouch **listenerList = NULL;
 
 private:
 

@@ -22,7 +22,7 @@ MashingController::MashingController() {
   listenerList[j++] = NULL;
 
   //TO BE REMOVED
-  BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::MASHING)->stop();
+  //BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::MASHING)->stop();
 }
 
 
@@ -32,8 +32,8 @@ void MashingController::initializeScreen(void *ptr) {
 
   //Setting new recipe if the process is not running, otherwise retrieve recipe from running process
   mashProcess = BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::MASHING);
-  if (mashProcess->isActive())
-    recipe = mashProcess->getRecipe();
+  if (mashProcess->isActive() && mashProcess->getRecipe() != NULL)
+    recipe = BrewsterController::get()->getRecipe();
   else {
     recipe = BrewsterController::get()->getRecipe();
     mashProcess->setRecipe(recipe);
@@ -45,17 +45,12 @@ void MashingController::initializeScreen(void *ptr) {
 
   //Update recipe information (current & next steps)
   getRecipeInformation();
+  updateRecipeValues();
 
-  if(mashProcess->isActive()) {
-    runTime = BrewsterUtils::convertSeconds(Time.now()-processStartTime, TimeUOM::minute);
-    remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - Time.now(), TimeUOM::minute);
-    progress = (uint8_t)((Time.now()-processStartTime)/recipe->getMashingTime()*100);
-    logger->info("Progress: %i", progress);
-  } else {
-    runTime = 0;
-    remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - currentStepStartTime, TimeUOM::minute);
-    progress = 85;
-  }
+  if(mashProcess->isActive())
+    bStartStop.setText(bStopText);
+  else
+    bStartStop.setText(bStartText);
 
   //Set pump status
   if(BrewsterController::get()->isOutputActive(mashPump))
@@ -63,16 +58,11 @@ void MashingController::initializeScreen(void *ptr) {
   else
     bPump.setValue(0);
 
-  if(mashProcess->isActive())
-    bStartStop.setText(bStopText);
-  else
-    bStartStop.setText(bStartText);
-
-
   //Init relevant temp sensors
   temperature[SensorLocation::HLT] = (*sensors)[SensorLocation::HLT].getValue();
   temperature[SensorLocation::MT] = (*sensors)[SensorLocation::MT].getValue();
   temperature[SensorLocation::COOLER_OUT] = (*sensors)[SensorLocation::COOLER_OUT].getValue();
+
 
   //Update screen
   updateLcdTemp();
@@ -99,6 +89,17 @@ void MashingController::process() {
 
   if (tempUpdate)
     updateLcdTemp();
+
+  //Check if process progress update is needed
+  unsigned long _runTime = runTime;
+  unsigned long _remainingTime = remainingTime;
+  uint8_t _progress = progress;
+  updateRecipeValues();
+
+  if(_runTime != runTime
+    || _remainingTime != remainingTime
+    || _progress != progress)
+    updateLcdProcessInfo();
 }
 
 void MashingController::updateLcdTemp() {
@@ -110,8 +111,10 @@ void MashingController::updateLcdTemp() {
 void MashingController::updateLcdProcessInfo() {
   tCurrStepTime.setText(String::format("%i min", runTime));
   tNextStepTime.setText(String::format("%i min", remainingTime));
-  ncurrStepTemp.setValue(currentStep->temperature);
-  nNextStepTemp.setValue(nextStep->temperature);
+  if(currentStep != NULL)
+    ncurrStepTemp.setValue(currentStep->temperature);
+  if(nextStep != NULL)
+    nNextStepTemp.setValue(nextStep->temperature);
   pbProgress.setValue(progress);
 }
 
@@ -122,8 +125,30 @@ void MashingController::getRecipeInformation() {
     processStartTime = 0;
   currentStep = recipe->getCurrentMashingStep(processStartTime);
   nextStep = recipe->getNextMashingStep(processStartTime);
-  currentStepStartTime = processStartTime + recipe->getMashingStepStartTime(currentStep);
-  nextStepStartTime = currentStepStartTime + BrewsterUtils::getSeconds(currentStep->time, currentStep->timeUOM);
+
+  if(currentStep != NULL) {
+    currentStepStartTime = processStartTime + recipe->getMashingStepStartTime(currentStep);
+    nextStepStartTime = currentStepStartTime + BrewsterUtils::getSeconds(currentStep->time, currentStep->timeUOM);
+  }else{
+    currentStepStartTime = 0;
+    nextStepStartTime = 0;
+  }
+}
+
+void MashingController::updateRecipeValues() {
+  if(mashProcess->isActive()) {
+    runTime = BrewsterUtils::convertSeconds(Time.now()-processStartTime, TimeUOM::minute);
+    if(nextStepStartTime >0)
+      remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - Time.now(), TimeUOM::minute);
+    else
+      remainingTime = 0;
+    progress = (uint8_t)((Time.now()-processStartTime)*100/recipe->getMashingTime());
+    //logger->info("Progress: %i [now:%u, processStartTime:%u, mashingTime:%u, runTime:%u]", progress, Time.now(), processStartTime, recipe->getMashingTime(), Time.now()-processStartTime);
+  } else {
+    runTime = 0;
+    remainingTime = BrewsterUtils::convertSeconds(nextStepStartTime - currentStepStartTime, TimeUOM::minute);
+    progress = 0;
+  }
 }
 
 void MashingController::triggerPumpButtonAH(void *ptr) {
@@ -161,6 +186,9 @@ void MashingController::triggerStartStopAH(void *ptr) {
   }else{
     w->logger->error("Start/Stop button state unknow. Not processing button press.");
   }
+
+  w->getRecipeInformation();
+  w->updateLcdProcessInfo();
 }
 
 void MashingController::processInfoChangeHandler(void* callingObject, void* process) {
@@ -173,11 +201,12 @@ void MashingController::pumpStateChanged(void* callingObject, int outputIdentifi
   MashingController *w = (MashingController *) callingObject;
 
   w->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);
+  Particle.process();
   uint32_t value;
   w->bPump.getValue(&value);
 
   if(event.isActive && value == 0)
     w->bPump.setValue(1);
-  else if (!event.isActive && value == 1) 
+  else if (!event.isActive && value == 1)
     w->bPump.setValue(0);
 }

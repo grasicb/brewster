@@ -2,8 +2,8 @@
 #define TRACE_ENABLE 1
 
 #include "application.h"
-#include "lib/lcd_nextion/ITEADLIB_Nextion.h"
-#include "controller/LcdController.h"
+//#include "lib/lcd_nextion/ITEADLIB_Nextion.h"
+#include "controller/LcdControllerNex.h"
 
 #include "util/BrewsterGlobals.h"
 #include "util/BrewsterUtils.h"
@@ -15,7 +15,8 @@
 #include "lib/papertrail/papertrail.h"
 
 //Globals
-//SYSTEM_MODE(SEMI_AUTOMATIC);
+SYSTEM_MODE(SEMI_AUTOMATIC);
+STARTUP( early_init() );
 LogCategoryFilters logFilters;
 
 #ifdef TRACE_ENABLE
@@ -27,9 +28,9 @@ LogCategoryFilters logFilters;
 // https://papertrailapp.com/events
 PapertrailLogHandler *papertailHandler;
 
-
 //LCD
 USARTSerial& nexSerial = Serial1;
+LcdControllerNex *lcd;
 
 //Threads
 Thread *controllerThread;
@@ -39,21 +40,23 @@ Thread *controllerThreadOutput;
 //other
 unsigned long lastHearthBeat;
 
+void early_init()
+{
+  //Init PINS
+ pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
+ pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
+ pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
+ pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
+ digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
+ digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
+ digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
+ digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
+}
+
 void setup() {
-	Serial.begin(115200);
-
-	//Init PINS
-	pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
-	pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
-	pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
-	pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
-	digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
-	digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
-	digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
-	digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
-
-	//Init LCD
-	LcdController::get();
+  //LcdControllerNex::get();
+  lcd = new LcdControllerNex();
+  Serial.begin(115200);
 
 	//Connect to Cloud
 	Particle.connect();
@@ -66,7 +69,6 @@ void setup() {
   #else
     papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster");
   #endif
-
 
 	Log.info("Starting application setup");
 	BrewsterController::get();
@@ -81,17 +83,19 @@ void setup() {
     Wire.begin();
 	}
 
-	//Start controller thread
-	controllerThreadController = new Thread(NULL, controllerLoopController);
-	controllerThreadOutput = new Thread(NULL, controllerLoopOutput);
-
 	//Initialize first window
 	//TODO: Implement handling and move to lcd_nextion
 
 	BrewsterController::get()->initRecipe();
-	LcdController::get()->showMainPage();
+  //Init LCD
+	lcd->showMainPage();
 	Speaker::playComplete();
 	lastHearthBeat = millis();
+
+  //Start controller threads
+	controllerThreadController = new Thread(NULL, controllerLoopController);
+	controllerThreadOutput = new Thread(NULL, controllerLoopOutput);
+
 	Log.info("Setup done. Brewster is ready");
 }
 
@@ -101,7 +105,10 @@ void loop(void) {
 		Log.info("...brewster is active...");
 		lastHearthBeat = millis();
 	}
-	LcdController::get()->processMessages();
+	//LcdControllerNex::get()->processMessages();
+  lcd->processMessages();
+  //BrewsterController::get()->controllerLoopOther();
+  //BrewsterController::get()->controllerLoopOutput();
 }
 
 os_thread_return_t controllerLoopController(void* param) {

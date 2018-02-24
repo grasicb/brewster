@@ -31,6 +31,7 @@ void Output::setOutput(uint8_t percentage) {
     }
 
     triggerChangeEvent();
+    _logger->info("Output is set to %d%%", _output/2.55);
 }
 
 void Output::setTargetValue(double target, float* input) {
@@ -57,6 +58,7 @@ void Output::setTargetValue(double target, float* input) {
   _pidOn = true;
 
   triggerChangeEvent();
+  _logger->info("Target value is set to to %4.1f°", _target);
 }
 
 void Output::changeTargetValue(double target) {
@@ -69,6 +71,7 @@ void Output::changeTargetValue(double target) {
   _target = target;
 
   triggerChangeEvent();
+  _logger->info("Target value changed to %4.1f°", _target);
 }
 
 double Output::getTargetValue() {
@@ -151,6 +154,7 @@ void Output::removeAllListeners() {
 }
 
 void Output::triggerChangeEvent() {
+  _logger->trace("Triggering change event");
   //Prepare event data
   OutputChangeEvent event;
   event.isActive = isActive();

@@ -30,7 +30,16 @@ void MashingProcess::processStarted() {
     stop();
   }else{
     updateOutput();
-    BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
+
+    Output* pump = BrewsterController::get()->getOutput(mashPump);
+    if(pump == NULL)
+      logger->error("Error while starting mashing process. Cannot start the pumpt, invalid reference to output.");
+    else {
+      logger->trace("Setting mash pum to rate %i", mashPumpFlowRate);
+      pump->setOutput(mashPumpFlowRate);
+    }
+
+    //BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
     logger->info("Process %s started.", (const char*) name);
   }
 }
@@ -68,5 +77,11 @@ void MashingProcess::updateOutput() {
 
   float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
 
-  BrewsterController::get()->getOutput(mashHeater)->setTargetValue(currentStep->temperature, temp);
+  if(currentStep == NULL)
+    logger->error("Error while updating output. Current step is not set.");
+  else if(temp == NULL)
+    logger->error("Error while updating output. Reference temperature for PID is NULL.");
+  else {
+    BrewsterController::get()->getOutput(mashHeater)->setTargetValue(currentStep->temperature, temp);
+  }
 }

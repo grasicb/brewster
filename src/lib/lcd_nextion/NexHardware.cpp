@@ -291,7 +291,7 @@ void nexLoop(NexTouch *nex_listen_list[])
 
     c = nexSerial.read();
     //dbSerialPrint("New command: %02X", c);
-    Log.info("New command: %02X", c);
+    //Log.info("New command: %02X", c);
 
     if (NEX_RET_EVENT_TOUCH_HEAD == c)
     {
@@ -304,7 +304,7 @@ void nexLoop(NexTouch *nex_listen_list[])
         }
         __buffer[i] = 0x00;
 
-        Log.info("Click: %02X %02X %02X %02X", c, __buffer[1], __buffer[2], __buffer[3]);
+        Log.trace("NexHardware.cpp Button pressed: %02X %02X %02X %02X", c, __buffer[1], __buffer[2], __buffer[3]);
 
         if (0xFF == __buffer[4] && 0xFF == __buffer[5] && 0xFF == __buffer[6])
         {

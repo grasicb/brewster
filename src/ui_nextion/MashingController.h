@@ -61,6 +61,7 @@ private:
   void updateLcdTemp();
   void updateLcdProcessInfo();
   void getRecipeInformation();
+  void updateRecipeValues();
 
   //Callback functions
   static void triggerPumpButtonAH(void *ptr);
