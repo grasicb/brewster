@@ -118,7 +118,7 @@ void Process::loadFromEEPROM() {
     startTime = 0;
   }
 
-  logger->trace("Process %s is restored from EEPROM [state=%s, startTime=%u].", (const char*)name, (const char*)ProcessStateNames[state], startTime);
+  logger->trace("Process %s is restored from EEPROM [state=%s, startTime=%u, mem location=%i].", (const char*)name, (const char*)ProcessStateNames[state], startTime, EEPROM_PROCESS_DATA[type]);
 }
 
 void Process::restoreProcess() {

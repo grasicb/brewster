@@ -41,6 +41,7 @@ void MashingController::initializeScreen(void *ptr) {
 
   //Adding listener for change in process & output state
   mashProcess->addListener(processInfoChangeHandler, this);
+  mashProcess->addListener(processStateChangeHandler, this);
   BrewsterController::get()->getOutput(mashPump)->addListener(pumpStateChanged, this, mashPump);
 
   //Update recipe information (current & next steps)
@@ -71,6 +72,7 @@ void MashingController::initializeScreen(void *ptr) {
 
 void MashingController::deactivateScreen() {
   mashProcess->removeListener(processInfoChangeHandler);
+  mashProcess->removeListener(processStateChangeHandler);
   BrewsterController::get()->getOutput(mashPump)->removeListener(pumpStateChanged);
 }
 
@@ -225,6 +227,18 @@ void MashingController::processInfoChangeHandler(void* callingObject, void* proc
   MashingController* mc = (MashingController*) callingObject;
   mc->getRecipeInformation();
   mc->updateLcdProcessInfo();
+}
+
+void MashingController::processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event) {
+  MashingController* mc = (MashingController*) callingObject;
+
+  if(event.newState == ProcessState::STOPPED) {
+    mc->bStartStop.setText(mc->bStartText);
+  }else if (event.newState == ProcessState::STARTED) {
+    mc->bStartStop.setText(mc->bStopText);
+  }else{
+    mc->logger->error("Start/Stop button state unknow. Not processing button press.");
+  }
 }
 
 void MashingController::pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event) {

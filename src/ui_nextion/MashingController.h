@@ -67,5 +67,6 @@ private:
   static void triggerPumpButtonAH(void *ptr);
   static void triggerStartStopAH(void *ptr);
   static void processInfoChangeHandler(void* callingObject, void* process);
+  static void processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event);
   static void pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event);
 };

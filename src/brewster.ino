@@ -43,14 +43,14 @@ unsigned long lastHearthBeat;
 void early_init()
 {
   //Init PINS
- pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
- pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
- pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
- pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
- digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
- digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
- digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
- digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
+  pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
+  pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
+  pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
+  pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
+  digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
+  digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
+  digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
+  digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
 }
 
 void setup() {

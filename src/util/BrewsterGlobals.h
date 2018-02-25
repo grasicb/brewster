@@ -10,7 +10,7 @@
 #define OUTPUT_NUMBER 4
 
 //Global structures
-static const uint8_t sensorLocationSize = 8;
+const static uint8_t sensorLocationSize = 8;
 
 enum BrewProcess {NONE, MASHING, BOILING, CHILLING, FERMENTING};
 enum ProcessState {STOPPED, STARTED, PAUSED};
@@ -19,9 +19,9 @@ enum QtyUOM {g, kg, ml, l};
 enum SensorLocation {HLT, MT, BK, COOLER_IN, COOLER_OUT, FERMENTOR, FRIDGE, ROOM};
 enum ControllerOutput {AC1, AC2, DC1, DC2};
 
-static const String ProcessStateNames[] = {"Stopped", "Started", "Paused"};
-static const String TimeUOMNames[4] = {"s", "min", "h", "day(s)"};
-static const String QtyUOMNames[4] = {"g", "kg", "ml", "l"};
+const static String ProcessStateNames[] = {"Stopped", "Started", "Paused"};
+const static String TimeUOMNames[4] = {"s", "min", "h", "day(s)"};
+const static String QtyUOMNames[4] = {"g", "kg", "ml", "l"};
 const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};
 const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
 const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
@@ -31,7 +31,8 @@ const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
 #define EEPROM_ACTIVE_PROCESS 0
 #define EEPROM_PROCESS_START 4
 #define EEPROM_RECIPE 1000
-static std::map<BrewProcess, int> EEPROM_PROCESS_DATA; //Defined in BrewsterGlobals constructor
+const static int EEPROM_PROCESS_DATA[] = {0, 8, 18, 28, 38};
+
 
 
 //Global type definitions
@@ -72,6 +73,7 @@ private:
     BrewsterGlobals(BrewsterGlobals const&);  // Don't Implement
     void operator=(BrewsterGlobals const&);   // Don't implement
     static BrewsterGlobals* instance;
+    Logger *logger;
 };
 
 #endif // BREWSTER_GLOBALS_H
