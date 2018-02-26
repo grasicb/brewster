@@ -18,12 +18,14 @@ SensorManager::SensorManager() {
 //    temperatureSensors[SensorLocation::HLT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x60, 0xA0, 0x64, 0x16, 0x3, 0x6F}, SensorLocation::HLT);
 //    temperatureSensors[SensorLocation::MT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xD0, 0x50, 0x63, 0x16, 0x4, 0xA8}, SensorLocation::MT);
 //    temperatureSensors[SensorLocation::BK] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x3, 0x6A}, SensorLocation::BK);
-    temperatureSensors[SensorLocation::COOLER_OUT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xB7, 0xC3, 0x51, 0x17, 0x4, 0xD4}, SensorLocation::COOLER_OUT);
+//    temperatureSensors[SensorLocation::COOLER_OUT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xB7, 0xC3, 0x51, 0x17, 0x4, 0xD4}, SensorLocation::COOLER_OUT);
+
     temperatureSensors[SensorLocation::FERMENTOR] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xDF, 0x8E, 0xC1, 0x16, 0x04, 0x6A}, SensorLocation::FERMENTOR);
 
     //New setup
-    temperatureSensors[SensorLocation::MT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xA6, 0x53, 0x52, 0x17, 0x04, 0x60}, SensorLocation::HLT);
-    temperatureSensors[SensorLocation::HLT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xAB, 0xC4, 0x51, 0x17, 0x04, 0x0F}, SensorLocation::BK);
+    temperatureSensors[SensorLocation::MT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xA6, 0x53, 0x52, 0x17, 0x04, 0x60}, SensorLocation::MT);
+    temperatureSensors[SensorLocation::HLT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xAB, 0xC4, 0x51, 0x17, 0x04, 0x0F}, SensorLocation::HLT);
+    temperatureSensors[SensorLocation::COOLER_OUT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x03, 0x6A}, SensorLocation::COOLER_OUT);
     temperatureSensors[SensorLocation::BK] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xAB, 0xC4, 0x51, 0x17, 0x04, 0x0F}, SensorLocation::BK); //Old BK
 
     // New Boil kettle (remaining prepared temp sensor)
