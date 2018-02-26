@@ -74,6 +74,7 @@ void LcdControllerNex::showMainPage() {
   sensorTestWC = new SensorTestController();
   outputTestWC = new OutputTestController();
   mashingWC = new MashingController();
+  mashStepChangeWC = new MashStepChange();
 
   //Register event handlers for pages
   mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, commonWC));
@@ -82,16 +83,18 @@ void LcdControllerNex::showMainPage() {
   settingsSensorsTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorsTest, sensorTestWC));
   settingsOutputTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsOutputTest, outputTestWC));
   mashingPage.attachPop(windowOpenCallback, new PageEvent(this, &mashingPage, mashingWC));
+  mashStepChangePage.attachPop(windowOpenCallback, new PageEvent(this, &mashStepChangePage, mashStepChangeWC));
 
   //Save pages, which should be listened for events
-  page_list = new NexTouch*[6];//malloc(sizeof(&mainPage)*4);
+  page_list = new NexTouch*[8];//malloc(sizeof(&mainPage)*4);
   page_list[0] = &mainPage;
   page_list[1] = &settingsPage;
   page_list[2] = &settingsSensorSearch;
   page_list[3] = &settingsSensorsTest;
   page_list[4] = &settingsOutputTest;
   page_list[5] = &mashingPage;
-  page_list[6] = NULL;
+  page_list[6] = &mashStepChangePage;
+  page_list[7] = NULL;
 
   nex_listen_list = NULL;
   updateListenerList();

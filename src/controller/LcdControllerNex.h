@@ -9,6 +9,7 @@
 #include "../ui_nextion/SensorTestController.h"
 #include "../ui_nextion/OutputTestController.h"
 #include "../ui_nextion/MashingController.h"
+#include "../ui_nextion/MashStepChange.h"
 
 class LcdControllerNex {
 public:
@@ -37,6 +38,7 @@ private:
     SensorTestController *sensorTestWC;
     OutputTestController *outputTestWC;
     MashingController *mashingWC;
+    MashStepChange *mashStepChangeWC;
 
     NexPage loadingPage = NexPage(0, 0, "loading_page");
     NexPage mainPage = NexPage(1, 0, "main_page");
@@ -45,6 +47,7 @@ private:
     NexPage settingsSensorsTest = NexPage(4, 0, "set_sensors_test");
     NexPage settingsOutputTest = NexPage(5, 0, "set_output_test");
     NexPage mashingPage = NexPage(6, 0, "mashing");
+    NexPage mashStepChangePage = NexPage(10, 0, "mashing_change");
 
     static void windowOpenCallback(void *ptr);
 };
