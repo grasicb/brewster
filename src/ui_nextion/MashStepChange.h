@@ -20,7 +20,7 @@ private:
   NexNumber nTemp = NexNumber(10, 6, "nTemp");
   NexNumber nTime = NexNumber(10, 15, "nTime");
   NexText tTimeUOM = NexText(10, 5, "tTimeUOM");
-  NexButton bSave = NexButton(10, 19, "bSave");
+  NexButton bSave = NexButton(10, 18, "bSave");
   NexPage pMashingPage = NexPage(6, 0, "mashing");
 
   //Mash process information
