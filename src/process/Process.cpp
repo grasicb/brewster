@@ -249,3 +249,8 @@ void Process::removeAllInfoChangeListeners() {
 
   logger->trace("Removed all information change listeners.");
 }
+
+
+void Process::setStartTime(long startTime) {
+  this->startTime = startTime;
+}

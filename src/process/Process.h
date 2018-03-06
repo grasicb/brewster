@@ -50,6 +50,7 @@ protected:
   virtual void processPaused() = 0;
   virtual void processResumed() = 0;
   void triggerInfoChangeEvent();
+  void setStartTime(long startTime);
 
   struct StateChageListener {
     f_processStateChange_t function;
