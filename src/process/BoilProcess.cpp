@@ -24,20 +24,21 @@ void BoilProcess::process() {
     if(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue() > boilingPoint) {
       logger->info("Boiling point reached.");
       boilingPointReached = true;
-      if(getStartTime() == 0) {}
+      if(getStartTime() == 0) {
         setStartTime(Time.now());
-        boilStopTime = getStartTime() + (recipe->getBoilingTime()*60);
+        storeToEEPROM();
       }
-
+      boilStopTime = getStartTime() + (recipe->getBoilingTime()*60);
       updateOutput();
       triggerInfoChangeEvent();
+    }
 
   }else if(boilingPoint - BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue() > 4) {
     logger->info("Temperature below lower boiling tresshold. Setting boiling heater output to high.");
     boilingPointReached = false;
   }
 
-  if(boilStopTime > 0) {
+  if(boilStopTime > 0 && boilStopTime < Time.now()) {
     logger->info("Boiling time over, boiling process stopped automatically.");
     stop();
   }
@@ -93,6 +94,7 @@ void BoilProcess::processResumed() {
 }
 
 void BoilProcess::updateOutput() {
+  logger->trace("Update output");
   if(getState() == ProcessState::STARTED) {
     if(boilingPointReached) {
       BrewsterController::get()->getOutput(boilHeater)->setOutput(boilHeatingRate);

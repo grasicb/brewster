@@ -84,7 +84,7 @@ void Process::resume() {
   //Business logic
   if(state == ProcessState::STOPPED)
     logger->error("Cannot resume process %s. The process is stopped.", (const char*) name);
-  else if(state == ProcessState::PAUSED)
+  else if(state == ProcessState::STARTED)
     logger->warn("The process %s is already running. Trying to resume a running process.", (const char*) name);
 
   else {

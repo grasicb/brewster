@@ -160,7 +160,7 @@ std::vector<AdditionDO> Recipe::getNextBoilAdditions(unsigned long boilStartTime
     unsigned int t = boilStartTime + BrewsterUtils::getSeconds(it->time, it->timeUOM);
 
     //If the step is in the future, then add it to the list
-    if(t > curTime) {
+    if(t >= curTime) {
       additions.push_back(*it);
     }
   }

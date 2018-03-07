@@ -40,8 +40,8 @@ const static ControllerOutput mashHeater = ControllerOutput::AC1;
 const static ControllerOutput mashPump = ControllerOutput::DC1;
 const static ControllerOutput boilHeater = ControllerOutput::AC1;
 const static uint8_t mashPumpFlowRate = 80;
-const static uint8_t boilHeatingRate = 80;
-const static float boilingPoint = 24;
+const static uint8_t boilHeatingRate = 5;
+const static float boilingPoint = 35;
 
 
 class BrewsterGlobals {

@@ -68,12 +68,18 @@ void BoilWindowController::process() {
 }
 
 void BoilWindowController::updateAdditions() {
-  std::vector<AdditionDO> additions = recipe->getNextBoilAdditions(startTime);
+  logger->trace("Update additions");
+  std::vector<AdditionDO> additions;
+  if(startTime>0)
+    additions = recipe->getNextBoilAdditions(startTime);
+  else
+    additions = recipe->getNextBoilAdditions(Time.now());
+
   int size = additions.size();
   if(size>6)
     size = 6;
   for(int i=0; i<size; i++) {
-    tAdd[i].setText(String::format("%i %s: %.1f %s %s", additions[i].time, TimeUOMNames[additions[i].timeUOM], additions[i].qty, QtyUOMNames[additions[i].qtyUOM], additions[i].name));
+    tAdd[i].setText(String::format("%i %s: %.1f %s %s", additions[i].time, (const char*)TimeUOMNames[additions[i].timeUOM], additions[i].qty, (const char*)QtyUOMNames[additions[i].qtyUOM], (const char*)additions[i].name));
   }
 
   for(int i=size; i<6; i++) {
@@ -83,6 +89,7 @@ void BoilWindowController::updateAdditions() {
 
 void BoilWindowController::updateTime() {
   ProcessState state = boilProcess->getState();
+
   if(state != ProcessState::STOPPED) {
     boolean timeUpdate = false;
     long newRunTime = BrewsterUtils::convertSeconds(Time.now()-startTime, TimeUOM::minute);
@@ -94,15 +101,19 @@ void BoilWindowController::updateTime() {
     //If time update is needed
     if(timeUpdate) {
       if(boilProcess->isBoilingPointReached())
-        tTimeElapsed.setText(String::format("%u min", runTime));
+        tTimeElapsed.setText(String::format("%i min", runTime));
       else
         tTimeElapsed.setText("Warming up");
 
-      if(runTime == 0) {
+
+      if(startTime == 0) {
         pbProgress.setValue(0);
         tTimeRemaining.setText(String::format("%i min", totalTime));
       }else{
-        pbProgress.setValue(totalTime/runTime);
+        if(runTime>totalTime)
+          pbProgress.setValue(100);
+        else
+          pbProgress.setValue(runTime*100/totalTime);
         tTimeRemaining.setText(String::format("%i min", (int)totalTime-runTime));
       }
     }
@@ -110,13 +121,15 @@ void BoilWindowController::updateTime() {
 }
 
 void BoilWindowController::setStartTime() {
+  logger->trace("Set start time");
   ProcessState state = boilProcess->getState();
 
   if(state == ProcessState::STOPPED) {
     runTime = 9999;
-    totalTime = 0;
+    totalTime = recipe->getBoilingTime();
     startTime = 0;
   }else{
+    runTime = 9999;
     startTime = boilProcess->getStartTime();
     totalTime = recipe->getBoilingTime();
   }
@@ -183,6 +196,6 @@ void BoilWindowController::processStateChangeHandler(void* callingObject, Proces
     //tTimeElapsed.setText("");
     bwc->tTimeRemaining.setText("Process stopped");
     for(int i=0; i<6; i++)
-      bwc->tAdd[0].setText("");
+      bwc->tAdd[i].setText("");
   }
 }

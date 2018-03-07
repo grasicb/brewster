@@ -31,7 +31,7 @@ void Output::setOutput(uint8_t percentage) {
     }
 
     triggerChangeEvent();
-    _logger->info("Output is set to %d%%", _output/2.55);
+    _logger->info("Output is set to %i%%", (int)(_output/2.55));
 }
 
 void Output::setTargetValue(double target, float* input) {
