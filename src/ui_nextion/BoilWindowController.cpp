@@ -73,7 +73,7 @@ void BoilWindowController::updateAdditions() {
   if(size>6)
     size = 6;
   for(int i=0; i<size; i++) {
-    tAdd[i].setText(String::format("%i %s: %.1f %s %s", additions[i].time, TimeUOMNames[additions[i].timeUOM], additions[i].qty, QtyUOM[additions[i].qtyUOM], name));
+    tAdd[i].setText(String::format("%i %s: %.1f %s %s", additions[i].time, TimeUOMNames[additions[i].timeUOM], additions[i].qty, QtyUOMNames[additions[i].qtyUOM], additions[i].name));
   }
 
   for(int i=size; i<6; i++) {
