@@ -1,4 +1,5 @@
 #include "Recipe.h"
+#include <algorithm>
 
 Recipe::Recipe() {
   recipe.name = "";
@@ -102,6 +103,8 @@ uint8_t Recipe::getBoilingTime() {
 
 void Recipe::addBoilAddition(AdditionDO addition) {
   recipe.boilAdditions.push_back(addition);
+
+  std::sort(recipe.boilAdditions.begin(), recipe.boilAdditions.end());
 }
 
 void Recipe::addBoilAddition(String name, float qty, QtyUOM qtyUOM, uint8_t time, TimeUOM timeUOM) {

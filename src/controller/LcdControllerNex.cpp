@@ -75,6 +75,7 @@ void LcdControllerNex::showMainPage() {
   outputTestWC = new OutputTestController();
   mashingWC = new MashingController();
   mashStepChangeWC = new MashStepChange();
+  boilWC = new BoilWindowController();
 
   //Register event handlers for pages
   mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, commonWC));
@@ -84,17 +85,20 @@ void LcdControllerNex::showMainPage() {
   settingsOutputTest.attachPop(windowOpenCallback, new PageEvent(this, &settingsOutputTest, outputTestWC));
   mashingPage.attachPop(windowOpenCallback, new PageEvent(this, &mashingPage, mashingWC));
   mashStepChangePage.attachPop(windowOpenCallback, new PageEvent(this, &mashStepChangePage, mashStepChangeWC));
+  boilPage.attachPop(windowOpenCallback, new PageEvent(this, &boilPage, boilWC));
 
   //Save pages, which should be listened for events
-  page_list = new NexTouch*[8];//malloc(sizeof(&mainPage)*4);
-  page_list[0] = &mainPage;
-  page_list[1] = &settingsPage;
-  page_list[2] = &settingsSensorSearch;
-  page_list[3] = &settingsSensorsTest;
-  page_list[4] = &settingsOutputTest;
-  page_list[5] = &mashingPage;
-  page_list[6] = &mashStepChangePage;
-  page_list[7] = NULL;
+  page_list = new NexTouch*[9];//malloc(sizeof(&mainPage)*4);
+  int i=0;
+  page_list[i++] = &mainPage;
+  page_list[i++] = &settingsPage;
+  page_list[i++] = &settingsSensorSearch;
+  page_list[i++] = &settingsSensorsTest;
+  page_list[i++] = &settingsOutputTest;
+  page_list[i++] = &mashingPage;
+  page_list[i++] = &mashStepChangePage;
+  page_list[i++] = &boilPage;
+  page_list[i++] = NULL;
 
   nex_listen_list = NULL;
   updateListenerList();

@@ -13,6 +13,8 @@ struct AdditionDO { //24
   QtyUOM qtyUOM;
   uint8_t time;
   TimeUOM timeUOM;
+  bool operator<(const AdditionDO &add) const { return time < add.time; }
+  bool operator>(const AdditionDO &add) const { return time > add.time; }
 };
 
 struct StepDO { //21 byte

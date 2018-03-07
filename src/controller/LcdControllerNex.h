@@ -10,6 +10,7 @@
 #include "../ui_nextion/OutputTestController.h"
 #include "../ui_nextion/MashingController.h"
 #include "../ui_nextion/MashStepChange.h"
+#include "../ui_nextion/BoilWindowController.h"
 
 class LcdControllerNex {
 public:
@@ -39,6 +40,7 @@ private:
     OutputTestController *outputTestWC;
     MashingController *mashingWC;
     MashStepChange *mashStepChangeWC;
+    BoilWindowController *boilWC;
 
     NexPage loadingPage = NexPage(0, 0, "loading_page");
     NexPage mainPage = NexPage(1, 0, "main_page");
@@ -47,6 +49,7 @@ private:
     NexPage settingsSensorsTest = NexPage(4, 0, "set_sensors_test");
     NexPage settingsOutputTest = NexPage(5, 0, "set_output_test");
     NexPage mashingPage = NexPage(6, 0, "mashing");
+    NexPage boilPage = NexPage(7, 0, "boiling");
     NexPage mashStepChangePage = NexPage(10, 0, "mashing_change");
 
     static void windowOpenCallback(void *ptr);
