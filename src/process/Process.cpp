@@ -82,7 +82,9 @@ void Process::resume() {
   event.oldState = state;
 
   //Business logic
-  if(state == ProcessState::STOPPED)
+  if (recipeMandatory && recipe == NULL)
+    logger->error("Recipe is mandatory for this process, but is not set. Cannot start the process.");
+  else if(state == ProcessState::STOPPED)
     logger->error("Cannot resume process %s. The process is stopped.", (const char*) name);
   else if(state == ProcessState::STARTED)
     logger->warn("The process %s is already running. Trying to resume a running process.", (const char*) name);

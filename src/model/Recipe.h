@@ -28,6 +28,7 @@ struct RecipeDO {
   String name;
   std::vector<StepDO> mashingSteps;
   uint8_t boilingTime;
+  uint8_t targetChillingTemperature;
   std::vector<AdditionDO> boilAdditions;
   std::vector<StepDO> fermentationSteps;
   std::vector<StepDO> fermentationPhases;
@@ -49,6 +50,9 @@ public:
 
   void setBoilingTime(uint8_t time);
   uint8_t getBoilingTime();
+
+  void setTargetChillingTemperature(uint8_t temperature);
+  uint8_t getTargetChillingTemperature();
 
   void addBoilAddition(AdditionDO addition);
   void addBoilAddition(String name, float qty, QtyUOM qtyUOM, uint8_t time, TimeUOM timeUOM);

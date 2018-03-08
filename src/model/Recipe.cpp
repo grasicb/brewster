@@ -97,6 +97,14 @@ uint8_t Recipe::getBoilingTime() {
   return recipe.boilingTime;
 }
 
+void Recipe::setTargetChillingTemperature(uint8_t temperature) {
+  recipe.targetChillingTemperature = temperature;
+}
+
+uint8_t Recipe::getTargetChillingTemperature() {
+  return recipe.targetChillingTemperature;
+}
+
 /************************
 ** Boil addition functions
 *************************/
