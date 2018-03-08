@@ -3,10 +3,10 @@
 #include "application.h"
 #include "Process.h"
 
-class BoilProcess : public Process {
+class BoilingProcess : public Process {
 public:
-  BoilProcess(BrewProcess type, String name);
-  BoilProcess(BrewProcess type, String name, Recipe* recipe);
+  BoilingProcess(BrewProcess type, String name);
+  BoilingProcess(BrewProcess type, String name, Recipe* recipe);
   void process();
   boolean isBoilingPointReached();
 

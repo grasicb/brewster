@@ -1,11 +1,11 @@
-#include "MashingController.h"
+#include "MashingWC.h"
 #include "UIEvent.h"
 #include "../controller/BrewsterController.h"
 #include "../controller/SensorManager.h"
 #include "../controller/TemperatureSensor.h"
 
-MashingController::MashingController() {
-  logger = new Logger("MashingController");
+MashingWC::MashingWC() {
+  logger = new Logger("MashingWC");
   sensors = &(BrewsterController::get()->getSensorManager()->getAllTemperatureSensors());
 
   temperature[SensorLocation::HLT] = 0;
@@ -26,7 +26,7 @@ MashingController::MashingController() {
 }
 
 
-void MashingController::initializeScreen(void *ptr) {
+void MashingWC::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
   logger->info("Initializing mashing screen");
 
@@ -70,14 +70,14 @@ void MashingController::initializeScreen(void *ptr) {
   updateLcdProcessInfo();
 }
 
-void MashingController::deactivateScreen() {
+void MashingWC::deactivateScreen() {
   mashProcess->removeListener(processInfoChangeHandler);
   mashProcess->removeListener(processStateChangeHandler);
   BrewsterController::get()->getOutput(mashPump)->removeListener(pumpStateChanged);
 }
 
 
-void MashingController::process() {
+void MashingWC::process() {
   boolean tempUpdate = false;
 
   //Check if temperature update is needed
@@ -104,13 +104,13 @@ void MashingController::process() {
     updateLcdProcessInfo();
 }
 
-void MashingController::updateLcdTemp() {
+void MashingWC::updateLcdTemp() {
   nTempMT.setValue(temperature[SensorLocation::MT]);
   nTempHLT.setValue(temperature[SensorLocation::HLT]);
   nTempCOut.setValue(temperature[SensorLocation::COOLER_OUT]);
 }
 
-void MashingController::updateLcdProcessInfo() {
+void MashingWC::updateLcdProcessInfo() {
   //Update runtime
   tCurrStepTime.setText(String::format("%i min", runTime));
 
@@ -141,7 +141,7 @@ void MashingController::updateLcdProcessInfo() {
   pbProgress.setValue(progress);
 }
 
-void MashingController::getRecipeInformation() {
+void MashingWC::getRecipeInformation() {
   if(mashProcess->isActive())
     processStartTime = mashProcess->getStartTime();
   else
@@ -158,7 +158,7 @@ void MashingController::getRecipeInformation() {
   }
 }
 
-void MashingController::updateRecipeValues() {
+void MashingWC::updateRecipeValues() {
 
   //If the process is running then calculates the values
   if(mashProcess->isActive()) {
@@ -183,10 +183,10 @@ void MashingController::updateRecipeValues() {
   }
 }
 
-void MashingController::triggerPumpButtonAH(void *ptr) {
+void MashingWC::triggerPumpButtonAH(void *ptr) {
   UIEvent *obj = (UIEvent *) ptr;
   NexDSButton *button = (NexDSButton *)obj->getButton();
-  MashingController *w = (MashingController *) obj->getWindowController();
+  MashingWC *w = (MashingWC *) obj->getWindowController();
   w->logger->trace("Pump button pressed");
 
   uint32_t value;
@@ -198,10 +198,10 @@ void MashingController::triggerPumpButtonAH(void *ptr) {
     BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
 }
 
-void MashingController::triggerStartStopAH(void *ptr) {
+void MashingWC::triggerStartStopAH(void *ptr) {
   UIEvent *obj = (UIEvent *) ptr;
   NexButton *button = (NexButton *)obj->getButton();
-  MashingController *w = (MashingController *) obj->getWindowController();
+  MashingWC *w = (MashingWC *) obj->getWindowController();
 
   w->logger->trace("Start/Stop pressed");
 
@@ -223,14 +223,14 @@ void MashingController::triggerStartStopAH(void *ptr) {
   w->updateLcdProcessInfo();
 }
 
-void MashingController::processInfoChangeHandler(void* callingObject, void* process) {
-  MashingController* mc = (MashingController*) callingObject;
+void MashingWC::processInfoChangeHandler(void* callingObject, void* process) {
+  MashingWC* mc = (MashingWC*) callingObject;
   mc->getRecipeInformation();
   mc->updateLcdProcessInfo();
 }
 
-void MashingController::processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event) {
-  MashingController* mc = (MashingController*) callingObject;
+void MashingWC::processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event) {
+  MashingWC* mc = (MashingWC*) callingObject;
 
   if(event.newState == ProcessState::STOPPED) {
     mc->bStartStop.setText(mc->bStartText);
@@ -241,8 +241,8 @@ void MashingController::processStateChangeHandler(void* callingObject, ProcessSt
   }
 }
 
-void MashingController::pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
-  MashingController *w = (MashingController *) callingObject;
+void MashingWC::pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
+  MashingWC *w = (MashingWC *) callingObject;
 
   w->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);
   Particle.process();

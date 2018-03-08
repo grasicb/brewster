@@ -1,4 +1,4 @@
-#include "BoilWindowController.h"
+#include "BoilingWC.h"
 #include "../controller/BrewsterController.h"
 #include "../controller/TemperatureSensor.h"
 #include "UIEvent.h"
@@ -9,8 +9,8 @@
 
 #include "../model/Recipe.h"
 
-BoilWindowController::BoilWindowController() {
-  logger = new Logger("BoilWindowController");
+BoilingWC::BoilingWC() {
+  logger = new Logger("BoilingWC");
 
   tempSensor = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::BK));
 
@@ -24,13 +24,13 @@ BoilWindowController::BoilWindowController() {
 }
 
 
-void BoilWindowController::initializeScreen(void *ptr) {
+void BoilingWC::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
 
   logger->info("Initializing boil screen");
   pbProgress.setValue(0);
 
-  boilProcess = (BoilProcess *)BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::BOILING);
+  boilProcess = (BoilingProcess *)BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::BOILING);
   if (boilProcess->isActive() && boilProcess->getRecipe() != NULL)
     recipe = BrewsterController::get()->getRecipe();
   else {
@@ -52,13 +52,13 @@ void BoilWindowController::initializeScreen(void *ptr) {
   boilProcess->addListener(processStateChangeHandler, this);
 }
 
-void BoilWindowController::deactivateScreen() {
+void BoilingWC::deactivateScreen() {
   boilProcess->removeListener(processInfoChangeHandler);
   boilProcess->removeListener(processStateChangeHandler);
 }
 
 
-void BoilWindowController::process() {
+void BoilingWC::process() {
   if(lastTemp != tempSensor->getValue()) {
     lastTemp = tempSensor->getValue();
     tTemp.setText(String::format("%.1f", lastTemp));
@@ -67,7 +67,7 @@ void BoilWindowController::process() {
   updateTime();
 }
 
-void BoilWindowController::updateAdditions() {
+void BoilingWC::updateAdditions() {
   logger->trace("Update additions");
   std::vector<AdditionDO> additions;
   if(startTime>0)
@@ -87,7 +87,7 @@ void BoilWindowController::updateAdditions() {
   }
 }
 
-void BoilWindowController::updateTime() {
+void BoilingWC::updateTime() {
   ProcessState state = boilProcess->getState();
 
   if(state != ProcessState::STOPPED) {
@@ -120,7 +120,7 @@ void BoilWindowController::updateTime() {
   }
 }
 
-void BoilWindowController::setStartTime() {
+void BoilingWC::setStartTime() {
   logger->trace("Set start time");
   ProcessState state = boilProcess->getState();
 
@@ -141,7 +141,7 @@ void BoilWindowController::setStartTime() {
   */
 }
 
-void BoilWindowController::updateButtonText() {
+void BoilingWC::updateButtonText() {
   ProcessState state = boilProcess->getState();
 
   if(state == ProcessState::STOPPED) {
@@ -160,11 +160,11 @@ void BoilWindowController::updateButtonText() {
   }
 }
 
-void BoilWindowController::bTriggerProcessCB(void *ptr)
+void BoilingWC::bTriggerProcessCB(void *ptr)
 {
     //logger->info("Search sensors button pressed");
   UIEvent *obj = (UIEvent *) ptr;
-  BoilWindowController *bwc = (BoilWindowController *) obj->getWindowController();
+  BoilingWC *bwc = (BoilingWC *) obj->getWindowController();
   NexButton *button = (NexButton *) obj->getButton();
   char* buf = (char*)malloc(20);
   button->getText(buf, 20);
@@ -185,14 +185,14 @@ void BoilWindowController::bTriggerProcessCB(void *ptr)
   }
 }
 
-void BoilWindowController::processInfoChangeHandler(void* callingObject, void* process) {
-  BoilWindowController* bwc = (BoilWindowController*) callingObject;
+void BoilingWC::processInfoChangeHandler(void* callingObject, void* process) {
+  BoilingWC* bwc = (BoilingWC*) callingObject;
   bwc->setStartTime();
   bwc->updateAdditions();
 }
 
-void BoilWindowController::processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event) {
-  BoilWindowController* bwc = (BoilWindowController*) callingObject;
+void BoilingWC::processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event) {
+  BoilingWC* bwc = (BoilingWC*) callingObject;
 
   bwc->updateButtonText();
 

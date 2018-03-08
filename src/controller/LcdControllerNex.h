@@ -8,9 +8,9 @@
 #include "../ui_nextion/SensorSearchController.h"
 #include "../ui_nextion/SensorTestController.h"
 #include "../ui_nextion/OutputTestController.h"
-#include "../ui_nextion/MashingController.h"
+#include "../ui_nextion/MashingWC.h"
 #include "../ui_nextion/MashStepChange.h"
-#include "../ui_nextion/BoilWindowController.h"
+#include "../ui_nextion/BoilingWC.h"
 
 class LcdControllerNex {
 public:
@@ -38,9 +38,9 @@ private:
     SensorSearchController *sensorSearchWC;
     SensorTestController *sensorTestWC;
     OutputTestController *outputTestWC;
-    MashingController *mashingWC;
+    MashingWC *mashingWC;
     MashStepChange *mashStepChangeWC;
-    BoilWindowController *boilWC;
+    BoilingWC *boilingWC;
 
     NexPage loadingPage = NexPage(0, 0, "loading_page");
     NexPage mainPage = NexPage(1, 0, "main_page");

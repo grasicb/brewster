@@ -9,10 +9,10 @@
 #include <vector>
 #include <map>
 
-class MashingController : public AWindowController {
+class MashingWC : public AWindowController {
 
 public:
-  MashingController();
+  MashingWC();
   void initializeScreen(void *ptr);
   void deactivateScreen();
   void process();

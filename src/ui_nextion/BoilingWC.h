@@ -4,12 +4,12 @@
 #include "../controller/TemperatureSensor.h"
 #include "../controller/SensorManager.h"
 #include "../controller/Output.h"
-#include "../process/BoilProcess.h"
+#include "../process/BoilingProcess.h"
 
-class BoilWindowController : public AWindowController {
+class BoilingWC : public AWindowController {
 
 public:
-  BoilWindowController();
+  BoilingWC();
   void initializeScreen(void *ptr);
   void deactivateScreen();
   void process();
@@ -42,7 +42,7 @@ private:
   String bResumeText = String("RESUME");
 
   //Boil process information
-  BoilProcess *boilProcess;
+  BoilingProcess *boilProcess;
   Recipe *recipe;
   TemperatureSensor *tempSensor;
   float lastTemp = 0;

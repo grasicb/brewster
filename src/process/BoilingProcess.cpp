@@ -1,9 +1,9 @@
-#include "BoilProcess.h"
+#include "BoilingProcess.h"
 #include "../controller/BrewsterController.h"
 
-BoilProcess::BoilProcess(BrewProcess type, String name): Process(type, name) {
+BoilingProcess::BoilingProcess(BrewProcess type, String name): Process(type, name) {
   lastTick = Time.now();
-  logger = new Logger("BoilProcess");
+  logger = new Logger("BoilingProcess");
   recipeMandatory = true;
   boilingPointReached = false;
   boilStopTime = 0;
@@ -11,11 +11,11 @@ BoilProcess::BoilProcess(BrewProcess type, String name): Process(type, name) {
   logger->warn("Initialized boil process for proccess named: %s.", (const char*) name);
 }
 
-BoilProcess::BoilProcess(BrewProcess type, String name, Recipe* recipe): Process(type, name, recipe) {
-  BoilProcess(type, name);
+BoilingProcess::BoilingProcess(BrewProcess type, String name, Recipe* recipe): Process(type, name, recipe) {
+  BoilingProcess(type, name);
 }
 
-void BoilProcess::process() {
+void BoilingProcess::process() {
   if (Time.now() - lastTick > 60) {
     lastTick = Time.now();
     logger->trace("Boil process is active.");
@@ -52,11 +52,11 @@ void BoilProcess::process() {
   }
 }
 
-boolean BoilProcess::isBoilingPointReached() {
+boolean BoilingProcess::isBoilingPointReached() {
   return boilingPointReached;
 }
 
-void BoilProcess::processStarted() {
+void BoilingProcess::processStarted() {
   logger->info("Starting process %s.", (const char*) name);
 
   if (recipe == NULL) {
@@ -72,7 +72,7 @@ void BoilProcess::processStarted() {
   }
 }
 
-void BoilProcess::processStopped() {
+void BoilingProcess::processStopped() {
   logger->info("Stopping process %s.", (const char*) name);
 
   BrewsterController::get()->getOutput(boilHeater)->setOutput(0);
@@ -80,7 +80,7 @@ void BoilProcess::processStopped() {
   logger->info("Process %s stopped.", (const char*) name);
 }
 
-void BoilProcess::processPaused() {
+void BoilingProcess::processPaused() {
   logger->info("Pausing process %s.", (const char*) name);
 
   BrewsterController::get()->getOutput(boilHeater)->setOutput(0);
@@ -89,7 +89,7 @@ void BoilProcess::processPaused() {
   logger->info("Process %s paused.", (const char*) name);
 }
 
-void BoilProcess::processResumed() {
+void BoilingProcess::processResumed() {
   logger->info("Resuming process %s.", (const char*) name);
 
   if (recipe == NULL) {
@@ -102,7 +102,7 @@ void BoilProcess::processResumed() {
   }
 }
 
-void BoilProcess::processRestored() {
+void BoilingProcess::processRestored() {
   logger->info("Restoring process %s after system startup.", (const char*) name);
 
   boilingPointReached = false;
@@ -119,7 +119,7 @@ void BoilProcess::processRestored() {
   logger->info("Process %s restored.", (const char*) name);
 }
 
-void BoilProcess::updateOutput() {
+void BoilingProcess::updateOutput() {
   logger->trace("Update output");
   if(getState() == ProcessState::STARTED) {
     if(boilingPointReached) {
