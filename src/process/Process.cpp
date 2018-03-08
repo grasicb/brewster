@@ -123,17 +123,7 @@ void Process::loadFromEEPROM() {
 
 void Process::restoreProcess() {
   loadFromEEPROM();
-
-  if(state == ProcessState::STARTED)
-    processResumed();
-
-  if(state != ProcessState::STOPPED) {
-    ProcessStateChangeEvent event;
-    event.oldState = ProcessState::STOPPED;
-    event.newState = state;
-    event.process = this;
-    triggerStateChangeEvent(event);
-  }
+  processRestored();
 }
 
 unsigned long Process::getStartTime() {

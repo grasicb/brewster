@@ -28,3 +28,7 @@ void GenericProcess::processPaused() {
 void GenericProcess::processResumed() {
   logger->info("Process %s resumed.", (const char*) name);
 }
+
+void GenericProcess::processRestored() {
+  logger->info("Process %s restored after system startup.", (const char*) name);
+}

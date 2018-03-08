@@ -93,6 +93,22 @@ void BoilProcess::processResumed() {
   }
 }
 
+void BoilProcess::processRestored() {
+  logger->info("Restoring process %s after system startup.", (const char*) name);
+
+  boilingPointReached = false;
+
+  if (recipe == NULL) {
+    logger->error("Recipe is not set. Cannot restore the boil process.");
+    stop();
+  }else{
+    updateOutput();
+  }
+
+
+  logger->info("Process %s restored.", (const char*) name);
+}
+
 void BoilProcess::updateOutput() {
   logger->trace("Update output");
   if(getState() == ProcessState::STARTED) {

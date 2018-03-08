@@ -14,6 +14,7 @@ protected:
   void processStopped();
   void processPaused();
   void processResumed();
+  void processRestored();
 private:
   void updateOutput();
   void updateStepStatus();

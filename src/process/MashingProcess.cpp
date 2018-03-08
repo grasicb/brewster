@@ -78,10 +78,34 @@ void MashingProcess::processResumed() {
     stop();
   }else{
     updateOutput();
-    BrewsterController::get()->getOutput(mashPump)->setOutput(mashPumpFlowRate);
+
+    Output* pump = BrewsterController::get()->getOutput(mashPump);
+    if(pump == NULL)
+      logger->error("Error while starting mashing process. Cannot start the pumpt, invalid reference to output.");
+    else {
+      logger->trace("Setting mash pum to rate %i", mashPumpFlowRate);
+      pump->setOutput(mashPumpFlowRate);
+    }
 
     logger->info("Process %s resumed.", (const char*) name);
   }
+}
+
+void MashingProcess::processRestored() {
+  logger->info("Restoring process %s after system startup.", (const char*) name);
+
+  if(getState()==ProcessState::STARTED) {
+    processResumed();
+  }else if(getState()==ProcessState::PAUSED) {
+    if (recipe == NULL) {
+      logger->error("Recipe is not set. The mashing process might not work as expected.");
+      stop();
+    }
+    processPaused();
+  }
+
+  logger->info("Process %s restored.", (const char*) name);
+
 }
 
 void MashingProcess::updateStepStatus() {

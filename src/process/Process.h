@@ -49,6 +49,7 @@ protected:
   virtual void processStopped() = 0;
   virtual void processPaused() = 0;
   virtual void processResumed() = 0;
+  virtual void processRestored() = 0;
   void triggerInfoChangeEvent();
   void setStartTime(long startTime);
 

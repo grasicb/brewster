@@ -12,6 +12,7 @@ public:
   void processStopped();
   void processPaused();
   void processResumed();
+  void processRestored();
 private:
   //Logger *logger;
   unsigned long lastTick;
