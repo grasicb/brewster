@@ -136,6 +136,26 @@ AdditionDO *Recipe::getBoilAddition(int i) {
   return &recipe.boilAdditions[i];
 }
 
+unsigned long Recipe::getNextBoilAdditionTime(unsigned long boilStartTime) {
+  if(boilStartTime == 0)
+    return 0;
+
+  unsigned long curTime = Time.now();
+  unsigned long nextAddTime = 0;
+
+  std::vector<AdditionDO>::iterator it;
+  for (it = recipe.boilAdditions.begin(); it != recipe.boilAdditions.end(); ++it) {
+    unsigned int t = boilStartTime + BrewsterUtils::getSeconds(it->time, it->timeUOM);
+
+    if(t > curTime) {
+      nextAddTime = t;
+      it=recipe.boilAdditions.end();
+    }
+  }
+
+  return nextAddTime;
+}
+
 std::vector<AdditionDO> Recipe::getPreviousBoilAdditions(unsigned long boilStartTime) {
   unsigned long curTime = Time.now();
   std::vector<AdditionDO> additions;

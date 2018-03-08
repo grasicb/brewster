@@ -22,6 +22,7 @@ private:
 
   boolean boilingPointReached;
   long boilStopTime;
+  long nextAdditionTime;
 
   unsigned long lastTick;
 };

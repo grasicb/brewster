@@ -54,6 +54,7 @@ public:
   void addBoilAddition(String name, float qty, QtyUOM qtyUOM, uint8_t time, TimeUOM timeUOM);
   int getBoilAdditionsCount();
   AdditionDO* getBoilAddition(int i);
+  unsigned long getNextBoilAdditionTime(unsigned long boilStartTime);
   std::vector<AdditionDO> getPreviousBoilAdditions(unsigned long boilStartTime);
   std::vector<AdditionDO> getNextBoilAdditions(unsigned long boilStartTime);
 

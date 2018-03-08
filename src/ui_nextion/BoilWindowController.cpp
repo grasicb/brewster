@@ -124,6 +124,11 @@ void BoilWindowController::setStartTime() {
   logger->trace("Set start time");
   ProcessState state = boilProcess->getState();
 
+  runTime = 9999;
+  startTime = boilProcess->getStartTime();
+  totalTime = recipe->getBoilingTime();
+
+  /*
   if(state == ProcessState::STOPPED) {
     runTime = 9999;
     totalTime = recipe->getBoilingTime();
@@ -133,7 +138,7 @@ void BoilWindowController::setStartTime() {
     startTime = boilProcess->getStartTime();
     totalTime = recipe->getBoilingTime();
   }
-
+  */
 }
 
 void BoilWindowController::updateButtonText() {

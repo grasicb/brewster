@@ -7,6 +7,7 @@ BoilProcess::BoilProcess(BrewProcess type, String name): Process(type, name) {
   recipeMandatory = true;
   boilingPointReached = false;
   boilStopTime = 0;
+  nextAdditionTime = 0;
   logger->warn("Initialized boil process for proccess named: %s.", (const char*) name);
 }
 
@@ -30,12 +31,19 @@ void BoilProcess::process() {
       }
       boilStopTime = getStartTime() + (recipe->getBoilingTime()*60);
       updateOutput();
+      nextAdditionTime = recipe->getNextBoilAdditionTime(getStartTime());
       triggerInfoChangeEvent();
     }
 
   }else if(boilingPoint - BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue() > 4) {
     logger->info("Temperature below lower boiling tresshold. Setting boiling heater output to high.");
     boilingPointReached = false;
+  }
+
+  if(nextAdditionTime>0 && nextAdditionTime<Time.now()) {
+    logger->info("Boiling addition time reached. Boiling addition to be added into the boild.");
+    nextAdditionTime = recipe->getNextBoilAdditionTime(getStartTime());
+    triggerInfoChangeEvent();
   }
 
   if(boilStopTime > 0 && boilStopTime < Time.now()) {
@@ -57,6 +65,7 @@ void BoilProcess::processStarted() {
   }else{
     boilingPointReached = false;
     boilStopTime = 0;
+    nextAdditionTime = 0;
     setStartTime(0);
     updateOutput();
     logger->info("Process %s started.", (const char*) name);
@@ -102,6 +111,7 @@ void BoilProcess::processRestored() {
     logger->error("Recipe is not set. Cannot restore the boil process.");
     stop();
   }else{
+    nextAdditionTime = recipe->getNextBoilAdditionTime(getStartTime());
     updateOutput();
   }
 
