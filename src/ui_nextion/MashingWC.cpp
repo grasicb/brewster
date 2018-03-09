@@ -183,6 +183,9 @@ void MashingWC::updateRecipeValues() {
   }
 }
 
+////////////////////////////////////
+// Event Handlers
+
 void MashingWC::triggerPumpButtonAH(void *ptr) {
   UIEvent *obj = (UIEvent *) ptr;
   NexDSButton *button = (NexDSButton *)obj->getButton();

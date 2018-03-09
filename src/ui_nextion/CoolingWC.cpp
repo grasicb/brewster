@@ -18,11 +18,13 @@ CoolingWC::CoolingWC() {
 
   b1.attachPop(bTriggerProcessCB, new UIEvent(this, &b1));
   b2.attachPop(bTriggerProcessCB, new UIEvent(this, &b2));
+  bPump.attachPop(triggerPumpButtonAH, new UIEvent(this, &bPump));
 
-  listenerList = new NexTouch*[3];
+  listenerList = new NexTouch*[4];
   listenerList[0] = &b1;
   listenerList[1] = &b2;
-  listenerList[2] = NULL;
+  listenerList[2] = &bPump;
+  listenerList[3] = NULL;
 }
 
 
@@ -39,21 +41,31 @@ void CoolingWC::initializeScreen(void *ptr) {
     coolingProcess->setRecipe(recipe);
   }
 
-  //Set button text
-  setStartTime();
-  updateButtonText();
-  updateTime();
-
+  //Init temperature values and time value to trigger update on next process loop
   lastTempBK = 999;
   lastTempCooler = 999;
   lastTempFermentor = 999;
+  startTime = 0;
+
+  //Set button text
+  setStartTime();
+  updateButtonText();
+
+  //Set pump status
+  if(BrewsterController::get()->isOutputActive(coolingPump))
+    bPump.setValue(1);
+  else
+    bPump.setValue(0);
 
   //Adding listener for change in process & output state
   coolingProcess->addListener(processStateChangeHandler, this);
+  BrewsterController::get()->getOutput(coolingPump)->addListener(pumpStateChanged, this, coolingPump);
 }
 
 void CoolingWC::deactivateScreen() {
   coolingProcess->removeListener(processStateChangeHandler);
+  BrewsterController::get()->getOutput(coolingPump)->removeListener(pumpStateChanged);
+
 }
 
 
@@ -93,6 +105,7 @@ void CoolingWC::updateTime() {
 
     //If time update is needed
     if(timeUpdate) {
+        logger->trace("Runtime changed to: %u", runTime);
         tTimeElapsed.setText(String::format("%i min", runTime));
     }
   }
@@ -100,6 +113,7 @@ void CoolingWC::updateTime() {
 
 void CoolingWC::setStartTime() {
   startTime = coolingProcess->getStartTime();
+  logger->trace("Start time set to %lu", startTime);
 }
 
 void CoolingWC::updateButtonText() {
@@ -120,6 +134,9 @@ void CoolingWC::updateButtonText() {
 
   }
 }
+
+////////////////////////////////////
+// Event Handlers
 
 void CoolingWC::bTriggerProcessCB(void *ptr)
 {
@@ -146,9 +163,48 @@ void CoolingWC::bTriggerProcessCB(void *ptr)
   }
 }
 
+void CoolingWC::triggerPumpButtonAH(void *ptr) {
+  UIEvent *obj = (UIEvent *) ptr;
+  NexDSButton *button = (NexDSButton *)obj->getButton();
+  CoolingWC *wc = (CoolingWC *) obj->getWindowController();
+  wc->logger->trace("Pump button pressed");
+
+  uint32_t value;
+  button->getValue(&value);
+
+  //If the process is started then pause and resume the process to turn-on/-ff the pump
+  if(wc->coolingProcess->getState() != ProcessState::STOPPED) {
+    if(value==0)
+      wc->coolingProcess->pause();
+    else
+      wc->coolingProcess->resume();
+
+  //If the process is not started, then cycle power state of the pump
+  }else{
+    if(value==0)
+      BrewsterController::get()->getOutput(coolingPump)->setOutput(0);
+    else
+      BrewsterController::get()->getOutput(coolingPump)->setOutput(50);
+  }
+}
+
 void CoolingWC::processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event) {
   CoolingWC* wc = (CoolingWC*) callingObject;
 
   wc->setStartTime();
   wc->updateButtonText();
+}
+
+void CoolingWC::pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
+  CoolingWC *wc = (CoolingWC *) callingObject;
+
+  wc->logger->info("Output event change received for cooling pump [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);
+
+  uint32_t value;
+  wc->bPump.getValue(&value);
+
+  if(event.isActive && value == 0)
+    wc->bPump.setValue(1);
+  else if (!event.isActive && value == 1)
+    wc->bPump.setValue(0);
 }

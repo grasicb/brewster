@@ -22,7 +22,7 @@ private:
 
   //UI Elements
   NexNumber nTargetTemp = NexNumber(8, 6, "n_targetTemp");
-  NexText tTimeElapsed = NexText(8, 3, "t_timeElapsed");
+  NexText tTimeElapsed = NexText(8, 3, "t_timelapse");
   NexText tTempBK = NexText(8, 8, "t_tempBK");
   NexText tTempCooler = NexText(8, 9, "t_tempCOut");
   NexText tTempFermentor = NexText(8, 15, "t_tempFerm");
@@ -30,6 +30,7 @@ private:
   NexButton b1 = NexButton(8, 10, "b1");
   NexButton b2 = NexButton(8, 11, "b2");
   NexDSButton bSettings = NexDSButton(8, 14, "bt1");
+  NexDSButton bPump = NexDSButton(8, 7, "bt_pump");
 
   String bStopText = String("STOP");
   String bStartText = String("START");
@@ -47,7 +48,7 @@ private:
   float lastTempFermentor = 0;
 
   long runTime = 0;
-  long startTime = 0;
+  unsigned long startTime = 0;
 
   //UI Refresh functions
   void updateTime();
@@ -56,5 +57,7 @@ private:
 
   //Callback functions
   static void bTriggerProcessCB(void *ptr);
+  static void triggerPumpButtonAH(void *ptr);
   static void processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event);
+  static void pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event);
 };
