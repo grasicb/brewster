@@ -59,12 +59,8 @@ void WaterPreparationWC::refreshOutputStatus() {
     bHLTPower.setValue((uint32_t)outputHLT->isActive());
     nTargetHLT.setValue((uint32_t)outputHLT->getTargetValue());
 
-    uint32_t settingsEnabled;
-    bHLTSettings.getValue(&settingsEnabled);
-    if(settingsEnabled==1) {
-      NexSendCommand("vis bt1,1");
-      NexSendCommand("vis bt3,1");
-    }
+    NexSendCommand("vis bt1,1");
+    NexSendCommand("vis bt3,1");
   }else {
     logger->warn("HLT outout is not in PID setting. Disabling control of this output from the current window.");
     nTargetHLT.setValue((uint32_t)outputHLT->getOutput());
@@ -76,13 +72,9 @@ void WaterPreparationWC::refreshOutputStatus() {
   if (outputHLT->isPID() || !outputHLT->isActive()) {
     bBKPower.setValue((uint32_t)outputBK->isActive());
     nTargetBK.setValue((uint32_t)outputHLT->getTargetValue());
-
-    uint32_t settingsEnabled;
-    bBKSettings.getValue(&settingsEnabled);
-    if(settingsEnabled==1) {
-      NexSendCommand("vis bt2,1");
-      NexSendCommand("vis bt4,1");
-    }
+    
+    NexSendCommand("vis bt2,1");
+    NexSendCommand("vis bt4,1");
   }else {
     logger->warn("HLT outout is not in PID setting. Disabling control of this output from the current window.");
     nTargetBK.setValue((uint32_t)outputBK->getOutput());
