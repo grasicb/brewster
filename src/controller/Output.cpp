@@ -61,6 +61,12 @@ void Output::setTargetValue(double target, float* input) {
   _logger->info("Target value is set to to %4.1f°", _target);
 }
 
+void Output::setTargetValue(double target, float* input, int direction) {
+  setTargetValue(target, input);
+  _pid->SetControllerDirection(direction);
+  _logger->info("PID direction set to %i", direction);
+}
+
 void Output::changeTargetValue(double target) {
   if (_input == NULL)
     _logger->warn("Changing set value on an object with input not set");
@@ -126,6 +132,12 @@ boolean Output::isPID() {
 uint8_t Output::getOutput() {
   return static_cast<uint8_t>(_output / 2.55);
 }
+
+/*
+void Output::SetPidDirection(int direction) {
+  _pid->SetControllerDirection(direction);
+}
+*/
 
 ///////////////////////////
 // Event handling

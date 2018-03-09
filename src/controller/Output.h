@@ -21,8 +21,10 @@ public:
     void setOutput(uint8_t percentage);
     uint8_t getOutput();
     void setTargetValue(double target, float* input);
+    void setTargetValue(double target, float* input, int direction);
     void changeTargetValue(double target);
     double getTargetValue();
+    //void SetPidDirection(int direction);
     void process();
     boolean isActive();
     boolean isPID();

@@ -2,6 +2,7 @@
 #include "GenericProcess.h"
 #include "MashingProcess.h"
 #include "BoilingProcess.h"
+#include "CoolingProcess.h"
 #include "../controller/BrewsterController.h"
 
 ProcessManager::ProcessManager() {
@@ -14,7 +15,7 @@ void ProcessManager::initProcesses() {
 
   processes[BrewProcess::MASHING] = new MashingProcess(BrewProcess::MASHING, "Mashing");
   processes[BrewProcess::BOILING] = new BoilingProcess(BrewProcess::BOILING, "Boiling");
-  processes[BrewProcess::CHILLING] = new GenericProcess(BrewProcess::CHILLING, "Chilling");
+  processes[BrewProcess::COOLING] = new CoolingProcess(BrewProcess::COOLING, "Chilling");
   processes[BrewProcess::FERMENTING] = new GenericProcess(BrewProcess::FERMENTING, "Fermenting");
 
   for (ProcessMap::iterator it=processes.begin(); it!=processes.end(); ++it)

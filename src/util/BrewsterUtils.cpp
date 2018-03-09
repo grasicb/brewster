@@ -35,7 +35,7 @@ unsigned long BrewsterUtils::convertSeconds(unsigned long timeSeconds, TimeUOM t
       return ((unsigned long)timeSeconds)/86400;
 
     default:
-      Log.error("BrewsterUtils::getSeconds: Missing conversion for TimeUOM enum %i", (int)timeUOM);
+      Log.error("BrewsterUtils::convertSeconds: Missing conversion for TimeUOM enum %i", (int)timeUOM);
       return 0;
   }
 }

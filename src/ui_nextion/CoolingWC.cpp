@@ -12,7 +12,9 @@
 CoolingWC::CoolingWC() {
   logger = new Logger("CoolingWC");
 
-  tempSensor = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::BK));
+  tempSensorBK = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::BK));
+  tempSensorCooler = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT));
+  tempSensorFermentor = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::FERMENTOR));
 
   b1.attachPop(bTriggerProcessCB, new UIEvent(this, &b1));
   b2.attachPop(bTriggerProcessCB, new UIEvent(this, &b2));
@@ -27,15 +29,14 @@ CoolingWC::CoolingWC() {
 void CoolingWC::initializeScreen(void *ptr) {
   AWindowController::initializeScreen(ptr);
 
-  logger->info("Initializing boil screen");
-  pbProgress.setValue(0);
+  logger->info("Initializing cooling screen");
 
-  coolingProcess = BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::CHILLING);
-  if (boilProcess->isActive() && boilProcess->getRecipe() != NULL)
+  coolingProcess = BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::COOLING);
+  if (coolingProcess->isActive() && coolingProcess->getRecipe() != NULL)
     recipe = BrewsterController::get()->getRecipe();
   else {
     recipe = BrewsterController::get()->getRecipe();
-    boilProcess->setRecipe(recipe);
+    coolingProcess->setRecipe(recipe);
   }
 
   //Set button text
@@ -48,23 +49,33 @@ void CoolingWC::initializeScreen(void *ptr) {
   lastTempFermentor = 999;
 
   //Adding listener for change in process & output state
-  coolingProcess->addListener(processInfoChangeHandler, this);
   coolingProcess->addListener(processStateChangeHandler, this);
 }
 
 void CoolingWC::deactivateScreen() {
-  coolingProcess->removeListener(processInfoChangeHandler);
   coolingProcess->removeListener(processStateChangeHandler);
 }
 
 
 void CoolingWC::process() {
-  /*
-  if(lastTemp != tempSensor->getValue()) {
-    lastTemp = tempSensor->getValue();
-    tTemp.setText(String::format("%.1f", lastTemp));
+  if(lastTempBK != tempSensorBK->getValue()) {
+    lastTempBK = tempSensorBK->getValue();
+    tTempBK.setText(String::format("%.1f", lastTempBK));
   }
-  */
+
+  if(lastTempCooler != tempSensorCooler->getValue()) {
+    lastTempCooler = tempSensorCooler->getValue();
+    tTempCooler.setText(String::format("%.1f", lastTempCooler));
+  }
+
+  if(lastTempFermentor != tempSensorFermentor->getValue()) {
+    lastTempFermentor = tempSensorFermentor->getValue();
+    if(lastTempFermentor != 0)
+      tTempFermentor.setText(String::format("%.1f", lastTempFermentor));
+    else
+      tTempFermentor.setText("");
+  }
+
 
   updateTime();
 }

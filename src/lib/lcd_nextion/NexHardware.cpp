@@ -328,6 +328,7 @@ void nexLoop(NexTouch *nex_listen_list[])
         if (0xFF == __buffer[2] && 0xFF == __buffer[3] && 0xFF == __buffer[4])
         {
           dbSerialPrintln(__buffer[1]);
+          Log.trace("NexHardware.cpp Page opened: %i", __buffer[1]);
           NexTouch::iterate(nex_listen_list, __buffer[1], 0, (int32_t)NEX_EVENT_PUSH, NULL);
         }
 

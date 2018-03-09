@@ -12,7 +12,7 @@
 //Global structures
 const static uint8_t sensorLocationSize = 8;
 
-enum BrewProcess {NONE, MASHING, BOILING, CHILLING, FERMENTING};
+enum BrewProcess {NONE, MASHING, BOILING, COOLING, FERMENTING};
 enum ProcessState {STOPPED, STARTED, PAUSED};
 enum TimeUOM {second, minute, hour, day};
 enum QtyUOM {g, kg, ml, l};

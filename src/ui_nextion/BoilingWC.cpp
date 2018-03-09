@@ -69,7 +69,7 @@ void BoilingWC::process() {
 
 void BoilingWC::updateAdditions() {
   logger->trace("Update additions");
-  std::vector<AdditionDO> additions;
+  std::vector<AdditionDO*> additions;
   if(startTime>0)
     additions = recipe->getNextBoilAdditions(startTime);
   else
@@ -79,7 +79,7 @@ void BoilingWC::updateAdditions() {
   if(size>6)
     size = 6;
   for(int i=0; i<size; i++) {
-    tAdd[i].setText(String::format("%i %s: %.1f %s %s", additions[i].time, (const char*)TimeUOMNames[additions[i].timeUOM], additions[i].qty, (const char*)QtyUOMNames[additions[i].qtyUOM], (const char*)additions[i].name));
+    tAdd[i].setText(String::format("%i %s: %.1f %s %s", additions[i]->time, (const char*)TimeUOMNames[additions[i]->timeUOM], additions[i]->qty, (const char*)QtyUOMNames[additions[i]->qtyUOM], (const char*)additions[i]->name));
   }
 
   for(int i=size; i<6; i++) {

@@ -55,11 +55,16 @@ void WaterPreparationWC::deactivateScreen() {
 
 void WaterPreparationWC::refreshOutputStatus() {
   //Setting status of HLT output
-  if (outputHLT->isPID()) {
+  if (outputHLT->isPID() || !outputHLT->isActive()) {
     bHLTPower.setValue((uint32_t)outputHLT->isActive());
     nTargetHLT.setValue((uint32_t)outputHLT->getTargetValue());
-    NexSendCommand("vis bt1,1");
-    NexSendCommand("vis bt3,1");
+
+    uint32_t settingsEnabled;
+    bHLTSettings.getValue(&settingsEnabled);
+    if(settingsEnabled==1) {
+      NexSendCommand("vis bt1,1");
+      NexSendCommand("vis bt3,1");
+    }
   }else {
     logger->warn("HLT outout is not in PID setting. Disabling control of this output from the current window.");
     nTargetHLT.setValue((uint32_t)outputHLT->getOutput());
@@ -68,11 +73,16 @@ void WaterPreparationWC::refreshOutputStatus() {
   }
 
   //Setting status of BK output
-  if (outputHLT->isPID()) {
+  if (outputHLT->isPID() || !outputHLT->isActive()) {
     bBKPower.setValue((uint32_t)outputBK->isActive());
     nTargetBK.setValue((uint32_t)outputHLT->getTargetValue());
-    NexSendCommand("vis bt2,1");
-    NexSendCommand("vis bt4,1");
+
+    uint32_t settingsEnabled;
+    bBKSettings.getValue(&settingsEnabled);
+    if(settingsEnabled==1) {
+      NexSendCommand("vis bt2,1");
+      NexSendCommand("vis bt4,1");
+    }
   }else {
     logger->warn("HLT outout is not in PID setting. Disabling control of this output from the current window.");
     nTargetBK.setValue((uint32_t)outputBK->getOutput());
@@ -101,26 +111,30 @@ void WaterPreparationWC::bTriggerPowerCB(void *ptr)
   WaterPreparationWC *wc = (WaterPreparationWC *) obj->getWindowController();
   NexDSButton *button = (NexDSButton *) obj->getButton();
 
-  wc->logger->trace("Trigger power button.");
-
   Output *output;
   uint32_t targetValue;
-  uint32_t switchState = button->getValue(&switchState);
+  //uint32_t switchState = button->getValue(&switchState);
+  uint32_t switchState=0;
   float *temperatureReference;
-
 
   //Power button triggered for HLT
   if(button == &wc->bHLTPower) {
     temperatureReference = wc->tempSensorHLT->getValueReference();
     wc->nTargetHLT.getValue(&targetValue);
+    wc->bHLTPower.getValue(&switchState);
     output = wc->outputHLT;
+
+    wc->logger->trace("Trigger power button for HLT [swtich=%i]", switchState);
   }
 
   //Power button triggered for BK
   if(button == &wc->bBKPower) {
     temperatureReference = wc->tempSensorBK->getValueReference();
     wc->nTargetBK.getValue(&targetValue);
+    wc->bBKPower.getValue(&switchState);
     output = wc->outputBK;
+
+    wc->logger->trace("Trigger power button for BK [swtich=%i]", switchState);
   }
 
   //Set the output
@@ -138,9 +152,9 @@ void WaterPreparationWC::bTriggerSettingsCB(void *ptr)
     //logger->info("Search sensors button pressed");
   UIEvent *obj = (UIEvent *) ptr;
   WaterPreparationWC *wc = (WaterPreparationWC *) obj->getWindowController();
-  NexButton *button = (NexButton *) obj->getButton();
+  NexDSButton *button = (NexDSButton *) obj->getButton();
 
-  wc->logger->trace("Trigger power button.");
+  wc->logger->trace("Trigger settings button.");
 
   Output *output;
   uint32_t targetValue;
@@ -175,6 +189,5 @@ void WaterPreparationWC::outputChangedEvent(void* callingObject, int outputIdent
 
   wc->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);
 
-  ControllerOutput out = (ControllerOutput)outputIdentifier;
   wc->refreshOutputStatus();
 }

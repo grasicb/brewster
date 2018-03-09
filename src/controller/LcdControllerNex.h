@@ -12,6 +12,7 @@
 #include "../ui_nextion/MashStepChange.h"
 #include "../ui_nextion/BoilingWC.h"
 #include "../ui_nextion/CoolingWC.h"
+#include "../ui_nextion/WaterPreparationWC.h"
 
 class LcdControllerNex {
 public:
@@ -43,6 +44,7 @@ private:
     MashStepChange *mashStepChangeWC;
     BoilingWC *boilingWC;
     CoolingWC *coolingWC;
+    WaterPreparationWC *waterPreparationWC;
 
     NexPage loadingPage = NexPage(0, 0, "loading_page");
     NexPage mainPage = NexPage(1, 0, "main_page");
@@ -54,6 +56,7 @@ private:
     NexPage boilPage = NexPage(7, 0, "boiling");
     NexPage mashStepChangePage = NexPage(10, 0, "mashing_change");
     NexPage coolingPage = NexPage(8, 0, "cooling");
+    NexPage waterPreparationPage = NexPage(11, 0, "water_prep");
 
     static void windowOpenCallback(void *ptr);
 };

@@ -43,11 +43,12 @@ void BrewsterController::initRecipe() {
   recipe->addMashingStep("Step 4", 5, TimeUOM::minute, 74);
 
   recipe->setBoilingTime(60);
-  recipe->addBoilAddition("Styrian Golding", 20, QtyUOM::g, 0, TimeUOM::minute);
-  recipe->addBoilAddition("Amarillo", 15, QtyUOM::g, 30, TimeUOM::minute);
-  recipe->addBoilAddition("Cascade", 20, QtyUOM::g, 45, TimeUOM::minute);
-  recipe->addBoilAddition("Amarillo", 15, QtyUOM::g, 45, TimeUOM::minute);
-  recipe->addBoilAddition("Irish moss", 11, QtyUOM::g, 45, TimeUOM::minute);
+  recipe->setTargetChillingTemperature(23);
+  recipe->addBoilAddition("Styrian Golding", 20, QtyUOM::g, 2, TimeUOM::minute);
+  recipe->addBoilAddition("Amarillo", 15, QtyUOM::g, 2, TimeUOM::minute);
+  recipe->addBoilAddition("Cascade", 20, QtyUOM::g, 1, TimeUOM::minute);
+  recipe->addBoilAddition("Amarillo", 15, QtyUOM::g, 4, TimeUOM::minute);
+  recipe->addBoilAddition("Irish moss", 11, QtyUOM::g, 8, TimeUOM::minute);
 
   recipe->printRecipe();
   recipe->storeToEEPROM();

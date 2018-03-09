@@ -29,6 +29,9 @@ void Process::start() {
     storeToEEPROM();
   }
 
+  //Triggering the same process on the implemented class for a given process
+  processStarted();
+
   //Triggering state change events
   event.newState = state;
   event.process = this;
@@ -47,6 +50,9 @@ void Process::stop() {
   startTime = 0;
   state = ProcessState::STOPPED;
   storeToEEPROM();
+
+  //Triggering the same process on the implemented class for a given process
+  processStopped();
 
   //Triggering state change events
   event.newState = state;
@@ -69,6 +75,9 @@ void Process::pause() {
     state = ProcessState::PAUSED;
     storeToEEPROM();
   }
+
+  //Triggering the same process on the implemented class for a given process
+  processPaused();
 
   //Triggering state change events
   event.newState = state;
@@ -93,6 +102,9 @@ void Process::resume() {
     state = ProcessState::STARTED;
     storeToEEPROM();
   }
+
+  //Triggering the same process on the implemented class for a given process
+  processResumed();
 
   //Triggering state change events
   event.newState = state;
@@ -126,6 +138,13 @@ void Process::loadFromEEPROM() {
 void Process::restoreProcess() {
   loadFromEEPROM();
   processRestored();
+
+  ProcessStateChangeEvent event;
+  event.oldState = ProcessState::PAUSED;
+  event.newState = state;
+  event.process = this;
+  if (event.oldState != event.newState)
+    triggerStateChangeEvent(event);
 }
 
 unsigned long Process::getStartTime() {
@@ -193,6 +212,8 @@ void Process::removeAllStateChangeListeners() {
 }
 
 void Process::triggerStateChangeEvent(ProcessStateChangeEvent& event)  {
+  /*
+  // Old logic with problems on restoring process after system restart
   if(event.newState == ProcessState::STARTED && event.oldState == ProcessState::STOPPED)
     processStarted();
   else if(event.newState == ProcessState::STARTED && event.oldState == ProcessState::PAUSED)
@@ -201,6 +222,7 @@ void Process::triggerStateChangeEvent(ProcessStateChangeEvent& event)  {
     processStopped();
   else if(event.newState == ProcessState::PAUSED)
     processPaused();
+  */
 
   for (StateChangeListenerMap::iterator it=listenersStateChange.begin(); it!=listenersStateChange.end(); ++it)
     it->first(it->second.callingObject, event);
