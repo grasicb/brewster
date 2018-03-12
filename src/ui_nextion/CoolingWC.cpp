@@ -19,12 +19,15 @@ CoolingWC::CoolingWC() {
   b1.attachPop(bTriggerProcessCB, new UIEvent(this, &b1));
   b2.attachPop(bTriggerProcessCB, new UIEvent(this, &b2));
   bPump.attachPop(triggerPumpButtonAH, new UIEvent(this, &bPump));
+  bSettings.attachPop(triggerSettingsButtonAH, new UIEvent(this, &bSettings));
+
 
   listenerList = new NexTouch*[4];
   listenerList[0] = &b1;
   listenerList[1] = &b2;
   listenerList[2] = &bPump;
-  listenerList[3] = NULL;
+  listenerList[3] = &bSettings;
+  listenerList[4] = NULL;
 }
 
 
@@ -50,6 +53,7 @@ void CoolingWC::initializeScreen(void *ptr) {
   //Set button text
   setStartTime();
   updateButtonText();
+  nTargetTemp.setValue(recipe->getTargetCoollingTemperature());
 
   //Set pump status
   if(BrewsterController::get()->isOutputActive(coolingPump))
@@ -185,6 +189,28 @@ void CoolingWC::triggerPumpButtonAH(void *ptr) {
       BrewsterController::get()->getOutput(coolingPump)->setOutput(0);
     else
       BrewsterController::get()->getOutput(coolingPump)->setOutput(50);
+  }
+}
+
+void CoolingWC::triggerSettingsButtonAH(void *ptr) {
+  UIEvent *obj = (UIEvent *) ptr;
+  NexDSButton *button = (NexDSButton *)obj->getButton();
+  CoolingWC *wc = (CoolingWC *) obj->getWindowController();
+  wc->logger->trace("Settings button pressed");
+
+  uint32_t value;
+  button->getValue(&value);
+
+  //Set the new target value in the recipe if the value has been changed
+  if(value == 0) {
+    wc->nTargetTemp.getValue(&value);
+
+    wc->recipe->setTargetCoollingTemperature(value);
+    //If the process is running, pause and resume the process in order to activate the new target value
+    if(wc->coolingProcess->getState() == ProcessState::STARTED) {
+      wc->coolingProcess->pause();
+      wc->coolingProcess->resume();
+    }
   }
 }
 

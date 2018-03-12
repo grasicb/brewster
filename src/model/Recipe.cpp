@@ -97,12 +97,12 @@ uint8_t Recipe::getBoilingTime() {
   return recipe.boilingTime;
 }
 
-void Recipe::setTargetChillingTemperature(uint8_t temperature) {
-  recipe.targetChillingTemperature = temperature;
+void Recipe::setTargetCoollingTemperature(uint8_t temperature) {
+  recipe.targetCoolingTemperature = temperature;
 }
 
-uint8_t Recipe::getTargetChillingTemperature() {
-  return recipe.targetChillingTemperature;
+uint8_t Recipe::getTargetCoollingTemperature() {
+  return recipe.targetCoolingTemperature;
 }
 
 /************************

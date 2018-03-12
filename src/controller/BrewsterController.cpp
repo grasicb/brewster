@@ -43,7 +43,7 @@ void BrewsterController::initRecipe() {
   recipe->addMashingStep("Step 4", 5, TimeUOM::minute, 74);
 
   recipe->setBoilingTime(60);
-  recipe->setTargetChillingTemperature(23);
+  recipe->setTargetCoollingTemperature(23);
   recipe->addBoilAddition("Styrian Golding", 20, QtyUOM::g, 2, TimeUOM::minute);
   recipe->addBoilAddition("Amarillo", 15, QtyUOM::g, 2, TimeUOM::minute);
   recipe->addBoilAddition("Cascade", 20, QtyUOM::g, 1, TimeUOM::minute);

@@ -58,6 +58,7 @@ private:
   //Callback functions
   static void bTriggerProcessCB(void *ptr);
   static void triggerPumpButtonAH(void *ptr);
+  static void triggerSettingsButtonAH(void *ptr);
   static void processStateChangeHandler(void* callingObject, ProcessStateChangeEvent event);
   static void pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event);
 };
