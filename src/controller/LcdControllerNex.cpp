@@ -78,6 +78,7 @@ void LcdControllerNex::showMainPage() {
   boilingWC = new BoilingWC();
   coolingWC = new CoolingWC();
   waterPreparationWC = new WaterPreparationWC();
+  pidCalibrationWC = new PIDCalibrationWC();
 
   //Register event handlers for pages
   mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, commonWC));
@@ -90,6 +91,7 @@ void LcdControllerNex::showMainPage() {
   boilPage.attachPop(windowOpenCallback, new PageEvent(this, &boilPage, boilingWC));
   coolingPage.attachPop(windowOpenCallback, new PageEvent(this, &coolingPage, coolingWC));
   waterPreparationPage.attachPop(windowOpenCallback, new PageEvent(this, &waterPreparationPage, waterPreparationWC));
+  pidCalibrationPage.attachPop(windowOpenCallback, new PageEvent(this, &pidCalibrationPage, pidCalibrationWC));
 
   //Save pages, which should be listened for events
   page_list = new NexTouch*[30];//malloc(sizeof(&mainPage)*4);
@@ -104,6 +106,7 @@ void LcdControllerNex::showMainPage() {
   page_list[i++] = &boilPage;
   page_list[i++] = &coolingPage;
   page_list[i++] = &waterPreparationPage;
+  page_list[i++] = &pidCalibrationPage;
   page_list[i++] = NULL;
 
   nex_listen_list = NULL;

@@ -22,7 +22,7 @@ CoolingWC::CoolingWC() {
   bSettings.attachPop(triggerSettingsButtonAH, new UIEvent(this, &bSettings));
 
 
-  listenerList = new NexTouch*[4];
+  listenerList = new NexTouch*[5];
   listenerList[0] = &b1;
   listenerList[1] = &b2;
   listenerList[2] = &bPump;
