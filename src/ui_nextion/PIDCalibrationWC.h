@@ -29,6 +29,11 @@ private:
 
   //Boil process information
   std::vector<String> output;
+  PID *pid;
+  PID_ATune *aTune;
+  double kp;
+  double ki;
+  double kd;
 
   //UI Refresh functions
   void addOutput(String text);
