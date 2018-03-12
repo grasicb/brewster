@@ -4,6 +4,10 @@
 #include "../util/BrewsterUtils.h"
 #include "UIEvent.h"
 
+#include "../lib/pid/PID.h"
+#include "../lib/pid_autotune/PID_ATune.h"
+
+
 PIDCalibrationWC::PIDCalibrationWC() {
   logger = new Logger("PIDCalibrationWC");
 
@@ -66,5 +70,15 @@ void PIDCalibrationWC::bTriggerCalibrationButtonCB(void *ptr) {
   wc->logger->trace("PID calibration button pressed");
 
   //Business logic
+
+  //Init variables
+  kp=2;
+  ki=0.5;
+  kd=2;
+  pid = new PID(&input, &output, &setpoint,kp,ki,kd, DIRECT);
+  aTune = new PID_ATune(&input, &output);
+
+  pid.SetMode(AUTOMATIC);
+  
 
 }
