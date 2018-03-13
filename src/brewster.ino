@@ -116,12 +116,14 @@ void setup() {
 	lcd->showMainPage();
 
 	Log.info("Setup done. Brewster is ready");
+  Particle.publish("brewsterNotification", "Brewster started", PRIVATE);
 }
 
 void loop(void) {
   //Output a hearthbeat every 30 sec
 	if(millis()-lastHearthBeat > 30000) {
 		Log.info("...brewster is active...");
+//    Particle.publish("brewsterNotification", "...brewster is active...", PRIVATE);
 		lastHearthBeat = millis();
 	}
 	//LcdControllerNex::get()->processMessages();

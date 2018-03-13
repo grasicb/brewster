@@ -21,6 +21,11 @@ private:
   void updateStepStatus();
 
   boolean boilingPointReached;
+  boolean boilingAlarm;
+  boolean nextAdditionAlarm1;
+  boolean nextAdditionAlarm2;
+  unsigned long alarm1 = 180;
+  unsigned long alarm2 = 60;
   long boilStopTime;
   long nextAdditionTime;
 

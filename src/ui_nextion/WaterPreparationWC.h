@@ -36,6 +36,10 @@ private:
   Output *outputBK;
   float lastTempHLT = 0;
   float lastTempBK = 0;
+  boolean notificationHLT = true;
+  boolean notificationBK = true;
+  float targetTempHLT = 0;
+  float targetTempBK = 0;
 
   //Sreen related functions
   void refreshOutputStatus();

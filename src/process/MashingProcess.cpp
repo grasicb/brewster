@@ -1,5 +1,6 @@
 #include "MashingProcess.h"
 #include "../controller/BrewsterController.h"
+#include "../controller/Speaker.h"
 
 MashingProcess::MashingProcess(BrewProcess type, String name): Process(type, name) {
   lastTick = Time.now();
@@ -23,7 +24,7 @@ void MashingProcess::process() {
     Particle.publish("tempMashing", String::format("%.2f;%.2f;%.2f;%.2f",
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::MT).getValue(),
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue(),
-            BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValue(), 
+            BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValue(),
             currentStep->temperature),
         PRIVATE);
   }
@@ -32,10 +33,12 @@ void MashingProcess::process() {
     if(nextStep == NULL) {
         logger->info("No further mashing steps. Stopping mashing process");
         stop();
+        Speaker::playComplete();
     }else{
       logger->info("Moving to next step[%s - %i %s @ %i °C]", (const char*)nextStep->name, nextStep->time, (const char*)TimeUOMNames[nextStep->timeUOM], nextStep->temperature);
       updateOutput();
       triggerInfoChangeEvent();
+      Speaker::playBeep();
     }
   }
 }

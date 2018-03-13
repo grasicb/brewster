@@ -1,6 +1,7 @@
 #include "WaterPreparationWC.h"
 #include "../controller/BrewsterController.h"
 #include "../controller/TemperatureSensor.h"
+#include "../controller/Speaker.h"
 #include "UIEvent.h"
 #include <map>
 
@@ -44,6 +45,11 @@ void WaterPreparationWC::initializeScreen(void *ptr) {
 
   refreshOutputStatus();
 
+  notificationHLT = true;
+  notificationBK = true;
+  targetTempHLT = 999;
+  targetTempBK = 999;
+
   outputHLT->addListener(outputChangedEvent, this, mashHeater);
   outputBK->addListener(outputChangedEvent, this, boilHeater);
 }
@@ -85,6 +91,8 @@ void WaterPreparationWC::refreshOutputStatus() {
 
 
 void WaterPreparationWC::process() {
+
+  //Update temperature display
   if(lastTempHLT != tempSensorHLT->getValue()) {
     lastTempHLT = tempSensorHLT->getValue();
     tTempHLT.setText(String::format("%.1f", lastTempHLT));
@@ -93,6 +101,17 @@ void WaterPreparationWC::process() {
   if(lastTempBK != tempSensorBK->getValue()) {
     lastTempBK = tempSensorBK->getValue();
     tTempBK.setText(String::format("%.1f", lastTempBK));
+  }
+
+  //Notification when target temperature is reached
+  if(!notificationHLT && targetTempHLT < lastTempHLT) {
+    Speaker::playBeep();
+    notificationHLT = true;
+  }
+
+  if(!notificationBK && targetTempBK < lastTempBK) {
+    Speaker::playBeep();
+    notificationBK = true;
   }
 }
 
@@ -116,6 +135,11 @@ void WaterPreparationWC::bTriggerPowerCB(void *ptr)
     wc->bHLTPower.getValue(&switchState);
     output = wc->outputHLT;
 
+    if(switchState>0) {
+      wc->targetTempHLT = (float)targetValue;
+      wc->notificationHLT = false;
+    }
+
     wc->logger->trace("Trigger power button for HLT [swtich=%i]", switchState);
   }
 
@@ -125,6 +149,11 @@ void WaterPreparationWC::bTriggerPowerCB(void *ptr)
     wc->nTargetBK.getValue(&targetValue);
     wc->bBKPower.getValue(&switchState);
     output = wc->outputBK;
+
+    if(switchState>0) {
+      wc->targetTempBK = (float)targetValue;
+      wc->notificationBK = false;
+    }
 
     wc->logger->trace("Trigger power button for BK [swtich=%i]", switchState);
   }
@@ -158,6 +187,11 @@ void WaterPreparationWC::bTriggerSettingsCB(void *ptr)
     wc->nTargetHLT.getValue(&targetValue);
     switchState = wc->bHLTPower.getValue(&switchState);
     output = wc->outputHLT;
+
+    if(switchState>0) {
+      wc->targetTempHLT = (float)targetValue;
+      wc->notificationHLT = false;
+    }
   }
 
   //Power button triggered for BK
@@ -165,6 +199,11 @@ void WaterPreparationWC::bTriggerSettingsCB(void *ptr)
     wc->nTargetBK.getValue(&targetValue);
     switchState = wc->bBKPower.getValue(&switchState);
     output = wc->outputBK;
+
+    if(switchState>0) {
+      wc->targetTempBK = (float)targetValue;
+      wc->notificationBK = false;
+    }
   }
 
   //Set the output
