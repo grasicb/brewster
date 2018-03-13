@@ -68,7 +68,7 @@ private:
   boolean autoTune = false;
   double aTuneStep=50;
   double aTuneNoise=1;
-  //double aTuneStartValue=100;
+  double aTuneStartValue=100;
   unsigned int aTuneLookBack=20;
   byte aTuneModeRemember=2;
   unsigned long autoTuneUpdate=0;

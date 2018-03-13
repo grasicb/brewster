@@ -114,19 +114,33 @@ void PIDCalibrationWC::bTriggerCalibrationButtonCB(void *ptr) {
     wc->logger->info("Output %s is active. Stopping the output before starting autotune.", (const char*)output->getName());
     output->setOutput(0);
   }
+
+  wc->logger->trace(String::format("PID[o:%s, p=%.1f, i=%.1f, d=%.1f]", (const char*)output->getName(), pidSettings->kp, pidSettings->ki, pidSettings->kd));
+  BrewsterGlobals::get()->loadPIDSettings();
+  pidSettings = &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::BOILING]);
+  pidSettings->kp = 2;
+  pidSettings->ki = 0.5;
+  pidSettings->kd = 2;
+  wc->logger->trace(String::format("PID[o:%s, p=%.1f, i=%.1f, d=%.1f]", (const char*)output->getName(), pidSettings->kp, pidSettings->ki, pidSettings->kd));
+  wc->logger->trace("t1");
   output->setTargetValue(target, input, direction, pidSettings);
+  wc->logger->trace("t2");
   PidSettings* ps = output->getPIDSettings();
-  wc->addOutput(String::format("Autotune started [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)output->getName(), ps->kp, ps->ki, ps->kd));
+  wc->logger->trace("t3");
+  output->toggleAutoTune();
+  wc->logger->trace("t4");
+  wc->addOutput(String::format("Started[o:%s,p=%.1f,i=%.1f,d=%.1f]", (const char*)output->getName(), ps->kp, ps->ki, ps->kd));
+  wc->logger->trace("t5");
 }
 
 void PIDCalibrationWC::outputChangedCB(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
   PIDCalibrationWC *wc = (PIDCalibrationWC *) callingObject;
   wc->logger->info("Output status changed [output: %s]", (const char*)event.output->getName());
   BrewProcess bp = (BrewProcess) outputIdentifier;
-
+/*
   PidSettings* ps = event.output->getPIDSettings();
   if(!event.output->isAutoTune()) {
-    wc->addOutput(String::format("Autotune complete [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
+    wc->addOutput(String::format("Complete[o:%s,p=%.1f,i=%.1f,d=%.1f]", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
     event.output->removeListener(outputChangedCB);
     //Storing PID values
     PidSettings ps1 = BrewsterGlobals::get()->getPIDSettings()[bp];
@@ -134,8 +148,9 @@ void PIDCalibrationWC::outputChangedCB(void* callingObject, int outputIdentifier
     ps1.ki = ps->ki;
     ps1.kd = ps->kd;
     BrewsterGlobals::get()->storePIDSettings();
-    
+
   }else {
     wc->addOutput(String::format("  output status changed [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
   }
+  */
 }

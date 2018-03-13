@@ -21,7 +21,8 @@ void MashingProcess::process() {
 
   if (Time.now() - lastTempLogged > logIntervalMashing) {
     lastTempLogged = Time.now();
-    Particle.publish("tempMashing", String::format("%.2f;%.2f;%.2f;%.2f",
+    Particle.publish("tempMashing", String::format("%ul;%.2f;%.2f;%.2f;%.2f",
+            Time.now()-getStartTime(),
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::MT).getValue(),
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue(),
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValue(),

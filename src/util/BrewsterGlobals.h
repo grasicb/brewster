@@ -33,7 +33,7 @@ const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettl
 const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
 const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
 
-const static unsigned long logIntervalMashing = 10;
+const static unsigned long logIntervalMashing = 9;
 //const static unsigned long logIntervalFermentation = ;
 
 
@@ -66,6 +66,7 @@ public:
     Mutex i2cMutex;
     t_map_pidSettings& getPIDSettings();
     void storePIDSettings();
+    void loadPIDSettings();
 
     //PIN Assignment
     static const uint8_t pinOneWire = 0x18; //0x18 - this is via i2c BUS
@@ -83,8 +84,6 @@ private:
     static BrewsterGlobals* instance;
     Logger *logger;
     t_map_pidSettings pidSettings;
-
-    void loadPIDSettings();
 };
 
 #endif // BREWSTER_GLOBALS_H

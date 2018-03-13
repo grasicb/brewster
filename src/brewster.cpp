@@ -130,7 +130,6 @@ void setup() {
 	lcd->showMainPage();
 
 	Log.info("Setup done. Brewster is ready");
-  Particle.publish("brewsterNotification", "Brewster started", PRIVATE);
 }
 
 void loop(void) {

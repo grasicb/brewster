@@ -68,7 +68,7 @@ void Output::setTargetValue(double target, float* input, PidSettings *settings) 
   _pidOn = true;
 
   triggerChangeEvent();
-  _logger->info("Target value is set to to %4.1f°", _target);
+  _logger->info("Target value is set to to %4.1f° [PID o:%s, p=%.1f, i=%.1f, d=%.1f]", _target, (const char*) getName(), pidSettings->kp, pidSettings->ki, pidSettings->kd);
 }
 
 void Output::setTargetValue(double target, float* input, int direction, PidSettings *settings) {
@@ -110,8 +110,8 @@ void Output::process() {
         _pid->SetTunings(pidSettings->kp,pidSettings->ki,pidSettings->kd);
 
         toggleAutoTune();
-      }else if(millis()-autoTuneUpdate > 1000){
-        _logger->info("Autotune in progress [p=%.1f, i=%.1f, d=%.1d]", pidATune->GetKp(), pidATune->GetKi(), pidATune->GetKd());
+      }else if(millis()-autoTuneUpdate > 10000){
+        _logger->info("Autotune in progress");
         autoTuneUpdate = millis();
       }
     }
@@ -175,22 +175,26 @@ boolean Output::isAutoTune() {
 }
 
 void Output::toggleAutoTune() {
+
   if(!autoTune) {
-    _logger->info("PID autotune started [p=%.1f, i=%.1f, d=%.1d]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
+    _logger->info("PID autotune started [p=%.1f, i=%.1f, d=%.1f]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
     if(pidATune == NULL) {
       pidATune = new PID_ATune(_input, &_output);
     }
+    /*
+    _output = aTuneStartValue;
     pidATune->SetNoiseBand(aTuneNoise);
     pidATune->SetOutputStep(aTuneStep);
     pidATune->SetLookbackSec((int)aTuneLookBack);
+    */
     aTuneModeRemember = _pid->GetMode();
     autoTune = true;
     triggerChangeEvent();
 
   }else{
-    _logger->info("PID autotune stopped [p=%.1f, i=%.1f, d=%.1d]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
+    _logger->info("PID autotune stopped [p=%.1f, i=%.1f, d=%.1f]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
     pidATune->Cancel();
-    delete pidATune;
+    //delete pidATune;
     pidATune = NULL;
     _pid->SetMode(aTuneModeRemember);
     autoTune = false;

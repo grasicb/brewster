@@ -57,8 +57,16 @@ int PID_ATune::Runtime()
 
 	//oscillate the output base on the input's relation to the setpoint
 
-	if(refVal>setpoint+noiseBand) *output = outputStart-oStep;
-	else if (refVal<setpoint-noiseBand) *output = outputStart+oStep;
+	if(refVal>setpoint+noiseBand) {
+		*output = outputStart-oStep;
+		Log.trace("Output dec: %.1f", *output);
+	}
+	else if (refVal<setpoint-noiseBand) {
+		*output = outputStart+oStep;
+		Log.trace("Output inc: %.1f", *output);
+	} else {
+		Log.trace("Output remains the same [refVal=%.1f, setpoint=%.1f, noiseBand=%.1f, absMax=%.1f, absMin=%.1f].", refVal, setpoint, noiseBand, absMax, absMin);
+	}
 
 
   //bool isMax=true, isMin=true;
