@@ -18,6 +18,16 @@ void MashingProcess::process() {
     logger->trace("Mashing process is active.");
   }
 
+  if (Time.now() - lastTempLogged > logIntervalMashing) {
+    lastTempLogged = Time.now();
+    Particle.publish("tempMashing", String::format("%.2f;%.2f;%.2f;%.2f",
+            BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::MT).getValue(),
+            BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue(),
+            BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValue(), 
+            currentStep->temperature),
+        PRIVATE);
+  }
+
   if(Time.now() > nextStepStartTime) {
     if(nextStep == NULL) {
         logger->info("No further mashing steps. Stopping mashing process");

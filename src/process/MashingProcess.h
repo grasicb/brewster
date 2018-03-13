@@ -22,6 +22,7 @@ private:
   unsigned long nextStepStartTime;
 
   unsigned long lastTick;
+  unsigned long lastTempLogged;
   StepDO* currentStep;
   StepDO* nextStep;
 };

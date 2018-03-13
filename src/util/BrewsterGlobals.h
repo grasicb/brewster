@@ -33,6 +33,9 @@ const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettl
 const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
 const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
 
+const static unsigned long logIntervalMashing = 10;
+//const static unsigned long logIntervalFermentation = ;
+
 
 //EEPROM Locations
 #define EEPROM_ACTIVE_PROCESS 0
