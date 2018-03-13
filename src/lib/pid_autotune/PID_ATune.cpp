@@ -2,7 +2,7 @@
 #include "PID_ATune.h"
 
 
-PID_ATune::PID_ATune(double* Input, double* Output)
+PID_ATune::PID_ATune(float* Input, double* Output)
 {
 	input = Input;
 	output = Output;

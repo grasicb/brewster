@@ -221,7 +221,7 @@ void CoolingWC::processStateChangeHandler(void* callingObject, ProcessStateChang
   wc->updateButtonText();
 }
 
-void CoolingWC::pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
+void CoolingWC::pumpStateChanged(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
   CoolingWC *wc = (CoolingWC *) callingObject;
 
   wc->logger->info("Output event change received for cooling pump [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);

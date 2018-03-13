@@ -244,7 +244,7 @@ void MashingWC::processStateChangeHandler(void* callingObject, ProcessStateChang
   }
 }
 
-void MashingWC::pumpStateChanged(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
+void MashingWC::pumpStateChanged(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
   MashingWC *w = (MashingWC *) callingObject;
 
   w->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);

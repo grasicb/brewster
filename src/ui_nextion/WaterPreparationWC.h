@@ -43,5 +43,5 @@ private:
   //Callback functions
   static void bTriggerPowerCB(void *ptr);
   static void bTriggerSettingsCB(void *ptr);
-  static void outputChangedEvent(void* callingObject, int outputIdentifier, OutputChangeEvent event);
+  static void outputChangedEvent(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event);
 };

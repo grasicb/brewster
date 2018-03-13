@@ -72,7 +72,7 @@ void WaterPreparationWC::refreshOutputStatus() {
   if (outputHLT->isPID() || !outputHLT->isActive()) {
     bBKPower.setValue((uint32_t)outputBK->isActive());
     nTargetBK.setValue((uint32_t)outputHLT->getTargetValue());
-    
+
     NexSendCommand("vis bt2,1");
     NexSendCommand("vis bt4,1");
   }else {
@@ -176,7 +176,7 @@ void WaterPreparationWC::bTriggerSettingsCB(void *ptr)
 /////////////////////////////////
 // Output Callback functions
 /////////////////////////////////
-void WaterPreparationWC::outputChangedEvent(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
+void WaterPreparationWC::outputChangedEvent(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
   WaterPreparationWC *wc = (WaterPreparationWC *) callingObject;
 
   wc->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);

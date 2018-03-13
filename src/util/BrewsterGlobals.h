@@ -5,6 +5,13 @@
 #include "mutex"
 #include "map"
 
+//Global structures
+struct PidSettings {
+  double kp;
+  double ki;
+  double kd;
+};
+
 //Global switches
 #define BUTTON_TONE 0
 #define OUTPUT_NUMBER 4
@@ -12,7 +19,7 @@
 //Global structures
 const static uint8_t sensorLocationSize = 8;
 
-enum BrewProcess {NONE, MASHING, BOILING, COOLING, FERMENTING};
+enum BrewProcess {NONE, MASHING, BOILING, COOLING, FERMENTING, WATER_PREP};
 enum ProcessState {STOPPED, STARTED, PAUSED};
 enum TimeUOM {second, minute, hour, day};
 enum QtyUOM {g, kg, ml, l};
@@ -30,9 +37,9 @@ const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
 //EEPROM Locations
 #define EEPROM_ACTIVE_PROCESS 0
 #define EEPROM_PROCESS_START 4
+#define EEPROM_PID_SETTINGS 50 //Size: 1 byte status, 24 bytes per process, 5 process = 121 bytes //uint8_t
 #define EEPROM_RECIPE 1000
 const static int EEPROM_PROCESS_DATA[] = {0, 8, 18, 28, 38};
-
 
 
 //Global type definitions
@@ -45,33 +52,25 @@ const static uint8_t boilHeatingRate = 5;
 const static float boilingPoint = 35;
 //const static uint8_t coolingPumpMaxFlow = 80; //TO BE IMPLEMENTED
 
+//Type definitions
+using t_map_pidSettings = std::map<BrewProcess, PidSettings>;
 
 class BrewsterGlobals {
 public:
     static BrewsterGlobals* get();
     ~BrewsterGlobals( );
 
+    Mutex i2cMutex;
+    t_map_pidSettings& getPIDSettings();
+
     //PIN Assignment
     static const uint8_t pinOneWire = 0x18; //0x18 - this is via i2c BUS
+    static const uint8_t addrOneWire = 0x18;
     static const uint8_t pinAC1 = WKP;
     static const uint8_t pinAC2 = A6;
     static const uint8_t pinDC1 = D3;
     static const uint8_t pinDC2 = D2;
     static const uint8_t pinSpeaker = D4;
-
-    /* Not used anymore
-    static const uint8_t tftCS = A2;
-    static const uint8_t tftDC = A0;
-    static const uint8_t tftRST = A1;
-    static const uint8_t touchCS = D6;
-    static const uint8_t touchIRQ = D7;
-    */
-
-    static const uint8_t addrOneWire = 0x18;
-
-    uint8_t global_spi_clock = 0;
-
-    Mutex i2cMutex;
 
 private:
     BrewsterGlobals();
@@ -79,6 +78,10 @@ private:
     void operator=(BrewsterGlobals const&);   // Don't implement
     static BrewsterGlobals* instance;
     Logger *logger;
+    t_map_pidSettings pidSettings;
+
+    void loadPIDSettings();
+    void storePIDSettings();
 };
 
 #endif // BREWSTER_GLOBALS_H

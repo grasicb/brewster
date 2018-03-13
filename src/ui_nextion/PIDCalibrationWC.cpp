@@ -67,37 +67,54 @@ void PIDCalibrationWC::bTriggerCalibrationButtonCB(void *ptr) {
   UIEvent *obj = (UIEvent *) ptr;
   NexButton *button = (NexButton *)obj->getButton();
   PIDCalibrationWC *wc = (PIDCalibrationWC *) obj->getWindowController();
-  wc->logger->trace("PID calibration button pressed");
+  wc->logger->info("PID calibration button pressed");
 
   //Business logic
-
-  //Init variables
-  kp=2;
-  ki=0.5;
-  kd=2;
-  pid = new PID(&input, &output, &setpoint,kp,ki,kd, DIRECT);
-  aTune = new PID_ATune(&input, &output);
-
-  pid.SetMode(AUTOMATIC);
-
-
-  //Compute - loop
-  if(tuning)
-  {
-    byte val = (aTune.Runtime());
-    if (val!=0)
-    {
-      tuning = false;
-    }
-    if(!tuning)
-    { //we're done, set the tuning parameters
-      kp = aTune.GetKp();
-      ki = aTune.GetKi();
-      kd = aTune.GetKd();
-      myPID.SetTunings(kp,ki,kd);
-      AutoTuneHelper(false);
-    }
+  Output *output = NULL;
+  float *input = NULL;
+  double target;
+  //Setting params based on button press
+  if(button == &wc->bHLT) {
+    output = BrewsterController::get()->getOutput(mashHeater);
+    input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
+    target = (*input) + 10;
+  }else if(button == &wc->bBK) {
+    output = BrewsterController::get()->getOutput(boilHeater);
+    input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::BK).getValueReference();
+    target = (*input) + 10;
+  }else if(button == &wc->bMT) {
+    output = BrewsterController::get()->getOutput(mashHeater);
+    //input = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::MT))->getValueReference();
+    input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
+    target = (*input) + 10;
+  }else if(button == &wc->bCooling) {
+    output = BrewsterController::get()->getOutput(coolingPump);
+    input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
+    target = (*input) - 5;
+  }else if(button == &wc->bFermentation) {
+    wc->logger->warn("Autotune for fermentation is not available. Fermentation process is not implemented yet.");
   }
-  else myPID.Compute();
 
+  //Starting autotune process
+  output->addListener(outputChangedCB, wc, 0);
+  if(output->isActive() && !output->isAutoTune()) {
+    wc->logger->info("Output %s is active. Stopping the output before starting autotune.", (const char*)output->getName());
+    output->setOutput(0);
+  }
+  output->setTargetValue(target, input);
+  PidSettings* ps = output->getPIDSettings();
+  wc->addOutput(String::format("Autotune started [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)output->getName(), ps->kp, ps->ki, ps->kd));
+}
+
+void PIDCalibrationWC::outputChangedCB(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
+  PIDCalibrationWC *wc = (PIDCalibrationWC *) callingObject;
+  wc->logger->info("Output status changed [output: %s]", (const char*)event.output->getName());
+
+  PidSettings* ps = event.output->getPIDSettings();
+  if(!event.output->isAutoTune()) {
+    wc->addOutput(String::format("Autotune complete [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
+    event.output->removeListener(outputChangedCB);
+  }else {
+    wc->addOutput(String::format("  output status changed [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
+  }
 }

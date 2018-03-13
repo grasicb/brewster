@@ -70,5 +70,5 @@ private:
   static void cbSettingsTriggered(void *ptr);
 
   //Brewster Callback functions
-  static void outputChangedEvent(void* callingObject, int outputIdentifier, OutputChangeEvent event);
+  static void outputChangedEvent(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event);
 };

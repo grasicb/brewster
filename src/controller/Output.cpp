@@ -34,7 +34,7 @@ void Output::setOutput(uint8_t percentage) {
     _logger->info("Output is set to %i%%", (int)(_output/2.55));
 }
 
-void Output::setTargetValue(double target, float* input) {
+void Output::setTargetValue(double target, float* input, PidSettings *settings) {
   _logger->info("Setting target value to %4.1f°", target);
 
   //If the reference to input is changed, we need to instantiate a new PID
@@ -43,7 +43,17 @@ void Output::setTargetValue(double target, float* input) {
       //delete _pid;
       _pid->SetMode(MANUAL);
     }
-    _pid = new PID(input, &_output, &_target, 2, 5, 1, DIRECT);
+
+    if(settings == NULL) {
+      PidSettings ps;
+      ps.kp = 2;
+      ps.ki = 5;
+      ps.kd = 1;
+      settings = &ps;
+    }
+    pidSettings = settings;
+
+    _pid = new PID(input, &_output, &_target, pidSettings->kp, pidSettings->ki, pidSettings->kd, DIRECT);
     _pid->SetMode(AUTOMATIC);
 
   //If just the target value is changed, then we just adapt the target value
@@ -61,8 +71,8 @@ void Output::setTargetValue(double target, float* input) {
   _logger->info("Target value is set to to %4.1f°", _target);
 }
 
-void Output::setTargetValue(double target, float* input, int direction) {
-  setTargetValue(target, input);
+void Output::setTargetValue(double target, float* input, int direction, PidSettings *settings) {
+  setTargetValue(target, input, settings);
   _pid->SetControllerDirection(direction);
   _logger->info("PID direction set to %i", direction);
 }
@@ -86,7 +96,28 @@ double Output::getTargetValue() {
 
 void Output::process() {
   if (_pidOn) {
-    _pid->Compute();
+    //autotunning process
+    if(autoTune)
+    {
+      byte val = pidATune->Runtime();
+
+      //If tunning is complete, then stops it and sets the values
+      if (val!=0)
+      {
+        pidSettings->kp = pidATune->GetKp();
+        pidSettings->ki = pidATune->GetKi();
+        pidSettings->kd = pidATune->GetKd();
+        _pid->SetTunings(pidSettings->kp,pidSettings->ki,pidSettings->kd);
+
+        toggleAutoTune();
+      }else if(millis()-autoTuneUpdate > 1000){
+        _logger->info("Autotune in progress [p=%.1f, i=%.1f, d=%.1d]", pidATune->GetKp(), pidATune->GetKi(), pidATune->GetKd());
+        autoTuneUpdate = millis();
+      }
+    }
+
+    //If autotune is disabled, then it processes normally pid values
+    else _pid->Compute();
   }
 
   //If PWM is used on the PIN then setting PWM value, the rest is done by the controller
@@ -139,6 +170,42 @@ void Output::SetPidDirection(int direction) {
 }
 */
 
+boolean Output::isAutoTune() {
+  return autoTune;
+}
+
+void Output::toggleAutoTune() {
+  if(!autoTune) {
+    _logger->info("PID autotune started [p=%.1f, i=%.1f, d=%.1d]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
+    if(pidATune == NULL) {
+      pidATune = new PID_ATune(_input, &_output);
+    }
+    pidATune->SetNoiseBand(aTuneNoise);
+    pidATune->SetOutputStep(aTuneStep);
+    pidATune->SetLookbackSec((int)aTuneLookBack);
+    aTuneModeRemember = _pid->GetMode();
+    autoTune = true;
+    triggerChangeEvent();
+
+  }else{
+    _logger->info("PID autotune stopped [p=%.1f, i=%.1f, d=%.1d]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
+    pidATune->Cancel();
+    delete pidATune;
+    pidATune = NULL;
+    _pid->SetMode(aTuneModeRemember);
+    autoTune = false;
+    triggerChangeEvent();
+  }
+}
+
+String Output::getName() {
+  return _name;
+}
+
+PidSettings* Output::getPIDSettings() {
+  return pidSettings;
+}
+
 ///////////////////////////
 // Event handling
 ///////////////////////////
@@ -171,6 +238,8 @@ void Output::triggerChangeEvent() {
   OutputChangeEvent event;
   event.isActive = isActive();
   event.isPID = isPID();
+  event.isAutoTune = isAutoTune();
+  event.output = this;
   if(event.isPID) {
     event.targetValue = getTargetValue();
   }else {

@@ -257,7 +257,7 @@ void OutputTestController::cbSettingsTriggered(void *ptr) {
 /////////////////////////////////
 // Output Callback functions
 /////////////////////////////////
-void OutputTestController::outputChangedEvent(void* callingObject, int outputIdentifier, OutputChangeEvent event) {
+void OutputTestController::outputChangedEvent(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
   OutputTestController *w = (OutputTestController *) callingObject;
 
   w->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);

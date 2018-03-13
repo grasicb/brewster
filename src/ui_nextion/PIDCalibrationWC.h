@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AWindowController.h"
+#include "../controller/Output.h"
 #include <vector>
 
 class PIDCalibrationWC : public AWindowController {
@@ -29,11 +30,9 @@ private:
 
   //Boil process information
   std::vector<String> output;
-  PID *pid;
-  PID_ATune *aTune;
-  double kp;
-  double ki;
-  double kd;
+  //PID *pid;
+  //PID_ATune *aTune;
+
 
   //UI Refresh functions
   void addOutput(String text);
@@ -41,4 +40,5 @@ private:
 
   //Callback functions
   static void bTriggerCalibrationButtonCB(void *ptr);
+  static void outputChangedCB(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event);
 };
