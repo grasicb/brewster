@@ -130,6 +130,6 @@ void MashingProcess::updateOutput() {
   else if(temp == NULL)
     logger->error("Error while updating output. Reference temperature for PID is NULL.");
   else {
-    BrewsterController::get()->getOutput(mashHeater)->setTargetValue(currentStep->temperature, temp);
+    BrewsterController::get()->getOutput(mashHeater)->setTargetValue(currentStep->temperature, temp, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::MASHING]));
   }
 }

@@ -62,6 +62,7 @@ public:
 
     Mutex i2cMutex;
     t_map_pidSettings& getPIDSettings();
+    void storePIDSettings();
 
     //PIN Assignment
     static const uint8_t pinOneWire = 0x18; //0x18 - this is via i2c BUS
@@ -81,7 +82,6 @@ private:
     t_map_pidSettings pidSettings;
 
     void loadPIDSettings();
-    void storePIDSettings();
 };
 
 #endif // BREWSTER_GLOBALS_H

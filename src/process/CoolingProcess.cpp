@@ -25,7 +25,7 @@ void CoolingProcess::processStarted() {
   logger->info("Starting process %s.", (const char*) name);
 
   float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE);
+  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
 
   logger->info("Process %s started.", (const char*) name);
 }
@@ -50,7 +50,7 @@ void CoolingProcess::processResumed() {
   logger->info("Resuming process %s.", (const char*) name);
 
   float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE);
+  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
 
   logger->info("Process %s resumed.", (const char*) name);
 }
@@ -60,7 +60,7 @@ void CoolingProcess::processRestored() {
 
   if(getState() == ProcessState::STARTED) {
     float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-    BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE);
+    BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
   }else {
     BrewsterController::get()->getOutput(coolingPump)->setOutput(0);
   }

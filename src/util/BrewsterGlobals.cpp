@@ -5,7 +5,7 @@ BrewsterGlobals* BrewsterGlobals::instance = NULL;
 BrewsterGlobals::BrewsterGlobals() {
   logger = new Logger("globals");
 
-  //loadPIDSettings();
+  loadPIDSettings();
 }
 
 BrewsterGlobals* BrewsterGlobals::get() {
@@ -17,6 +17,7 @@ BrewsterGlobals* BrewsterGlobals::get() {
 }
 
 void BrewsterGlobals::loadPIDSettings() {
+  logger->info("Loading PID settings");
   int location = EEPROM_PID_SETTINGS;
   uint8_t settingsAvailable;
   EEPROM.get(location++, settingsAvailable);
@@ -47,6 +48,7 @@ void BrewsterGlobals::loadPIDSettings() {
 }
 
 void BrewsterGlobals::storePIDSettings() {
+  logger->info("Storing PID settings");
   int location = EEPROM_PID_SETTINGS;
   uint8_t settingsAvailable = 1;
   EEPROM.write(location++, settingsAvailable);

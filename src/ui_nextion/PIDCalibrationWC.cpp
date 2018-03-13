@@ -73,35 +73,48 @@ void PIDCalibrationWC::bTriggerCalibrationButtonCB(void *ptr) {
   Output *output = NULL;
   float *input = NULL;
   double target;
+  int direction = DIRECT;
+  PidSettings *pidSettings = NULL;
+  BrewProcess bp;
+
   //Setting params based on button press
   if(button == &wc->bHLT) {
+    bp = BrewProcess::WATER_PREP;
     output = BrewsterController::get()->getOutput(mashHeater);
     input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
+    pidSettings = &(BrewsterGlobals::get()->getPIDSettings()[bp]);
     target = (*input) + 10;
   }else if(button == &wc->bBK) {
+    bp = BrewProcess::BOILING;
     output = BrewsterController::get()->getOutput(boilHeater);
     input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::BK).getValueReference();
+    pidSettings = &(BrewsterGlobals::get()->getPIDSettings()[bp]);
     target = (*input) + 10;
   }else if(button == &wc->bMT) {
+    bp = BrewProcess::MASHING;
     output = BrewsterController::get()->getOutput(mashHeater);
     //input = &(BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::MT))->getValueReference();
     input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
+    pidSettings = &(BrewsterGlobals::get()->getPIDSettings()[bp]);
     target = (*input) + 10;
   }else if(button == &wc->bCooling) {
+    bp = BrewProcess::COOLING;
     output = BrewsterController::get()->getOutput(coolingPump);
     input = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
+    pidSettings = &(BrewsterGlobals::get()->getPIDSettings()[bp]);
     target = (*input) - 5;
+    direction = REVERSE;
   }else if(button == &wc->bFermentation) {
     wc->logger->warn("Autotune for fermentation is not available. Fermentation process is not implemented yet.");
   }
 
   //Starting autotune process
-  output->addListener(outputChangedCB, wc, 0);
+  output->addListener(outputChangedCB, wc, bp);
   if(output->isActive() && !output->isAutoTune()) {
     wc->logger->info("Output %s is active. Stopping the output before starting autotune.", (const char*)output->getName());
     output->setOutput(0);
   }
-  output->setTargetValue(target, input);
+  output->setTargetValue(target, input, direction, pidSettings);
   PidSettings* ps = output->getPIDSettings();
   wc->addOutput(String::format("Autotune started [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)output->getName(), ps->kp, ps->ki, ps->kd));
 }
@@ -109,11 +122,19 @@ void PIDCalibrationWC::bTriggerCalibrationButtonCB(void *ptr) {
 void PIDCalibrationWC::outputChangedCB(void* callingObject, int outputIdentifier, Output::OutputChangeEvent event) {
   PIDCalibrationWC *wc = (PIDCalibrationWC *) callingObject;
   wc->logger->info("Output status changed [output: %s]", (const char*)event.output->getName());
+  BrewProcess bp = (BrewProcess) outputIdentifier;
 
   PidSettings* ps = event.output->getPIDSettings();
   if(!event.output->isAutoTune()) {
     wc->addOutput(String::format("Autotune complete [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
     event.output->removeListener(outputChangedCB);
+    //Storing PID values
+    PidSettings ps1 = BrewsterGlobals::get()->getPIDSettings()[bp];
+    ps1.kp = ps->kp;
+    ps1.ki = ps->ki;
+    ps1.kd = ps->kd;
+    BrewsterGlobals::get()->storePIDSettings();
+    
   }else {
     wc->addOutput(String::format("  output status changed [output: %s, p=%.1f, i=%.1f, d=%.1f].", (const char*)event.output->getName(), ps->kp, ps->ki, ps->kd));
   }
