@@ -13,7 +13,7 @@ public:
     static void i2c_scanner();
     static int setPIDParameters(String params);
 
-    static std::map<String, String>& getParams(String input);
+    static std::map<String, String>* getParams(String input);
     static std::pair<String, String>* getSingleParam(String input);
 };
 

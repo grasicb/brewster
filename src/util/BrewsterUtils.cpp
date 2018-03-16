@@ -86,7 +86,7 @@ void BrewsterUtils::i2c_scanner() {
 int BrewsterUtils::setPIDParameters(String params) {
   Log.info("setPIDParameters: Setting PID parameters [%s]", (const char*) params);
 
-  std::map<String, String> p = getParams(params);
+  std::map<String, String>* p = getParams(params);
   std::map<String, String>::iterator it;
 
   BrewProcess bp = BrewProcess::NONE;
@@ -94,8 +94,8 @@ int BrewsterUtils::setPIDParameters(String params) {
   double ki = -1;
   double kd = -1;
 
-  it = p.find("process");
-  if(it != p.end()) {
+  it = p->find("process");
+  if(it != p->end()) {
     String value = it->second;
     Log.trace("Process: %s", (const char*) value);
     if(value.compareTo("mashing")==0)
@@ -110,20 +110,20 @@ int BrewsterUtils::setPIDParameters(String params) {
       bp = BrewProcess::WATER_PREP;
   }
 
-  it = p.find("p");
-  if(it != p.end())
+  it = p->find("p");
+  if(it != p->end())
     kp = it->second.toFloat();
 
-  it = p.find("i");
-  if(it != p.end())
+  it = p->find("i");
+  if(it != p->end())
     ki = it->second.toFloat();
 
-  it = p.find("d");
-  if(it != p.end())
+  it = p->find("d");
+  if(it != p->end())
     kd = it->second.toFloat();
 
   if(bp != BrewProcess::NONE && kp != -1 && ki != -1 && kd != -1) {
-    Log.info("setPIDParameters: Setting PID parameters for process %s [p=%.1f,i=%.1f,d=%.1f].", (const char*) p["process"], kp, ki, kd);
+    Log.info("setPIDParameters: Setting PID parameters for process %s [p=%.1f,i=%.1f,d=%.1f].", (const char*) (*p)["process"], kp, ki, kd);
 
     PidSettings ps = BrewsterGlobals::get()->getPIDSettings(bp);
     ps.kp = kp;
@@ -155,29 +155,29 @@ int BrewsterUtils::setPIDParameters(String params) {
 
     Log.info("setPIDParameters: Error setting PID configuration. Invalid input '%s': %s ", (const char*) params, (const char*) err);
 
-    Log.info("Param size: %i, %s, %s, %s, %s", p.size(), (const char*) p["process"], (const char*) p["p"], (const char*) p["i"], (const char*) p["d"]);
+    Log.info("Param size: %i, %s, %s, %s, %s", p->size(), (const char*) (*p)["process"], (const char*) (*p)["p"], (const char*) (*p)["i"], (const char*) (*p)["d"]);
 
     return 0;
   }
 }
 
-std::map<String, String>& BrewsterUtils::getParams(String input) {
+std::map<String, String>* BrewsterUtils::getParams(String input) {
   int l = input.length();
   int lastI = 0;
   int i = 0;
 
-  std::map<String, String> ret;
+  std::map<String, String>* ret = new std::map<String, String>();
 
   while ( (i = input.indexOf(';', lastI)) >= 0) {
     std::pair<String, String>* pair = getSingleParam(input.substring(lastI, i));
     if (pair != NULL)
-      ret.insert(*pair);
+      ret->insert(*pair);
 
     lastI = i+1;
   }
   std::pair<String, String>* pair = getSingleParam(input.substring(lastI, l));
   if (pair != NULL)
-    ret.insert(*pair);
+    ret->insert(*pair);
 
   return ret;
 }
