@@ -21,7 +21,7 @@ void MashingProcess::process() {
 
   if (Time.now() - lastTempLogged > logIntervalMashing) {
     lastTempLogged = Time.now();
-    Particle.publish("tempMashing", String::format("%ul;%.2f;%.2f;%.2f;%.2f",
+    Particle.publish("tempMashing", String::format("%lu;%.2f;%.2f;%.2f;%i",
             Time.now()-getStartTime(),
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::MT).getValue(),
             BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValue(),
@@ -138,6 +138,7 @@ void MashingProcess::updateOutput() {
   updateStepStatus();
 
   float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
+  //float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
 
   if(currentStep == NULL)
     logger->error("Error while updating output. Current step is not set.");

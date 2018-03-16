@@ -163,12 +163,14 @@ void WaterPreparationWC::bTriggerPowerCB(void *ptr)
     if(switchState == 0) {
       output->setOutput(0);
     }else {
-      //output->setTargetValue(targetValue, temperatureReference, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::WATER_PREP]));
+      output->setTargetValue(targetValue, temperatureReference, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::WATER_PREP]));
+      /*
       PidSettings ps;
       ps.kp = 50;
       ps.ki = 0.01;
       ps.kd = 200;
       output->setTargetValue(targetValue, temperatureReference, &ps);
+      */
     }
   }
 }

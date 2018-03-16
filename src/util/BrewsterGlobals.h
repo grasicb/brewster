@@ -65,6 +65,7 @@ public:
 
     Mutex i2cMutex;
     t_map_pidSettings& getPIDSettings();
+    PidSettings& getPIDSettings(BrewProcess brewProcess);
     void storePIDSettings();
     void loadPIDSettings();
 

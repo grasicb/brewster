@@ -71,3 +71,7 @@ void BrewsterGlobals::storePIDSettings() {
 t_map_pidSettings& BrewsterGlobals::getPIDSettings() {
   return pidSettings;
 }
+
+PidSettings& BrewsterGlobals::getPIDSettings(BrewProcess brewProcess) {
+  return pidSettings[brewProcess];
+}

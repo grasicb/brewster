@@ -24,6 +24,9 @@ BrewsterController::BrewsterController() {
     ds18Interface = new DS18(BrewsterGlobals::get()->pinOneWire);
     sensorManger = new SensorManager();
     processManager = new ProcessManager();
+
+    // register the cloud function
+    Particle.function("setPIDParams", &BrewsterUtils::setPIDParameters);
 }
 
 void BrewsterController::controllerLoop() {
