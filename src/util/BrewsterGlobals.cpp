@@ -18,9 +18,10 @@ BrewsterGlobals* BrewsterGlobals::get() {
 
 void BrewsterGlobals::loadPIDSettings() {
   logger->info("Loading PID settings");
+  pidSettings = t_map_pidSettings();
   int location = EEPROM_PID_SETTINGS;
   uint8_t settingsAvailable=0xFF;
-  //EEPROM.write(location, settingsAvailable);
+  EEPROM.write(location, settingsAvailable);
   EEPROM.get(location++, settingsAvailable);
 
   if(settingsAvailable == 1) {
@@ -42,6 +43,11 @@ void BrewsterGlobals::loadPIDSettings() {
     logger->trace("Settings not stored. Setting to initial values.");
     for(int i=1; i<6; i++) {
       PidSettings ps;
+      /*
+      ps.kp = 50;
+      ps.ki = 0.1;
+      ps.kd = 200;
+      */
       ps.kp = 2;
       ps.ki = 5;
       ps.kd = 1;

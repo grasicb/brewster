@@ -10,7 +10,7 @@ public:
     void readSensor();
 
     float getValue();
-    float *getValueReference();
+    float* getValueReference();
     String getAddressString();
     void setActive(boolean active);
     boolean isActive();
@@ -26,7 +26,7 @@ private:
   SensorLocation location;
 
   //Time out variables
-  const static unsigned long valueValidity = 300000; //value read from sensor is valid for this value (5min), after this timeout value 0 is returned
+  const static unsigned long valueValidity = 60000; //value read from sensor is valid for this value (1min), after this timeout value 0 is returned
   const static unsigned long readInterval = 400; //Value is requested from sensor every 400 ms - this is the time DS18 needs for processing 11 bit precision value
 };
 

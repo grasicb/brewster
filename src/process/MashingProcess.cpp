@@ -137,8 +137,8 @@ void MashingProcess::updateStepStatus() {
 void MashingProcess::updateOutput() {
   updateStepStatus();
 
-  float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
-  //float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
+  //float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
+  float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
 
   if(currentStep == NULL)
     logger->error("Error while updating output. Current step is not set.");

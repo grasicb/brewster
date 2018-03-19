@@ -7,9 +7,9 @@
 
 //Global structures
 struct PidSettings {
-  double kp;
-  double ki;
-  double kd;
+  float kp;
+  float ki;
+  float kd;
 };
 
 //Global switches
@@ -51,8 +51,8 @@ const static ControllerOutput mashPump = ControllerOutput::DC1;
 const static ControllerOutput boilHeater = ControllerOutput::AC1;
 const static ControllerOutput coolingPump = ControllerOutput::DC1;
 const static uint8_t mashPumpFlowRate = 80;
-const static uint8_t boilHeatingRate = 5;
-const static float boilingPoint = 35;
+const static uint8_t boilHeatingRate = 80;
+const static float boilingPoint = 95;
 //const static uint8_t coolingPumpMaxFlow = 80; //TO BE IMPLEMENTED
 
 //Type definitions

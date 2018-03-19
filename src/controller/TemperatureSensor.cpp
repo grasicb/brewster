@@ -42,7 +42,7 @@ void TemperatureSensor::readSensor() {
 }
 
 float TemperatureSensor::getValue() {
-    if (lastRead+valueValidity > millis()) {
+    if (millis() - lastRead < valueValidity) {
       return value;
     }else{
       return 0;

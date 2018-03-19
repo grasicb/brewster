@@ -5,6 +5,11 @@ CoolingProcess::CoolingProcess(BrewProcess type, String name): Process(type, nam
   lastTick = Time.now();
   logger = new Logger("CoolingProcess");
   recipeMandatory = true;
+  tempFermentor = 0;
+  lastTempLogged=0;
+  tempFermentorSum=0;
+  tempFermentorCount=0;
+  Particle.variable("tempFerm", tempFermentor);
 
   logger->warn("Initialized chilling process for proccess named: %s.", (const char*) name);
 }
@@ -14,9 +19,31 @@ CoolingProcess::CoolingProcess(BrewProcess type, String name, Recipe* recipe): P
 }
 
 void CoolingProcess::process() {
-  if (Time.now() - lastTick > 30) {
+  if (Time.now() - lastTick >= 30) {
     lastTick = Time.now();
     logger->trace("Chilling process is active.");
+  }
+
+  if (Time.now() - lastTempLogged >= 1) {
+    tempFermentorSum += BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::FERMENTOR).getValue();
+    tempFermentorCount++;
+    lastTempLogged = Time.now();
+
+    if(tempFermentorCount>=300) {
+      Particle.publish("tempFerment", String::format("%lu;%lu;%.2f",
+              Time.now()-getStartTime(),
+              Time.now(),
+              tempFermentorSum/tempFermentorCount),
+          PRIVATE);
+
+      tempFermentorSum = 0;
+      tempFermentorCount = 0;
+    }
+  }
+
+
+  if (tempFermentor !=  BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::FERMENTOR).getValue()) {
+    tempFermentor = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::FERMENTOR).getValue();
   }
 }
 
@@ -26,6 +53,10 @@ void CoolingProcess::processStarted() {
 
   float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
   BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
+
+  lastTempLogged=0;
+  tempFermentorSum=0;
+  tempFermentorCount=0;
 
   logger->info("Process %s started.", (const char*) name);
 }

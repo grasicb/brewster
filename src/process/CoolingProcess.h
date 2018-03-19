@@ -21,4 +21,9 @@ private:
   void updateStepStatus();
 
   unsigned long lastTick;
+  double tempFermentor;
+
+  unsigned long lastTempLogged;
+  double tempFermentorSum;
+  double tempFermentorCount;
 };
