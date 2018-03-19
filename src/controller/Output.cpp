@@ -95,30 +95,38 @@ double Output::getTargetValue() {
 }
 
 void Output::process() {
+  //PID process
   if (_pidOn) {
-    //autotunning process
-    if(autoTune)
+    _pid->Compute();
+
+  //Autotuning process
+  } else if(autoTune)
     {
-      byte val = pidATune->Runtime();
+      //First 90 seconds hold a steady output, afterwards start autotining
+      if(Time.now() - autoTuneStart < 90) {
+        if(millis()-autoTuneUpdate > 5000){
+          _logger->info("Starting autotune in %lu sec.", 90-(Time.now() - autoTuneStart));
+          autoTuneUpdate = millis();
+        }
 
-      //If tunning is complete, then stops it and sets the values
-      if (val!=0)
-      {
-        pidSettings->kp = pidATune->GetKp();
-        pidSettings->ki = pidATune->GetKi();
-        pidSettings->kd = pidATune->GetKd();
-        _pid->SetTunings(pidSettings->kp,pidSettings->ki,pidSettings->kd);
+      }else{
+        byte val = pidATune->Runtime();
 
-        toggleAutoTune();
-      }else if(millis()-autoTuneUpdate > 10000){
-        _logger->info("Autotune in progress");
-        autoTuneUpdate = millis();
+        //If tunning is complete, then stops it and sets the values
+        if (val!=0)
+        {
+          pidSettings->kp = pidATune->GetKp();
+          pidSettings->ki = pidATune->GetKi();
+          pidSettings->kd = pidATune->GetKd();
+          _pid->SetTunings(pidSettings->kp,pidSettings->ki,pidSettings->kd);
+
+          toggleAutoTune();
+        }else if(millis()-autoTuneUpdate > 5000){
+          _logger->info("Autotune in progress");
+          autoTuneUpdate = millis();
+        }
       }
     }
-
-    //If autotune is disabled, then it processes normally pid values
-    else _pid->Compute();
-  }
 
   //If PWM is used on the PIN then setting PWM value, the rest is done by the controller
   if (_isPWM && _lastOutput != _output) {
@@ -177,16 +185,19 @@ boolean Output::isAutoTune() {
 void Output::toggleAutoTune() {
 
   if(!autoTune) {
-    _logger->info("PID autotune started [p=%.1f, i=%.1f, d=%.1f]", pidSettings->kp, pidSettings->ki, pidSettings->kd);
+    _logger->info("PID autotune started");
     if(pidATune == NULL) {
       pidATune = new PID_ATune(_input, &_output);
     }
-    /*
+
+    _pidOn = false;
+    autoTuneStart = Time.now();
+
     _output = aTuneStartValue;
     pidATune->SetNoiseBand(aTuneNoise);
     pidATune->SetOutputStep(aTuneStep);
     pidATune->SetLookbackSec((int)aTuneLookBack);
-    */
+
     aTuneModeRemember = _pid->GetMode();
     autoTune = true;
     triggerChangeEvent();

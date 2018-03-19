@@ -181,10 +181,10 @@ void PID_ATune::SetLookbackSec(int value)
 {
     if (value<1) value = 1;
 
-	if(value<25)
+	if(value<50)
 	{
 		nLookBack = value * 4;
-		sampleTime = 250;
+		sampleTime = 500;
 	}
 	else
 	{

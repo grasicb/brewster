@@ -66,12 +66,13 @@ private:
 
   PidSettings *pidSettings;
   boolean autoTune = false;
-  double aTuneStep=50;
+  double aTuneStep=80;
   double aTuneNoise=1;
-  double aTuneStartValue=100;
+  double aTuneStartValue=127;
   unsigned int aTuneLookBack=20;
   byte aTuneModeRemember=2;
   unsigned long autoTuneUpdate=0;
+  unsigned long autoTuneStart=0;
 
   std::map<f_outputCB_t, OutputListener> listeners;
   void triggerChangeEvent();
