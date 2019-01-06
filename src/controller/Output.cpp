@@ -49,9 +49,10 @@ void Output::setTargetValue(double target, float* input, PidSettings *settings) 
       ps.kp = 2;
       ps.ki = 5;
       ps.kd = 1;
-      settings = &ps;
-    }
-    pidSettings = settings;
+      //settings = &ps;
+      pidSettings = &ps;
+    }else
+      pidSettings = settings;
 
     _pid = new PID(input, &_output, &_target, pidSettings->kp, pidSettings->ki, pidSettings->kd, DIRECT);
     _pid->SetMode(AUTOMATIC);
@@ -109,6 +110,7 @@ void Output::process() {
           autoTuneUpdate = millis();
         }
 
+      //After 90 seconds start the autotune process
       }else{
         byte val = pidATune->Runtime();
 

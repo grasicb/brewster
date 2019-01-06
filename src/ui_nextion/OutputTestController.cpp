@@ -165,7 +165,7 @@ void OutputTestController::cbPowerSwitchTriggered(void *ptr) {
   }else{
     //If pid is enabled, then turn on PID
     if(swAuto == 1) {
-      o->setTargetValue(value, w->it->second.getValueReference());
+      o->setTargetValue(value, w->it->second.getValueReference(), &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::WATER_PREP]));
 
     //If it is the classical output just turn on the output
     }else{

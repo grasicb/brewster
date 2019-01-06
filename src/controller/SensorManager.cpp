@@ -26,7 +26,9 @@ SensorManager::SensorManager() {
     temperatureSensors[SensorLocation::MT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xA6, 0x53, 0x52, 0x17, 0x04, 0x60}, SensorLocation::MT);
     temperatureSensors[SensorLocation::HLT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xAB, 0xC4, 0x51, 0x17, 0x04, 0x0F}, SensorLocation::HLT);
     temperatureSensors[SensorLocation::COOLER_OUT] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x7D, 0x34, 0x63, 0x16, 0x03, 0x6A}, SensorLocation::COOLER_OUT);
-    temperatureSensors[SensorLocation::BK] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xAB, 0xC4, 0x51, 0x17, 0x04, 0x0F}, SensorLocation::BK); //Old BK
+    //temperatureSensors[SensorLocation::BK] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0xAB, 0xC4, 0x51, 0x17, 0x04, 0x0F}, SensorLocation::BK); //Old BK
+    temperatureSensors[SensorLocation::BK] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x97, 0xD5, 0x51, 0x17, 0x04, 0x1D}, SensorLocation::BK); //New BK
+
 
     temperatureSensors[SensorLocation::FERMENTOR] = TemperatureSensor(new uint8_t [8] {0x28, 0xFF, 0x97, 0xD5, 0x51, 0x17, 0x04, 0x1D}, SensorLocation::FERMENTOR); //New BK
     //Particle.variable("tempFerm", *temperatureSensors[SensorLocation::FERMENTOR].getValueReference());

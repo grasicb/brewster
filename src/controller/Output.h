@@ -64,7 +64,7 @@ private:
   String _name;
   uint8_t _pin;
 
-  PidSettings *pidSettings;
+  PidSettings *pidSettings = NULL;
   boolean autoTune = false;
   double aTuneStep=80;
   double aTuneNoise=1;

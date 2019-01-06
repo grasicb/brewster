@@ -48,7 +48,7 @@ const static int EEPROM_PROCESS_DATA[] = {0, 8, 18, 28, 38};
 //Global type definitions
 const static ControllerOutput mashHeater = ControllerOutput::AC1;
 const static ControllerOutput mashPump = ControllerOutput::DC1;
-const static ControllerOutput boilHeater = ControllerOutput::AC1;
+const static ControllerOutput boilHeater = ControllerOutput::AC2;
 const static ControllerOutput coolingPump = ControllerOutput::DC1;
 const static uint8_t mashPumpFlowRate = 80;
 const static uint8_t boilHeatingRate = 80;

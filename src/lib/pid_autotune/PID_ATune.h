@@ -2,6 +2,9 @@
 #define PID_AutoTune_v0
 #define LIBRARY_VERSION	0.0.1
 
+//Documentation:
+// http://brettbeauregard.com/blog/2012/01/arduino-pid-autotune-library/
+
 class PID_ATune
 {
 

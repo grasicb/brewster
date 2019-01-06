@@ -67,20 +67,32 @@ LcdControllerNex::LcdControllerNex() {
 
 void LcdControllerNex::showMainPage() {
   this->logger->trace("Initializing serial connection for Nextion LCD");
-  Log.info("LCD: Initializing serial connection for Nextion LCD");
+  //Log.info("LCD: Initializing serial connection for Nextion LCD");
 
+  this->logger->trace("Initializing windows");
+  this->logger->trace("1. CommonWindowController");
   commonWC = new CommonWindowController();
+  this->logger->trace("2. SensorSearchController");
   sensorSearchWC = new SensorSearchController();
+  this->logger->trace("3. SensorTestController");
   sensorTestWC = new SensorTestController();
+  this->logger->trace("4. OutputTestController");
   outputTestWC = new OutputTestController();
+  this->logger->trace("5. MashingWC");
   mashingWC = new MashingWC();
+  this->logger->trace("6. MashStepChange");
   mashStepChangeWC = new MashStepChange();
+  this->logger->trace("7. BoilingWC");
   boilingWC = new BoilingWC();
+  this->logger->trace("8. CoolingWC");
   coolingWC = new CoolingWC();
+  this->logger->trace("9. WaterPreparationWC");
   waterPreparationWC = new WaterPreparationWC();
+  this->logger->trace("10. PIDCalibrationWC");
   pidCalibrationWC = new PIDCalibrationWC();
 
   //Register event handlers for pages
+  this->logger->trace("Registering handlers");
   mainPage.attachPop(windowOpenCallback, new PageEvent(this, &mainPage, commonWC));
   settingsPage.attachPop(windowOpenCallback, new PageEvent(this, &settingsPage, commonWC));
   settingsSensorSearch.attachPop(windowOpenCallback, new PageEvent(this, &settingsSensorSearch, sensorSearchWC));
@@ -94,6 +106,7 @@ void LcdControllerNex::showMainPage() {
   pidCalibrationPage.attachPop(windowOpenCallback, new PageEvent(this, &pidCalibrationPage, pidCalibrationWC));
 
   //Save pages, which should be listened for events
+  this->logger->trace("Adding pages to event listeners");
   page_list = new NexTouch*[30];//malloc(sizeof(&mainPage)*4);
   int i=0;
   page_list[i++] = &mainPage;
@@ -112,6 +125,7 @@ void LcdControllerNex::showMainPage() {
   nex_listen_list = NULL;
   updateListenerList();
 
+  this->logger->trace("Window framework initialization completed. Opening main window.");
   mainPage.show();
 }
 

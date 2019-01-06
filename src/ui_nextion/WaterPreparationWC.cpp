@@ -24,7 +24,7 @@ WaterPreparationWC::WaterPreparationWC() {
   bHLTSettings.attachPop(bTriggerSettingsCB, new UIEvent(this, &bHLTSettings));
   bBKSettings.attachPop(bTriggerSettingsCB, new UIEvent(this, &bBKSettings));
 
-  listenerList = new NexTouch*[3];
+  listenerList = new NexTouch*[5];
   listenerList[0] = &bHLTPower;
   listenerList[1] = &bBKPower;
   listenerList[2] = &bHLTSettings;

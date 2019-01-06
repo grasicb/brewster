@@ -38,23 +38,19 @@ void BrewsterController::initRecipe() {
   logger.info("Creating a recipe");
 
   recipe = new Recipe();
-  recipe->setName("Spring ale");
+  recipe->setName("Summer Wolf");
 
-  recipe->addMashingStep("Step 1", 20, TimeUOM::minute, 63);
-  recipe->addMashingStep("Step 2", 40, TimeUOM::minute, 68);
+  recipe->addMashingStep("Step 1", 60, TimeUOM::minute, 66);
+  recipe->addMashingStep("Step 2", 10, TimeUOM::minute, 74);
   //recipe->addMashingStep("Step 3", 3, TimeUOM::minute, 66);
   //recipe->addMashingStep("Step 4", 5, TimeUOM::minute, 74);
 
-  recipe->setBoilingTime(90);
+  recipe->setBoilingTime(60);
   recipe->setTargetCoollingTemperature(20);
-  recipe->addBoilAddition("Styrian Wolf", 10, QtyUOM::g, 0, TimeUOM::minute);
-  recipe->addBoilAddition("Styrian Wolf", 5, QtyUOM::g, 30, TimeUOM::minute);
-  recipe->addBoilAddition("Styrian Wolf", 5, QtyUOM::g, 80, TimeUOM::minute);
-  recipe->addBoilAddition("Styrian Wolf", 10, QtyUOM::g, 85, TimeUOM::minute);
-  recipe->addBoilAddition("Styrian Wolf", 10, QtyUOM::g, 90, TimeUOM::minute);
-  recipe->addBoilAddition("Bobek", 15, QtyUOM::g, 80, TimeUOM::minute);
-  recipe->addBoilAddition("Bobek", 10, QtyUOM::g, 85, TimeUOM::minute);
-  recipe->addBoilAddition("Bobek", 10, QtyUOM::g, 90, TimeUOM::minute);
+  recipe->addBoilAddition("Columbus", 10, QtyUOM::g, 0, TimeUOM::minute);
+  recipe->addBoilAddition("Styrian Fox", 15, QtyUOM::g, 40, TimeUOM::minute);
+  recipe->addBoilAddition("Styrian Fox", 20, QtyUOM::g, 50, TimeUOM::minute);
+  recipe->addBoilAddition("Irish moss", 7, QtyUOM::g, 50, TimeUOM::minute);
 
 
   /*

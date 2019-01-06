@@ -2,7 +2,7 @@
 
 #include "AWindowController.h"
 #include "../controller/TemperatureSensor.h"
-#include "../controller/SensorManager.h"
+//#include "../controller/SensorManager.h"
 #include "../controller/Output.h"
 
 class WaterPreparationWC : public AWindowController {

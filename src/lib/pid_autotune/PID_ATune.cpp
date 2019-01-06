@@ -48,6 +48,8 @@ int PID_ATune::Runtime()
 		running = true;
 		outputStart = *output;
 		*output = outputStart+oStep;
+
+		Log.trace("autotune initialized");
 	}
 	else
 	{
@@ -97,6 +99,7 @@ int PID_ATune::Runtime()
     peak1 = now;
     peaks[peakCount] = refVal;
 
+		Log.trace("Max peak identified [%.2f]", refVal);
   }
   else if(isMin)
   {
@@ -109,10 +112,13 @@ int PID_ATune::Runtime()
     }
 
     if(peakCount<10)peaks[peakCount] = refVal;
+
+		Log.trace("Min peak identified [%.2f]", refVal);
   }
 
   if(justchanged && peakCount>2)
-  { //we've transitioned.  check if we can autotune based on the last peaks
+  { //we've transitioned.  check if we can autotune based on the last peaks+
+		Log.trace("Checking if autotune can be completed.");
     double avgSeparation = (abs(peaks[peakCount-1]-peaks[peakCount-2])+abs(peaks[peakCount-2]-peaks[peakCount-3]))/2;
     if( avgSeparation < 0.05*(absMax-absMin))
     {
@@ -131,6 +137,7 @@ void PID_ATune::FinishUp()
       //we can generate tuning parameters!
       Ku = 4*(2*oStep)/((absMax-absMin)*3.14159);
       Pu = (double)(peak1-peak2) / 1000;
+		Log.trace("Autotune completed [ku=%.3f, pu=%.3f].", Ku, Pu);
 }
 
 double PID_ATune::GetKp()
