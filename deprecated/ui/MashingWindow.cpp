@@ -119,6 +119,7 @@ void MashingWindow::process(void* param) {
 
     //////////////////////////////////
     // Logging of timings
+    /*
     if ((lastLoggedTime + MASH_LOG_INTERVAL) < Time.now()) {
       //Log.trace("%d, %d, %d, %d", lastLoggedTime, Time.now(), controller->getProcessStartTime(), (lastLoggedTime + MASH_LOG_INTERVAL));
       lastLoggedTime = Time.now();
@@ -126,6 +127,7 @@ void MashingWindow::process(void* param) {
 
       Particle.publish("MASHING", String::format("Mash|%d|%.02f|%.02f|%.02f", lastLoggedTime - controller->getProcessStartTime(), BrewsterController::get()->temperatureSensors->temperature[0], BrewsterController::get()->temperatureSensors->temperature[1], BrewsterController::get()->temperatureSensors->temperature[2]));
     }
+    */
 
 
   // Clean-up time in process if not empty

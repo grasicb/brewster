@@ -8,6 +8,7 @@
 #include "../model/Recipe.h"
 
 #include "../lib/sensors/DS18.h"
+#include "../lib/cloud_connect/CloudConnect.h"
 
 class BrewsterController {
 public:
@@ -25,6 +26,9 @@ public:
     SensorManager* getSensorManager();
     ProcessManager* getProcessManager();
 
+    void setCloudConnectInstance(CloudConnect* cc) {this->cc = cc;};
+    CloudConnect* getCloudConnectInstance() {return cc;};
+
     void initRecipe();
     Recipe *getRecipe();
     void initProcesses();
@@ -37,6 +41,7 @@ private:
     Logger logger;
     Output *outputs[OUTPUT_NUMBER];
     Recipe *recipe;
+    CloudConnect* cc = NULL;
 
     SensorManager *sensorManger;
     ProcessManager *processManager;

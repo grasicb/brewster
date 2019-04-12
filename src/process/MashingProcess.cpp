@@ -19,6 +19,7 @@ void MashingProcess::process() {
     logger->trace("Mashing process is active.");
   }
 
+  /*
   if (Time.now() - lastTempLogged > logIntervalMashing) {
     lastTempLogged = Time.now();
     Particle.publish("tempMashing", String::format("%lu;%.2f;%.2f;%.2f;%i",
@@ -29,6 +30,7 @@ void MashingProcess::process() {
             currentStep->temperature),
         PRIVATE);
   }
+  */
 
   if(Time.now() > nextStepStartTime) {
     if(nextStep == NULL) {

@@ -2,9 +2,13 @@
 #include "BrewsterController.h"
 #include "../util/BrewsterGlobals.h"
 
+#include "../lib/cloud_connect/CloudConnect.h"
+#include <ArduinoJson.h>
+
 TemperatureSensor::TemperatureSensor() {
   logger = new Logger("temp_sensor");
   value = 0;
+  lastValue = 0;
   active = false;
   lastRead = 0;
 }
@@ -12,6 +16,7 @@ TemperatureSensor::TemperatureSensor() {
 TemperatureSensor::TemperatureSensor(uint8_t sensorAddress[8], SensorLocation sensorLocation) {
     logger = new Logger("temp_sensor");
     value = 0;
+    lastValue = 0;
     location = sensorLocation;
     active = true;
     lastRead = 0;
@@ -27,6 +32,11 @@ void TemperatureSensor::readSensor() {
     //Read processed sensor value (async reading of values)
     if (lastRead > 0 && sensor->asyncReadFetchData(address)) {
         value = sensor->celsius();
+
+        if(value != lastValue) {
+          sendTempChangeEvent();          
+          lastValue = value;
+        }
 /*
         if (Log.isTraceEnabled()) {
            logger->trace("Sensor %s: %.2f - Ref: 0x%X", (const char *)sensorNames[location], getValue(),  this);
@@ -66,4 +76,23 @@ boolean TemperatureSensor::isActive() {
 
 SensorLocation TemperatureSensor::getLocation() {
   return location;
+}
+
+void TemperatureSensor::sendTempChangeEvent() {
+  ulong ttime = Time.now()*1000;
+  const int capacity = JSON_OBJECT_SIZE(8+1);
+  StaticJsonBuffer<capacity> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  root["type"] = "event";
+  root["event"] = "temperatureChange";
+  root["timestamp"] = ttime*1000;
+  std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
+  root["timestamp_human"] = str;
+  JsonObject& payload = root.createNestedObject("payload");
+  payload["value"] = value;
+  std::string sId (sensorShortNames[location] .c_str());
+  payload["id"] = sId;
+
+  CloudConnect* cc = BrewsterController::get()->getCloudConnectInstance();
+  cc->emitEvent(root);
 }

@@ -1,4 +1,6 @@
 #include "Output.h"
+#include <ArduinoJson.h>
+#include "BrewsterController.h"
 
 Output::Output(String name, uint8_t pin, boolean enablePWM) {
     String loggerName = String("Output "+name);
@@ -266,4 +268,28 @@ void Output::triggerChangeEvent() {
   //call events
   for (std::map<f_outputCB_t, OutputListener>::iterator it=listeners.begin(); it!=listeners.end(); ++it)
     it->first(it->second.callingObject, it->second.outputIdentifier, event);
+
+  sendCloudEvent();
+}
+
+void Output::sendCloudEvent() {
+  ulong ttime = Time.now()*1000;
+  const int capacity = JSON_OBJECT_SIZE(12+1);
+  StaticJsonBuffer<capacity> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  root["type"] = "event";
+  root["event"] = "outputChange";
+  root["timestamp"] = ttime*1000;
+  std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
+  root["timestamp_human"] = str;
+  JsonObject& payload = root.createNestedObject("payload");
+  std::string oId (_name.c_str());
+  payload["id"] = oId;
+  payload["isActive"] = isActive();
+  payload["isPID"] = isPID();
+  payload["pidTargetValue"] = getTargetValue();
+  payload["isAutoTune"] = isAutoTune();
+  payload["output"] = getOutput();
+
+  BrewsterController::get()->getCloudConnectInstance()->emitEvent(root);
 }

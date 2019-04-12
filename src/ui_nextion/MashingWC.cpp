@@ -248,7 +248,7 @@ void MashingWC::pumpStateChanged(void* callingObject, int outputIdentifier, Outp
   MashingWC *w = (MashingWC *) callingObject;
 
   w->logger->info("Output event change received for output %i [ON=%i, AUTO=%i, VALUE=%.1f]", outputIdentifier, (int)event.isActive, (int)event.isPID, event.targetValue);
-  Particle.process();
+//  Particle.process();
   uint32_t value;
   w->bPump.getValue(&value);
 

@@ -129,12 +129,12 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
   while (cnt_0xff < 3 && millis() - start <= timeout)
   {
 #if defined(SPARK)
-    Particle.process();
+//    Particle.process();
 #endif
     while (nexSerial.available())
     {
 #if defined(SPARK)
-      Particle.process();
+//      Particle.process();
 #endif
       c = nexSerial.read();
       if (str_start_flag)
@@ -285,7 +285,7 @@ void nexLoop(NexTouch *nex_listen_list[])
   while (nexSerial.available())
   {
 #if defined(SPARK)
-    Particle.process();
+//    Particle.process();
 #endif
     delay(10);
 

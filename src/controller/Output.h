@@ -76,4 +76,5 @@ private:
 
   std::map<f_outputCB_t, OutputListener> listeners;
   void triggerChangeEvent();
+  void sendCloudEvent();
 };

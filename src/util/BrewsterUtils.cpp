@@ -82,7 +82,6 @@ void BrewsterUtils::i2c_scanner() {
   BrewsterGlobals::get()->i2cMutex.unlock();
 }
 
-
 int BrewsterUtils::setPIDParameters(String params) {
   Log.info("setPIDParameters: Setting PID parameters [%s]", (const char*) params);
 
@@ -196,4 +195,8 @@ std::pair<String, String>* BrewsterUtils::getSingleParam(String input) {
   }
 
   return ret;
+}
+
+int BrewsterUtils::enterDfuMode(String params) {
+  System.dfu();
 }

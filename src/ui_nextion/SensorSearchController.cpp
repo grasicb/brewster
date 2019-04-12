@@ -54,12 +54,12 @@ void SensorSearchController::bSearchCallback(void *ptr)
   SensorSearchController *window = (SensorSearchController *) obj->getWindowController();
   window->logger->info("Search sensors button pressed");
 
-  Particle.process();
+//  Particle.process();
   //BrewsterUtils::i2c_scanner();
   TempUtils::setPrecision(DS18::PRECISION::BIT_11);
 
   delay(500);
-  Particle.process();
+//  Particle.process();
 
   TempUtils::listSensors();
 }

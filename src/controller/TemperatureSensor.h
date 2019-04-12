@@ -15,11 +15,13 @@ public:
     void setActive(boolean active);
     boolean isActive();
     SensorLocation getLocation();
+    void sendTempChangeEvent();
 
 
 private:
   Logger *logger;
   float value;
+  float lastValue = 0;
   uint8_t address[8];
   boolean active; //For future use - currently always true
   unsigned long lastRead;

@@ -3,6 +3,8 @@
 /*.bin
 /src/build
 /src/*.bin
+/.vscode
+/target
 
 # Prerequisites
 *.d

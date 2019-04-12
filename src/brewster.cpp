@@ -1,7 +1,16 @@
 #define DEBUG_SERIAL_ENABLE
 #define TRACE_ENABLE 1
 
+#include "lib/cloud_connect/CloudConnect.h"
+//#include "lib/cloud_connect/CloudLogger.h"
+
 #include "application.h"
+void early_init();
+void setup();
+void loop(void);
+os_thread_return_t controllerLoopController(void* param);
+os_thread_return_t controllerLoopOutput(void* param);
+#line 8 "/home/boogoo/Programiranje/Brewster/brewster/src/brewster.ino"
 //#include "lib/lcd_nextion/ITEADLIB_Nextion.h"
 #include "controller/LcdControllerNex.h"
 
@@ -12,7 +21,41 @@
 #include "controller/BrewsterController.h"
 #include "controller/Speaker.h"
 
-#include "lib/papertrail/papertrail.h"
+//#include "lib/papertrail/papertrail.h"
+
+//Globals
+//SYSTEM_MODE(SEMI_AUTOMATIC);
+//SYSTEM_MODE(MANUAL);
+STARTUP( early_init() );
+LogCategoryFilters logFilters;
+
+#ifdef TRACE_ENABLE
+  SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
+#else
+  SerialLogHandler logHandler(115200, LOG_LEVEL_INFO, logFilters);
+#endif
+// Online logging with papertrail
+// https://papertrailapp.com/events
+//PapertrailLogHandler *papertailHandler;
+//CloudLogger *cloudLogger;
+
+//Brewster Server Connection
+CloudConnect *cc;
+byte server[] = { 192, 168, 1, 27 };
+int port = 8081;
+void handleCloudEvent(JsonObject& event); // Forward declaration
+
+//LCD
+USARTSerial& nexSerial = Serial1;
+LcdControllerNex *lcd;
+
+//Threads
+Thread *controllerThread;
+Thread *controllerThreadController;
+Thread *controllerThreadOutput;
+
+//other
+unsigned long lastHearthBeat;
 
 void early_init()
 {
@@ -27,46 +70,6 @@ void early_init()
   digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
 }
 
-os_thread_return_t controllerLoopController(void* param) {
-	for(;;) {
-		BrewsterController::get()->controllerLoopOther();
-	}
-}
-
-os_thread_return_t controllerLoopOutput(void* param) {
-	for(;;) {
-		BrewsterController::get()->controllerLoopOutput();
-	}
-}
-
-//Globals
-SYSTEM_MODE(SEMI_AUTOMATIC);
-STARTUP( early_init() );
-LogCategoryFilters logFilters;
-
-#ifdef TRACE_ENABLE
-  SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
-#else
-  SerialLogHandler logHandler(115200, LOG_LEVEL_INFO, logFilters);
-#endif
-// Online logging with papertrail
-// https://papertrailapp.com/events
-PapertrailLogHandler *papertailHandler;
-
-//LCD
-USARTSerial& nexSerial = Serial1;
-LcdControllerNex *lcd;
-
-//Threads
-Thread *controllerThread;
-Thread *controllerThreadController;
-Thread *controllerThreadOutput;
-
-//other
-unsigned long lastHearthBeat;
-
-
-
 void setup() {
   //LcdControllerNex::get();
   lcd = new LcdControllerNex();
@@ -80,18 +83,26 @@ void setup() {
   //Wait that the time is being synchronized
   waitFor(Time.isValid, 30000);
 
-  //delay(10000);
+  //Connecting to Brewster Server
+  cc = new CloudConnect(server, port);
+
+  cc->registerListener(handleCloudEvent);
+
   #ifdef TRACE_ENABLE
-    papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
+    //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
+    //cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
   #else
-    papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
+    //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
+    //cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
   #endif
 
   if(!Time.isValid())
     Log.error("Time could not be set in the given reserved timeframe.");
 
+
 	Log.info("Starting application setup");
 	BrewsterController::get();
+  BrewsterController::get()->setCloudConnectInstance(cc);
 
 	///////////////////////////////////////////////////
 	//Speaker::playTheme();
@@ -130,16 +141,50 @@ void setup() {
 	lcd->showMainPage();
 
 	Log.info("Setup done. Brewster is ready");
+
 }
 
 void loop(void) {
   //Output a hearthbeat every 30 sec
-	if(millis()-lastHearthBeat > 30000) {
-		Log.info("...brewster is active...");
+	if(millis()-lastHearthBeat > 5000) {
+    uint32_t freemem = System.freeMemory();
+		Log.info(String::format("...brewster is active [free mem: %d]...", freemem));
+
+//    Particle.publish("brewsterNotification", "...brewster is active...", PRIVATE);
 		lastHearthBeat = millis();
+
+    Log.info("Size lcd: %d", sizeof(lcd));
+    Log.info("Size *lcd: %d", sizeof(*lcd));
+    Log.info("Size &lcd: %d", sizeof(&lcd));
+    Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
+    Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
 	}
 	//LcdControllerNex::get()->processMessages();
   lcd->processMessages();
+  cc->process();
+  Particle.process();
   //BrewsterController::get()->controllerLoopOther();
   //BrewsterController::get()->controllerLoopOutput();
+}
+
+os_thread_return_t controllerLoopController(void* param) {
+	for(;;) {
+		BrewsterController::get()->controllerLoopOther();
+	}
+}
+
+os_thread_return_t controllerLoopOutput(void* param) {
+	for(;;) {
+		BrewsterController::get()->controllerLoopOutput();
+	}
+}
+
+void handleCloudEvent(JsonObject& event) {
+    Log.trace("handleCloudEvent: %s", event["event"]);
+    
+    if (event["event"] == "ledDimm") {
+        int val = event["payload"]["value"];
+        Log.trace(String::format("Change led brightness to %d%c", val), '%');
+    //    analogWrite(led, val*255/100);
+    }
 }

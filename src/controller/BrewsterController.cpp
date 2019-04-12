@@ -27,7 +27,10 @@ BrewsterController::BrewsterController() {
 
     // register the cloud function
     Particle.function("setPIDParams", &BrewsterUtils::setPIDParameters);
+    Particle.function("enterDfuMode", &BrewsterUtils::enterDfuMode);
+
 }
+
 
 void BrewsterController::controllerLoop() {
     controllerLoopOther();
@@ -58,9 +61,12 @@ void BrewsterController::initRecipe() {
   recipe->addBoilAddition("Cascade", 20, QtyUOM::g, 1, TimeUOM::minute);
   recipe->addBoilAddition("Amarillo", 15, QtyUOM::g, 4, TimeUOM::minute);
   recipe->addBoilAddition("Irish moss", 11, QtyUOM::g, 8, TimeUOM::minute);
-*/
+  */
+
+  /*
   recipe->printRecipe();
   recipe->storeToEEPROM();
+  */
 }
 
 Recipe* BrewsterController::getRecipe() {

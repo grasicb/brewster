@@ -9,7 +9,7 @@ CoolingProcess::CoolingProcess(BrewProcess type, String name): Process(type, nam
   lastTempLogged=0;
   tempFermentorSum=0;
   tempFermentorCount=0;
-  Particle.variable("tempFerm", tempFermentor);
+  //Particle.variable("tempFerm", tempFermentor);
 
   logger->warn("Initialized chilling process for proccess named: %s.", (const char*) name);
 }
@@ -24,6 +24,7 @@ void CoolingProcess::process() {
     logger->trace("Chilling process is active.");
   }
 
+  /*
   if (Time.now() - lastTempLogged >= 1) {
     tempFermentorSum += BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::FERMENTOR).getValue();
     tempFermentorCount++;
@@ -40,6 +41,7 @@ void CoolingProcess::process() {
       tempFermentorCount = 0;
     }
   }
+  */
 
 
   if (tempFermentor !=  BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::FERMENTOR).getValue()) {

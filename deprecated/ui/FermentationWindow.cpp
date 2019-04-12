@@ -86,6 +86,7 @@ void FermentationWindow::process(void* param) {
 
     //////////////////////////////////
     // Logging of timings
+    /*
     if ((lastLoggedTime + LOG_INTERVAL) < Time.now()) {
       //Log.trace("%d, %d, %d, %d", lastLoggedTime, Time.now(), controller->getProcessStartTime(), (lastLoggedTime + MASH_LOG_INTERVAL));
       lastLoggedTime = Time.now();
@@ -93,6 +94,7 @@ void FermentationWindow::process(void* param) {
 
       Particle.publish("FEMENTING", String::format("Ferment|%d|%.2f|%.2f|%d:%d", (lastLoggedTime - controller->getProcessStartTime())/60, BrewsterController::get()->temperatureSensors->temperature[0], BrewsterController::get()->temperatureSensors->temperature[1], Time.hour(), Time.minute()));
     }
+    */
 
 
   // Clean-up time in process if not empty
