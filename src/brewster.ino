@@ -120,11 +120,29 @@ void setup() {
 
 void loop(void) {
   //Output a hearthbeat every 30 sec
+  /*
 	if(millis()-lastHearthBeat > 30000) {
 		Log.info("...brewster is active...");
 //    Particle.publish("brewsterNotification", "...brewster is active...", PRIVATE);
 		lastHearthBeat = millis();
 	}
+  */
+
+  //Output a hearthbeat every 5 sec
+	if(millis()-lastHearthBeat > 5000) {
+    uint32_t freemem = System.freeMemory();
+		Log.info(String::format("...brewster is active [free mem: %d]...", freemem));
+
+    Particle.publish("brewster-hearthbeat", String::format("...brewster is active [free mem: %d]...", freemem), PRIVATE);
+		lastHearthBeat = millis();
+
+    Log.info("Size lcd: %d", sizeof(lcd));
+    Log.info("Size *lcd: %d", sizeof(*lcd));
+    Log.info("Size &lcd: %d", sizeof(&lcd));
+    Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
+    Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
+  }
+
 	//LcdControllerNex::get()->processMessages();
   lcd->processMessages();
   //BrewsterController::get()->controllerLoopOther();

@@ -2,6 +2,12 @@
 #define TRACE_ENABLE 1
 
 #include "application.h"
+void early_init();
+void setup();
+void loop(void);
+os_thread_return_t controllerLoopController(void* param);
+os_thread_return_t controllerLoopOutput(void* param);
+#line 5 "/home/boogoo/Programiranje/Brewster/brewster/src/brewster.ino"
 //#include "lib/lcd_nextion/ITEADLIB_Nextion.h"
 #include "controller/LcdControllerNex.h"
 
@@ -13,31 +19,6 @@
 #include "controller/Speaker.h"
 
 #include "lib/papertrail/papertrail.h"
-
-void early_init()
-{
-  //Init PINS
-  pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
-  pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
-  pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
-  pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
-  digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
-  digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
-  digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
-  digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
-}
-
-os_thread_return_t controllerLoopController(void* param) {
-	for(;;) {
-		BrewsterController::get()->controllerLoopOther();
-	}
-}
-
-os_thread_return_t controllerLoopOutput(void* param) {
-	for(;;) {
-		BrewsterController::get()->controllerLoopOutput();
-	}
-}
 
 //Globals
 SYSTEM_MODE(SEMI_AUTOMATIC);
@@ -65,7 +46,18 @@ Thread *controllerThreadOutput;
 //other
 unsigned long lastHearthBeat;
 
-
+void early_init()
+{
+  //Init PINS
+  pinMode(BrewsterGlobals::get()->pinAC1, OUTPUT);
+  pinMode(BrewsterGlobals::get()->pinAC2, OUTPUT);
+  pinMode(BrewsterGlobals::get()->pinDC1, OUTPUT);
+  pinMode(BrewsterGlobals::get()->pinDC2, OUTPUT);
+  digitalWrite(BrewsterGlobals::get()->pinAC1, 0);
+  digitalWrite(BrewsterGlobals::get()->pinAC2, 0);
+  digitalWrite(BrewsterGlobals::get()->pinDC1, 0);
+  digitalWrite(BrewsterGlobals::get()->pinDC2, 0);
+}
 
 void setup() {
   //LcdControllerNex::get();
@@ -134,12 +126,43 @@ void setup() {
 
 void loop(void) {
   //Output a hearthbeat every 30 sec
+  /*
 	if(millis()-lastHearthBeat > 30000) {
 		Log.info("...brewster is active...");
+//    Particle.publish("brewsterNotification", "...brewster is active...", PRIVATE);
 		lastHearthBeat = millis();
 	}
+  */
+
+  //Output a hearthbeat every 5 sec
+	if(millis()-lastHearthBeat > 500) {
+    uint32_t freemem = System.freeMemory();
+		Log.info(String::format("...brewster is active [free mem: %d]...", freemem));
+
+    Particle.publish("brewster-hearthbeat", String::format("...brewster is active [free mem: %d]...", freemem), PRIVATE);
+		lastHearthBeat = millis();
+
+    Log.info("Size lcd: %d", sizeof(lcd));
+    Log.info("Size *lcd: %d", sizeof(*lcd));
+    Log.info("Size &lcd: %d", sizeof(&lcd));
+    Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
+    Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
+  }
+
 	//LcdControllerNex::get()->processMessages();
   lcd->processMessages();
   //BrewsterController::get()->controllerLoopOther();
   //BrewsterController::get()->controllerLoopOutput();
+}
+
+os_thread_return_t controllerLoopController(void* param) {
+	for(;;) {
+		BrewsterController::get()->controllerLoopOther();
+	}
+}
+
+os_thread_return_t controllerLoopOutput(void* param) {
+	for(;;) {
+		BrewsterController::get()->controllerLoopOutput();
+	}
 }

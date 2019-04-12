@@ -27,6 +27,7 @@ BrewsterController::BrewsterController() {
 
     // register the cloud function
     Particle.function("setPIDParams", &BrewsterUtils::setPIDParameters);
+    Particle.function("enterDfuMode", &BrewsterUtils::enterDfuMode);
 }
 
 void BrewsterController::controllerLoop() {

@@ -197,3 +197,7 @@ std::pair<String, String>* BrewsterUtils::getSingleParam(String input) {
 
   return ret;
 }
+
+int BrewsterUtils::enterDfuMode(String params) {
+  System.dfu();
+}
