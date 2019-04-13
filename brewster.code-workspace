@@ -48,7 +48,8 @@
         },
         "particle.targetDevice": "crazy_boomer",
         "particle.firmwareVersion": "0.7.0",
-        "particle.targetPlatform": "photon"
+        "particle.targetPlatform": "photon",
+        "cortex-debug.openocdPath": "/home/boogoo/.particle/toolchains/openocd/0.10.0-particle.1/bin/openocd"
     },
     "folders": [
         {

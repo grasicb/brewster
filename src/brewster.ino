@@ -1,12 +1,12 @@
-#define DEBUG_SERIAL_ENABLE
-#define TRACE_ENABLE 1
+//#define DEBUG_SERIAL_ENABLE
+#define WEB_TRACE_ENABLE 1
 
 #include "lib/cloud_connect/CloudConnect.h"
-//#include "lib/cloud_connect/CloudLogger.h"
+#include "lib/cloud_connect/CloudLogger.h"
 
 #include "application.h"
 //#include "lib/lcd_nextion/ITEADLIB_Nextion.h"
-#include "controller/LcdControllerNex.h"
+//#include "controller/LcdControllerNex.h"
 
 #include "util/BrewsterGlobals.h"
 #include "util/BrewsterUtils.h"
@@ -23,15 +23,15 @@
 STARTUP( early_init() );
 LogCategoryFilters logFilters;
 
-#ifdef TRACE_ENABLE
+#ifdef DEBUG_SERIAL_ENABLE
   SerialLogHandler logHandler(115200, LOG_LEVEL_ALL, logFilters);
 #else
-  SerialLogHandler logHandler(115200, LOG_LEVEL_INFO, logFilters);
+  SerialLogHandler logHandler(115200, LOG_LEVEL_WARN, logFilters);
 #endif
 // Online logging with papertrail
 // https://papertrailapp.com/events
 //PapertrailLogHandler *papertailHandler;
-//CloudLogger *cloudLogger;
+CloudLogger *cloudLogger;
 
 //Brewster Server Connection
 CloudConnect *cc;
@@ -41,7 +41,7 @@ void handleCloudEvent(JsonObject& event); // Forward declaration
 
 //LCD
 USARTSerial& nexSerial = Serial1;
-LcdControllerNex *lcd;
+//LcdControllerNex *lcd;
 
 //Threads
 Thread *controllerThread;
@@ -66,7 +66,7 @@ void early_init()
 
 void setup() {
   //LcdControllerNex::get();
-  lcd = new LcdControllerNex();
+//  lcd = new LcdControllerNex();
   Serial.begin(115200);
 
 	//Connect to Cloud
@@ -82,12 +82,12 @@ void setup() {
 
   cc->registerListener(handleCloudEvent);
 
-  #ifdef TRACE_ENABLE
+  #ifdef WEB_TRACE_ENABLE
     //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
-    //cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
+    cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
   #else
     //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
-    //cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
+    cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_WARN);
   #endif
 
   if(!Time.isValid())
@@ -132,29 +132,47 @@ void setup() {
   BrewsterController::get()->initProcesses();
 
   Log.trace("Opening main page on UI");
-	lcd->showMainPage();
+//	lcd->showMainPage();
 
 	Log.info("Setup done. Brewster is ready");
 
-}
+
+  }
 
 void loop(void) {
-  //Output a hearthbeat every 30 sec
-	if(millis()-lastHearthBeat > 5000) {
+  //Output a hearthbeat every 10 sec
+	if(millis()-lastHearthBeat > 10000) {
     uint32_t freemem = System.freeMemory();
 		Log.info(String::format("...brewster is active [free mem: %d]...", freemem));
 
 //    Particle.publish("brewsterNotification", "...brewster is active...", PRIVATE);
 		lastHearthBeat = millis();
 
+    /*
     Log.info("Size lcd: %d", sizeof(lcd));
     Log.info("Size *lcd: %d", sizeof(*lcd));
     Log.info("Size &lcd: %d", sizeof(&lcd));
     Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
     Log.info("Size *wc: %d", sizeof(*lcd->getCurrentWindowController()));
+    
+    Log.info("Size *recipe: %d", sizeof(*BrewsterController::get()->getRecipe()));
+    Log.info("Size *SensorManager: %d", sizeof(*BrewsterController::get()->getSensorManager()));
+    Log.info("Size *ProcessManager: %d", sizeof(*BrewsterController::get()->getProcessManager()));
+    Log.info("Size *Output: %d", sizeof(*BrewsterController::get()->getOutput(ControllerOutput::AC1)));
+    Log.info("Size *BrewsterController: %d", sizeof(*BrewsterController::get()));
+
+    
+    Log.info("Size *Process-BOILING: %d", sizeof(*BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::BOILING)));
+    Log.info("Size *Process-MASHING: %d", sizeof(*BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::MASHING)));
+    Log.info("Size *Process-COOLING: %d", sizeof(*BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::COOLING)));
+    Log.info("Size *Process-FERMENTING: %d", sizeof(*BrewsterController::get()->getProcessManager()->getProcess(BrewProcess::FERMENTING)));
+    */
+
+    
+    
 	}
 	//LcdControllerNex::get()->processMessages();
-  lcd->processMessages();
+//  lcd->processMessages();
   cc->process();
   Particle.process();
   //BrewsterController::get()->controllerLoopOther();
