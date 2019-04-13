@@ -9,12 +9,13 @@ CloudLogger::CloudLogger(CloudConnect* cc, String app, String system, LogLevel l
 /// Send the log message to Cloud Connect.
 void CloudLogger::log(String message) {
     String time = Time.format(Time.now(), TIME_FORMAT_ISO8601_FULL);
-    String packet = String::format("<22>1 %s %s %s - - - %s", time.c_str(), m_system.c_str(), m_app.c_str(),
+    String packet = String::format("%s %s %s - - - %s", time.c_str(), m_system.c_str(), m_app.c_str(),
                                    message.c_str());
     //Serial.println(packet);
     
     //TODO: Create event
-    long ttime = Time.now()*1000;
+    //long ttime = Time.now()*1000;
+    long ttime = Time.now();
     const int capacity = JSON_OBJECT_SIZE(9+1);
     StaticJsonBuffer<capacity> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
@@ -24,9 +25,9 @@ void CloudLogger::log(String message) {
     std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
     root["timestamp_human"] = str;
     JsonObject& payload = root.createNestedObject("payload");
-    std::string msg (packet.c_str());
-    payload["message"] = msg.length();
-    //payload["message2"] = msg;
+    //std::string msg (packet.c_str());
+    payload["message"] = packet.c_str();
+    //payload["message2"] = packet.c_str();
 
     cc->emitEvent(root);
 }
