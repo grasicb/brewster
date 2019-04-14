@@ -63,7 +63,7 @@ TemperatureSensor& SensorManager::getTemperatureSensor(SensorLocation sensorLoca
   return temperatureSensors[sensorLocation];
 }
 
-TempSensorMap& SensorManager::getAllTemperatureSensors() {
+SensorManager::TempSensorMap& SensorManager::getAllTemperatureSensors() {
   return temperatureSensors;
 }
 

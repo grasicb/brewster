@@ -3,19 +3,22 @@
 
 #include <ArduinoJson.h>
 #include "application.h"
+#include <map>
 
 #define CCLIB_VERSION "0.1x"
 
 class CloudConnect {
     public:
         typedef void (* eventHandlerFunc)(JsonObject& event);
+        typedef std::map<String, eventHandlerFunc> EventHandlers;
         
         CloudConnect(byte* server, int port);
         boolean connect();
         void process();
         void emitEvent(String event);
         void emitEvent(JsonObject& event);
-        void registerListener(eventHandlerFunc eventHandler);
+        void registerListener(String eventType, eventHandlerFunc eventHandler);
+        void deregisterListener(String eventType, eventHandlerFunc eventHandler);
         //JsonObject& prepareHeaderEvent(std::string eventType, int countArrayElements, int countObjects);
         
     private:
@@ -31,10 +34,11 @@ class CloudConnect {
         long lastCommunication = 0;
         const int reconnectTime = 500;
         int reconnectRetries = 0;
-        long lastConnectionAttempt = 0;
-        int nextConnectionAttemptIn = reconnectTime;
+        unsigned long lastConnectionAttempt = 0;
+        unsigned int nextConnectionAttemptIn = reconnectTime;
         int charsAvailable = 0;
-        eventHandlerFunc eventHandler = NULL;
+        //eventHandlerFunc eventHandler = NULL;
+        EventHandlers eventHandlers;
 };
 
 #endif

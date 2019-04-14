@@ -15,10 +15,10 @@ BrewsterController::BrewsterController() {
     Logger logger("controller");
 
     //Initialize Outputs
-    outputs[ControllerOutput::AC1] = new Output(OutputNames[ControllerOutput::AC1], BrewsterGlobals::get()->pinAC1, false);
-    outputs[ControllerOutput::AC2] = new Output(OutputNames[ControllerOutput::AC2], BrewsterGlobals::get()->pinAC2, false);
-    outputs[ControllerOutput::DC1] = new Output(OutputNames[ControllerOutput::DC1], BrewsterGlobals::get()->pinDC1, true);
-    outputs[ControllerOutput::DC2] = new Output(OutputNames[ControllerOutput::DC2], BrewsterGlobals::get()->pinDC2, true);
+    outputs[ControllerOutput::AC1] = new Output(OutputShortNames[ControllerOutput::AC1], BrewsterGlobals::get()->pinAC1, false);
+    outputs[ControllerOutput::AC2] = new Output(OutputShortNames[ControllerOutput::AC2], BrewsterGlobals::get()->pinAC2, false);
+    outputs[ControllerOutput::DC1] = new Output(OutputShortNames[ControllerOutput::DC1], BrewsterGlobals::get()->pinDC1, true);
+    outputs[ControllerOutput::DC2] = new Output(OutputShortNames[ControllerOutput::DC2], BrewsterGlobals::get()->pinDC2, true);
 
     //Initialize other Brewster components
     ds18Interface = new DS18(BrewsterGlobals::get()->pinOneWire);

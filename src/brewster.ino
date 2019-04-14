@@ -15,6 +15,8 @@
 #include "controller/BrewsterController.h"
 #include "controller/Speaker.h"
 
+#include <map>
+
 //#include "lib/papertrail/papertrail.h"
 
 //Globals
@@ -37,7 +39,10 @@ CloudLogger *cloudLogger;
 CloudConnect *cc;
 byte server[] = { 192, 168, 1, 27 };
 int port = 8081;
-void handleCloudEvent(JsonObject& event); // Forward declaration
+//void handleCloudEvent(JsonObject& event); // Forward declaration
+void handleCloudEvent_RefreshSensors(JsonObject& event); // Forward declaration
+void handleCloudEvent_RefreshOutputs(JsonObject& event); // Forward declaration
+void handleCloudEvent_HealthInfo(JsonObject& event); // Forward declaration
 
 //LCD
 USARTSerial& nexSerial = Serial1;
@@ -80,7 +85,11 @@ void setup() {
   //Connecting to Brewster Server
   cc = new CloudConnect(server, port);
 
-  cc->registerListener(handleCloudEvent);
+  //cc->registerListener(handleCloudEvent);
+  //cc->registerListener("ledDimm", handleCloudEvent_RefreshSensors);
+  cc->registerListener("refreshSensors", handleCloudEvent_RefreshSensors);
+  cc->registerListener("refreshOutputs", handleCloudEvent_RefreshOutputs);
+  cc->registerListener("healthInfo", handleCloudEvent_HealthInfo);
 
   #ifdef WEB_TRACE_ENABLE
     //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
@@ -191,6 +200,28 @@ os_thread_return_t controllerLoopOutput(void* param) {
 	}
 }
 
+void handleCloudEvent_RefreshSensors(JsonObject& event) {
+  std::map<SensorLocation, TemperatureSensor> sensorsMap = BrewsterController::get()->getSensorManager()->getAllTemperatureSensors();
+  for ( auto &p : sensorsMap ) {
+    p.second.sendTempChangeEvent();
+  }
+}
+
+void handleCloudEvent_RefreshOutputs(JsonObject& event) {
+  for (int i = 0; i < OUTPUT_NUMBER; i++) {
+    BrewsterController::get()->getOutput((ControllerOutput)i)->sendCloudEvent();
+  }
+}
+
+void handleCloudEvent_HealthInfo(JsonObject& event) {
+  
+  String output = String::format("Brewster health info:\n\tFree memory: %d, Uptime: %d hours\n\tParticle Cloud:%s\n\tWiFi:%s,  signal: %.02f%%, quality: %.02f%%",
+              System.freeMemory(), System.uptime()/60/60, Particle.connected()?"Yes":"No", WiFi.SSID(), WiFi.RSSI().getStrength(), WiFi.RSSI().getQuality());
+
+  Log.info(output);
+}
+
+/*
 void handleCloudEvent(JsonObject& event) {
     Log.trace("handleCloudEvent: %s", event["event"]);
     
@@ -200,3 +231,4 @@ void handleCloudEvent(JsonObject& event) {
     //    analogWrite(led, val*255/100);
     }
 }
+*/

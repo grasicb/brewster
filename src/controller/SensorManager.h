@@ -3,12 +3,13 @@
 #include "application.h"
 #include "../util/BrewsterGlobals.h"
 #include "TemperatureSensor.h"
+#include "../lib/cloud_connect/CloudConnect.h"
 #include <map>
-
-typedef std::map<SensorLocation, TemperatureSensor> TempSensorMap;
 
 class SensorManager {
 public:
+    typedef std::map<SensorLocation, TemperatureSensor> TempSensorMap;
+
     SensorManager();
     ~SensorManager() {};
     void readSensors();

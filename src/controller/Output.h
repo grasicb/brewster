@@ -40,6 +40,7 @@ public:
     void addListener(f_outputCB_t function, void* callingObject, int outputIdentifier);
     void removeListener(f_outputCB_t function);
     void removeAllListeners();
+    void sendCloudEvent();
 
 protected:
   struct OutputListener {
@@ -76,5 +77,4 @@ private:
 
   std::map<f_outputCB_t, OutputListener> listeners;
   void triggerChangeEvent();
-  void sendCloudEvent();
 };

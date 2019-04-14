@@ -79,13 +79,13 @@ SensorLocation TemperatureSensor::getLocation() {
 }
 
 void TemperatureSensor::sendTempChangeEvent() {
-  ulong ttime = Time.now()*1000;
+  ulong ttime = Time.now();
   const int capacity = JSON_OBJECT_SIZE(8+1);
   StaticJsonBuffer<capacity> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   root["type"] = "event";
   root["event"] = "temperatureChange";
-  root["timestamp"] = ttime*1000;
+  root["timestamp"] = ttime;
   std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
   root["timestamp_human"] = str;
   JsonObject& payload = root.createNestedObject("payload");

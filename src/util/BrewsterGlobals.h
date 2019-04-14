@@ -31,7 +31,8 @@ const static String TimeUOMNames[4] = {"s", "min", "h", "day(s)"};
 const static String QtyUOMNames[4] = {"g", "kg", "ml", "l"};
 const static String sensorNames[8] = {"Hot liquor tank", "Mash tun", "Boil kettle", "Cooler input", "Coller output", "Fermentor", "Fridge", "Room"};
 const static String sensorShortNames[8] = {"HLT", "MT", "BK", "C-IN", "C-OUT", "FERM", "FRDG", "ROOM"};
-const static String OutputNames[] = {"AC 1", "AC 2", "DC 1", "DC 2"};
+const static String OutputNames[4] = {"AC 1", "AC 2", "DC 1", "DC 2"};
+const static String OutputShortNames[4] = {"AC1", "AC2", "DC1", "DC2"};
 
 const static unsigned long logIntervalMashing = 9;
 //const static unsigned long logIntervalFermentation = ;

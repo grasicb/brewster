@@ -87,7 +87,7 @@ void CloudConnect::process() {
 }
 
 void CloudConnect::emitEvent(String event) {
-    if (client != NULL && client.connected()) {
+    if (client.connected()) {
         client.println(event);
     }else{
         logger->error("Cannot emit event to the server. Connection to the server is not established. Event: "+event);
@@ -95,7 +95,7 @@ void CloudConnect::emitEvent(String event) {
 }
 
 void CloudConnect::emitEvent(JsonObject&  event) {
-    if (client != NULL && client.connected()) {
+    if (client.connected()) {
         serializeToClient(event);
     }else{
         logger->error("Cannot emit event to the server. Connection to the server is not established.");
@@ -103,13 +103,22 @@ void CloudConnect::emitEvent(JsonObject&  event) {
     }
 }
 
-void CloudConnect::registerListener(eventHandlerFunc eventHandler) {
-    this->eventHandler = eventHandler;
+void CloudConnect::registerListener(String eventType, eventHandlerFunc eventHandler) {
+    this->eventHandlers[eventType] = eventHandler;
+}
+
+void CloudConnect::deregisterListener(String eventType, eventHandlerFunc eventHandler) {
+    this->eventHandlers.erase(eventType);
 }
         
 void CloudConnect::distributeEvent(JsonObject& event) {
-    if (eventHandler != NULL) {
-        eventHandler(event);
+    String eventType = String((const char*) event["event"]);
+    eventHandlerFunc handler = eventHandlers[eventType];
+
+    if (handler != NULL) {
+        handler(event);
+    }else {
+        logger->warn("No event handler defined for event: " + eventType);
     }
 }
 
@@ -118,12 +127,12 @@ void CloudConnect::sendHearthBeat() {
     StaticJsonBuffer<capacity> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
     root["type"] = "hearthbeat";
-    long ttime = Time.now()*1000;
+    long ttime = Time.now();
     root["timestamp"] = ttime;
     std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
     root["timestamp_human"] = str;
     
-    if (client != NULL && client.connected()) {
+    if (client.connected()) {
         serializeToClient(root);
     }else{
         logger->error("Cannot send hearthbeat to the server. Connection to the server is not established.");
@@ -136,13 +145,13 @@ void CloudConnect::sendWelcomeMessage() {
     StaticJsonBuffer<capacity> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
     root["type"] = "connection_established";
-    long ttime = Time.now()*1000;
+    long ttime = Time.now();
     root["timestamp"] = ttime;
     std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
     root["timestamp_human"] = str;
     root["client_version"] = CCLIB_VERSION;
     
-    if (client != NULL && client.connected()) {
+    if (client.connected()) {
         serializeToClient(root);
     }else{
         logger->error("Cannot send welcome message to the server. Connection to the server is not established.");

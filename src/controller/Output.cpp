@@ -273,7 +273,7 @@ void Output::triggerChangeEvent() {
 }
 
 void Output::sendCloudEvent() {
-  ulong ttime = Time.now()*1000;
+  ulong ttime = Time.now();
   const int capacity = JSON_OBJECT_SIZE(12+1);
   StaticJsonBuffer<capacity> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
@@ -290,6 +290,20 @@ void Output::sendCloudEvent() {
   payload["pidTargetValue"] = getTargetValue();
   payload["isAutoTune"] = isAutoTune();
   payload["output"] = getOutput();
+
+  SensorManager::TempSensorMap sensors = BrewsterController::get()->getSensorManager()->getAllTemperatureSensors();
+  for(auto sensor : sensors)
+  {
+    
+    if (sensor.second.getValueReference() == _input) {
+      payload["sensorLocation"] = sensorShortNames[sensor.second.getLocation()].c_str();
+      _logger->info("Found matching sensor: " + sensorShortNames[sensor.second.getLocation()]);
+    }else{
+      _logger->info(String::format("Sensor not matched: " + sensorShortNames[sensor.second.getLocation()] + "; %u; %u, %u, %u, %f", _input, &_input, sensor.second.getValueReference(), 0, _input ));
+    }
+  }
+
+  //BrewsterController::get()->getOutput(ControllerOutput::AC1)
 
   BrewsterController::get()->getCloudConnectInstance()->emitEvent(root);
 }
