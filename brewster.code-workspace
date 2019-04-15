@@ -44,7 +44,12 @@
             "type_traits": "cpp",
             "tuple": "cpp",
             "typeinfo": "cpp",
-            "utility": "cpp"
+            "utility": "cpp",
+            "condition_variable": "cpp",
+            "iostream": "cpp",
+            "thread": "cpp",
+            "optional": "cpp",
+            "string_view": "cpp"
         },
         "particle.targetDevice": "crazy_boomer",
         "particle.firmwareVersion": "0.7.0",

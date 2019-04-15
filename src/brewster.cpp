@@ -1,4 +1,4 @@
-//#define DEBUG_SERIAL_ENABLE
+#define DEBUG_SERIAL_ENABLE
 #define WEB_TRACE_ENABLE 1
 
 #include "lib/cloud_connect/CloudConnect.h"
@@ -98,7 +98,7 @@ void setup() {
   cc->registerListener("healthInfo", handleCloudEvent_HealthInfo);
 
   #ifdef WEB_TRACE_ENABLE
-    //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
+    //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
     cloudLogger = new CloudLogger(cc, "brewster", "crazy_boomer", LOG_LEVEL_ALL);
   #else
     //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);

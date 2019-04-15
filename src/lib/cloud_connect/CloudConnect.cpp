@@ -37,55 +37,62 @@ bool CloudConnect::connect() {
 }
 
 void CloudConnect::process() {
-    charsAvailable = client.available();
-    if (charsAvailable)
-    {
-        logger->trace(String::format("Chars in buffer: %d", charsAvailable));
-        lastCommunication = millis();
-        //String input = client.readString();
-        //logger->info(String::format("Message received (%d chars): "+input, input.length()));
-        //distributeEvent(input);
-        
-        /*
-        logger->info("Start");
-        char buffer [10];
-        int bread = client.readBytes(buffer, 10);
-        buffer[bread] = 0;
-        logger->info("Done");
-        logger->info(String::format("Message received (%d chars): %s", bread, buffer));
-        */
-        
-        String input = "";
-        while(client.available()) {
-            char c = (char)client.read();
-            if (c == 0)
-                logger->info("NULL character detected");
-
-            input += c;
-        }
-        logger->info(String::format("Message received (%d chars): "+input, input.length()));
-
-        const int capacity = JSON_OBJECT_SIZE(25);
-        StaticJsonBuffer<capacity> jsonBuffer;
-        JsonObject& root = jsonBuffer.parseObject(input.c_str());
-        if (root.success()) {
-            if (root["type"] == "event")
-                distributeEvent(root);
-        }else{
-            logger->error("Parsing of JSON input message failed ("+input+")");
-        }
-    }
-    
-    if (!client.connected())
-    {
+    if (!client.connected()) {
         if(lastConnectionAttempt + nextConnectionAttemptIn < millis()) {
             logger->warn("Client disconnected from server. Trying to reconnect.");
             connect();
             lastConnectionAttempt = millis();
         }
+    } else {
+
+        /////////////////////////////////////////////
+        // Receive messages from the server if any
+        charsAvailable = client.available();
+        if (charsAvailable)
+        {
+            //logger->trace(String::format("Chars in buffer: %d", charsAvailable));
+            lastCommunication = millis();           
+            
+            String input = "";
+            while(client.available()) {
+                char c = (char)client.read();
+                /*
+                if (c == 0)
+                    logger->info("NULL character detected");
+                */
+
+                input += c;
+            }
+            logger->trace(String::format("Message received (%d chars): "+input, input.length()));
+
+            const int capacity = JSON_OBJECT_SIZE(25);
+            StaticJsonBuffer<capacity> jsonBuffer;
+            JsonObject& root = jsonBuffer.parseObject(input.c_str());
+            if (root.success()) {
+                if (root["type"] == "event")
+                    distributeEvent(root);
+            }else{
+                logger->error("Parsing of JSON input message failed ("+input+")");
+            }
+        }
+        
+        /////////////////////////////////////////////
+        //Send messages to the server from the queue
+        while (!outgoingQueue.empty() && client.available()==0) {
+            //ulong start = millis();
+            char* event = outgoingQueue.front();
+            outgoingQueue.pop();
+
+            client.write((const u_int8_t*)event, strlen(event), 100);
+            client.write((uint8_t)0, 100);
+
+            delete event;
+            //ulong t1 = millis() - start;
+            //Serial.println(String::format("EVENT____ setn to the server in %u ms.", t1));
+        }
     }
 }
-
+/*
 void CloudConnect::emitEvent(String event) {
     if (client.connected()) {
         client.println(event);
@@ -93,14 +100,22 @@ void CloudConnect::emitEvent(String event) {
         logger->error("Cannot emit event to the server. Connection to the server is not established. Event: "+event);
     }
 }
-
+*/
 void CloudConnect::emitEvent(JsonObject&  event) {
-    if (client.connected()) {
-        serializeToClient(event);
-    }else{
-        logger->error("Cannot emit event to the server. Connection to the server is not established.");
-        event.prettyPrintTo(Serial);
+    // Dropping old messages after treshold is reached
+    if (outgoingQueue.size() > 40) {
+        char* item = outgoingQueue.front();
+        outgoingQueue.pop();
+        delete item;
     }
+
+
+    // Adding message to the queue
+    size_t size = event.measureLength()+1;
+    char* str2 = (char*)malloc(size);
+    event.printTo(str2, size);
+    //str2[size-1] = 0;
+    outgoingQueue.push(str2);
 }
 
 void CloudConnect::registerListener(String eventType, eventHandlerFunc eventHandler) {
@@ -133,7 +148,7 @@ void CloudConnect::sendHearthBeat() {
     root["timestamp_human"] = str;
     
     if (client.connected()) {
-        serializeToClient(root);
+        emitEvent(root);
     }else{
         logger->error("Cannot send hearthbeat to the server. Connection to the server is not established.");
     }
@@ -152,13 +167,8 @@ void CloudConnect::sendWelcomeMessage() {
     root["client_version"] = CCLIB_VERSION;
     
     if (client.connected()) {
-        serializeToClient(root);
+        emitEvent(root);
     }else{
         logger->error("Cannot send welcome message to the server. Connection to the server is not established.");
     }
-}
-
-void CloudConnect::serializeToClient(JsonObject& object) {
-    object.printTo(client);
-    client.write((uint8_t)0);
 }
