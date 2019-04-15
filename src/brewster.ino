@@ -42,7 +42,7 @@ int port = 8081;
 //void handleCloudEvent(JsonObject& event); // Forward declaration
 void handleCloudEvent_RefreshSensors(JsonObject& event); // Forward declaration
 void handleCloudEvent_RefreshOutputs(JsonObject& event); // Forward declaration
-void handleCloudEvent_HealthInfo(JsonObject& event); // Forward declaration
+void handleCloudFunction_HealthInfo(JsonObject& event); // Forward declaration
 
 //LCD
 USARTSerial& nexSerial = Serial1;
@@ -89,7 +89,7 @@ void setup() {
   //cc->registerListener("ledDimm", handleCloudEvent_RefreshSensors);
   cc->registerListener("refreshSensors", handleCloudEvent_RefreshSensors);
   cc->registerListener("refreshOutputs", handleCloudEvent_RefreshOutputs);
-  cc->registerListener("healthInfo", handleCloudEvent_HealthInfo);
+  cc->registerFunction("healthInfo", handleCloudFunction_HealthInfo);
 
   #ifdef WEB_TRACE_ENABLE
     //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
@@ -213,12 +213,18 @@ void handleCloudEvent_RefreshOutputs(JsonObject& event) {
   }
 }
 
-void handleCloudEvent_HealthInfo(JsonObject& event) {
+void handleCloudFunction_HealthInfo(JsonObject& event) {
   
   String output = String::format("Brewster health info:\n\tFree memory: %d, Uptime: %d hours\n\tParticle Cloud:%s\n\tWiFi:%s,  signal: %.02f%%, quality: %.02f%%",
               System.freeMemory(), System.uptime()/60/60, Particle.connected()?"Yes":"No", WiFi.SSID(), WiFi.RSSI().getStrength(), WiFi.RSSI().getQuality());
-
   Log.info(output);
+
+  //Send result to the cloud
+  const int capacity = JSON_OBJECT_SIZE(12+1);
+  StaticJsonBuffer<capacity> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  root["info"] = output.c_str();
+  cc->sendFunctionResult(event["signature"], root);
 }
 
 /*

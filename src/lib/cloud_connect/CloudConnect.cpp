@@ -71,6 +71,8 @@ void CloudConnect::process() {
             if (root.success()) {
                 if (root["type"] == "event")
                     distributeEvent(root);
+                else if (root["type"] == "function")
+                    distributeFunctionCall(root);
             }else{
                 logger->error("Parsing of JSON input message failed ("+input+")");
             }
@@ -118,22 +120,56 @@ void CloudConnect::emitEvent(JsonObject&  event) {
     outgoingQueue.push(str2);
 }
 
-void CloudConnect::registerListener(String eventType, eventHandlerFunc eventHandler) {
+void CloudConnect::sendFunctionResult(const char* functionCallID, JsonObject& result) {
+    ulong ttime = Time.now();
+    const int capacity = JSON_OBJECT_SIZE(12+1);
+    StaticJsonBuffer<capacity> jsonBuffer;
+    JsonObject& root = jsonBuffer.createObject();
+    root["type"] = "functionResult";
+    root["signature"] = functionCallID;
+    root["timestamp"] = ttime*1000;
+    std::string str (Time.format(ttime, TIME_FORMAT_ISO8601_FULL).c_str());
+    root["timestamp_human"] = str;
+    root["result"] = result;
+
+    emitEvent(root);
+}
+
+void CloudConnect::registerListener(String eventType, cloudHandlerFunc eventHandler) {
     this->eventHandlers[eventType] = eventHandler;
 }
 
-void CloudConnect::deregisterListener(String eventType, eventHandlerFunc eventHandler) {
+void CloudConnect::deregisterListener(String eventType, cloudHandlerFunc eventHandler) {
     this->eventHandlers.erase(eventType);
+}
+
+void CloudConnect::registerFunction(String function, cloudHandlerFunc eventHandler) {
+    this->functionHandlers[function] = eventHandler;
+}
+
+void CloudConnect::deregisterFunction(String function, cloudHandlerFunc eventHandler) {
+    this->functionHandlers.erase(function);
 }
         
 void CloudConnect::distributeEvent(JsonObject& event) {
     String eventType = String((const char*) event["event"]);
-    eventHandlerFunc handler = eventHandlers[eventType];
+    cloudHandlerFunc handler = eventHandlers[eventType];
 
     if (handler != NULL) {
         handler(event);
     }else {
         logger->warn("No event handler defined for event: " + eventType);
+    }
+}
+
+void CloudConnect::distributeFunctionCall(JsonObject& functionCall) {
+    String function = String((const char*) functionCall["function"]);
+    cloudHandlerFunc handler = functionHandlers[function];
+
+    if (handler != NULL) {
+        handler(functionCall);
+    }else {
+        logger->warn("No functional handler defined for function: " + function);
     }
 }
 

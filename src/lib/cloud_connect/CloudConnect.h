@@ -10,20 +10,25 @@
 
 class CloudConnect {
     public:
-        typedef void (* eventHandlerFunc)(JsonObject& event);
-        typedef std::map<String, eventHandlerFunc> EventHandlers;
+        typedef void (* cloudHandlerFunc)(JsonObject& event);
+        typedef std::map<String, cloudHandlerFunc> EventHandlers;
+        typedef std::map<String, cloudHandlerFunc> FunctionHandlers;
         
         CloudConnect(byte* server, int port);
         boolean connect();
         void process();
         //void emitEvent(String event);
         void emitEvent(JsonObject& event);
-        void registerListener(String eventType, eventHandlerFunc eventHandler);
-        void deregisterListener(String eventType, eventHandlerFunc eventHandler);
+        void sendFunctionResult(const char * functionCallID, JsonObject& result);
+        void registerListener(String eventType, cloudHandlerFunc eventHandler);
+        void deregisterListener(String eventType, cloudHandlerFunc eventHandler);
+        void registerFunction(String function, cloudHandlerFunc eventHandler);
+        void deregisterFunction(String function, cloudHandlerFunc eventHandler);
         //JsonObject& prepareHeaderEvent(std::string eventType, int countArrayElements, int countObjects);
         
     private:
         void distributeEvent(JsonObject& event);
+        void distributeFunctionCall(JsonObject& functionCall);
         void sendHearthBeat();
         void sendWelcomeMessage();
         Logger *logger;
@@ -41,6 +46,7 @@ class CloudConnect {
         int charsAvailable = 0;
         
         EventHandlers eventHandlers;
+        FunctionHandlers functionHandlers;
 };
 
 #endif
