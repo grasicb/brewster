@@ -183,7 +183,7 @@ std::map<String, String>* BrewsterUtils::getParams(String input) {
 
 std::pair<String, String>* BrewsterUtils::getSingleParam(String input) {
   std::pair<String, String>* ret = NULL;
-  int i = input.indexOf('=');
+  u_int i = input.indexOf('=');
   if(i>0 && i<input.length()-1) {
     String param = input.substring(0, i).trim().toLowerCase();
     String value = input.substring(i+1, input.length()).trim();
@@ -199,4 +199,5 @@ std::pair<String, String>* BrewsterUtils::getSingleParam(String input) {
 
 int BrewsterUtils::enterDfuMode(String params) {
   System.dfu();
+  return 1;
 }

@@ -226,7 +226,7 @@ void handleCloudFunction_HealthInfo(JsonObject& event) {
   Log.info(output);
 
   //Send result to the cloud
-  const int capacity = JSON_OBJECT_SIZE(12+1);
+  const int capacity = JSON_OBJECT_SIZE(1);
   StaticJsonBuffer<capacity> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   root["info"] = output.c_str();

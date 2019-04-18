@@ -122,7 +122,7 @@ void CloudConnect::emitEvent(JsonObject&  event) {
 
 void CloudConnect::sendFunctionResult(const char* functionCallID, JsonObject& result) {
     ulong ttime = Time.now();
-    const int capacity = JSON_OBJECT_SIZE(12+1);
+    const int capacity = JSON_OBJECT_SIZE(30);
     StaticJsonBuffer<capacity> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
     root["type"] = "functionResult";
@@ -135,25 +135,25 @@ void CloudConnect::sendFunctionResult(const char* functionCallID, JsonObject& re
     emitEvent(root);
 }
 
-void CloudConnect::registerListener(String eventType, cloudHandlerFunc eventHandler) {
+void CloudConnect::registerListener(String eventType, eventHandlerFunc eventHandler) {
     this->eventHandlers[eventType] = eventHandler;
 }
 
-void CloudConnect::deregisterListener(String eventType, cloudHandlerFunc eventHandler) {
+void CloudConnect::deregisterListener(String eventType, eventHandlerFunc eventHandler) {
     this->eventHandlers.erase(eventType);
 }
 
-void CloudConnect::registerFunction(String function, cloudHandlerFunc eventHandler) {
+void CloudConnect::registerFunction(String function, functionHandlerFunc eventHandler) {
     this->functionHandlers[function] = eventHandler;
 }
 
-void CloudConnect::deregisterFunction(String function, cloudHandlerFunc eventHandler) {
+void CloudConnect::deregisterFunction(String function, functionHandlerFunc eventHandler) {
     this->functionHandlers.erase(function);
 }
         
 void CloudConnect::distributeEvent(JsonObject& event) {
     String eventType = String((const char*) event["event"]);
-    cloudHandlerFunc handler = eventHandlers[eventType];
+    eventHandlerFunc handler = eventHandlers[eventType];
 
     if (handler != NULL) {
         handler(event);
@@ -164,10 +164,12 @@ void CloudConnect::distributeEvent(JsonObject& event) {
 
 void CloudConnect::distributeFunctionCall(JsonObject& functionCall) {
     String function = String((const char*) functionCall["function"]);
-    cloudHandlerFunc handler = functionHandlers[function];
+    functionHandlerFunc handler = functionHandlers[function];
 
     if (handler != NULL) {
         handler(functionCall);
+        //sendFunctionResult(functionCall["signature"], result);
+
     }else {
         logger->warn("No functional handler defined for function: " + function);
     }
