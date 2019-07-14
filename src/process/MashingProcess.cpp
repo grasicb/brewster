@@ -139,14 +139,9 @@ void MashingProcess::updateStepStatus() {
 void MashingProcess::updateOutput() {
   updateStepStatus();
 
-  //float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::HLT).getValueReference();
-  float *temp = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-
   if(currentStep == NULL)
     logger->error("Error while updating output. Current step is not set.");
-  else if(temp == NULL)
-    logger->error("Error while updating output. Reference temperature for PID is NULL.");
   else {
-    BrewsterController::get()->getOutput(mashHeater)->setTargetValue(currentStep->temperature, temp, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::MASHING]));
+    BrewsterController::get()->getOutput(mashHeater)->setTargetValue(currentStep->temperature, SensorLocation::COOLER_OUT, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::MASHING]));
   }
 }

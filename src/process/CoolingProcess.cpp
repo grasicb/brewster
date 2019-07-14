@@ -53,8 +53,7 @@ void CoolingProcess::process() {
 void CoolingProcess::processStarted() {
   logger->info("Starting process %s.", (const char*) name);
 
-  float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
+  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), SensorLocation::COOLER_OUT, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
 
   lastTempLogged=0;
   tempFermentorSum=0;
@@ -82,8 +81,7 @@ void CoolingProcess::processPaused() {
 void CoolingProcess::processResumed() {
   logger->info("Resuming process %s.", (const char*) name);
 
-  float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
+  BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), SensorLocation::COOLER_OUT, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
 
   logger->info("Process %s resumed.", (const char*) name);
 }
@@ -92,8 +90,7 @@ void CoolingProcess::processRestored() {
   logger->info("Restoring process %s after system startup.", (const char*) name);
 
   if(getState() == ProcessState::STARTED) {
-    float *temperatureRef = BrewsterController::get()->getSensorManager()->getTemperatureSensor(SensorLocation::COOLER_OUT).getValueReference();
-    BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), temperatureRef, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
+    BrewsterController::get()->getOutput(coolingPump)->setTargetValue(recipe->getTargetCoollingTemperature(), SensorLocation::COOLER_OUT, REVERSE, &(BrewsterGlobals::get()->getPIDSettings()[BrewProcess::COOLING]));
   }else {
     BrewsterController::get()->getOutput(coolingPump)->setOutput(0);
   }

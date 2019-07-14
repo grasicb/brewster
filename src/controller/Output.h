@@ -24,18 +24,23 @@ public:
     ~Output() {};
     void setOutput(uint8_t percentage);
     uint8_t getOutput();
-    void setTargetValue(double target, float* input, PidSettings* settings = NULL);
-    void setTargetValue(double target, float* input, int direction, PidSettings* settings = NULL);
+    void setTargetValue(double target, SensorLocation sensor, PidSettings* settings = NULL);
+    void setTargetValue(double target, SensorLocation sensor, int direction, PidSettings* settings = NULL);
     void changeTargetValue(double target);
     double getTargetValue();
     boolean isAutoTune();
     void toggleAutoTune();
     //void SetPidDirection(int direction);
+    void setPower(bool enabled);
     void process();
     boolean isActive();
     boolean isPID();
     String getName();
-    PidSettings* getPIDSettings();
+    PidSettings getPIDSettings();
+    void enableManualMode();
+    void enablePIDMode(SensorLocation sensor);
+    void enablePIDMode(SensorLocation sensor, PidSettings *settings);
+    
 
     void addListener(f_outputCB_t function, void* callingObject, int outputIdentifier);
     void removeListener(f_outputCB_t function);
@@ -55,9 +60,11 @@ private:
   double _output;
   boolean _isPWM;
   boolean _pidOn;
+  boolean _isOn;
   int _frequency;
   const static unsigned long _timeWindow = 500;
   unsigned long _windowStartTime = 0;
+  SensorLocation sensor = SensorLocation::HLT;
   float* _input;
   double _target;
   PID* _pid = NULL;
@@ -65,7 +72,7 @@ private:
   String _name;
   uint8_t _pin;
 
-  PidSettings *pidSettings = NULL;
+  PidSettings pidSettings;
   boolean autoTune = false;
   double aTuneStep=80;
   double aTuneNoise=1;
@@ -77,4 +84,6 @@ private:
 
   std::map<f_outputCB_t, OutputListener> listeners;
   void triggerChangeEvent();
+
+  void enablePIDMode(float* sensorInput, PidSettings *settings);
 };

@@ -6,6 +6,7 @@
  **********************************************************************************************/
 
 #include "PID.h"
+#include "application.h"
 
 /*Constructor (...)*********************************************************
  *    The parameters specified here are those for for which we can't set up
@@ -56,6 +57,8 @@ bool PID::Compute()
    unsigned long timeChange = (now - lastTime);
    if(timeChange>=SampleTime)
    {
+      double o1 = *myOutput;
+
       /*Compute all the working error variables*/
       double input = (double)*myInput;
       double error = *mySetpoint - input;
@@ -79,6 +82,8 @@ bool PID::Compute()
 	    if(output > outMax) output = outMax;
       else if(output < outMin) output = outMin;
 	    *myOutput = output;
+
+      // Log.info("PID:: setPoint: %.2f, input: %.2f, error:%2.f, dInput:%2.f, kp: %.1f, ki: %.1f, kd: %.1f old output: %.2f, new output: %.2f", *mySetpoint, input, error, dInput, kp, ki, kd, o1, *myOutput);
 
       /*Remember some variables for next time*/
       lastInput = input;

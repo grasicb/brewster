@@ -13,6 +13,7 @@
 #include "util/TempUtils.h"
 
 #include "controller/BrewsterController.h"
+#include "controller/CloudFunctionHandlers.h"
 #include "controller/Speaker.h"
 
 #include <map>
@@ -39,10 +40,6 @@ CloudLogger *cloudLogger;
 CloudConnect *cc;
 byte server[] = { 192, 168, 1, 27 };
 int port = 8081;
-//void handleCloudEvent(JsonObject& event); // Forward declaration
-void handleCloudEvent_RefreshSensors(JsonObject& event); // Forward declaration
-void handleCloudEvent_RefreshOutputs(JsonObject& event); // Forward declaration
-void handleCloudFunction_HealthInfo(JsonObject& event); // Forward declaration
 
 //LCD
 USARTSerial& nexSerial = Serial1;
@@ -85,11 +82,12 @@ void setup() {
   //Connecting to Brewster Server
   cc = new CloudConnect(server, port);
 
-  //cc->registerListener(handleCloudEvent);
-  //cc->registerListener("ledDimm", handleCloudEvent_RefreshSensors);
   cc->registerListener("refreshSensors", handleCloudEvent_RefreshSensors);
   cc->registerListener("refreshOutputs", handleCloudEvent_RefreshOutputs);
   cc->registerFunction("healthInfo", handleCloudFunction_HealthInfo);
+  cc->registerFunction("setPower", handleCF_setOutputPower);
+  cc->registerFunction("setOutput", handleCF_setOutput);
+  cc->registerFunction("setOutputMode", handleCF_setOutputMode);
 
   #ifdef WEB_TRACE_ENABLE
     //papertailHandler = new PapertrailLogHandler("logs2.papertrailapp.com", 41549, "brewster", "crazy_boomer", LOG_LEVEL_INFO);
@@ -199,42 +197,3 @@ os_thread_return_t controllerLoopOutput(void* param) {
 		BrewsterController::get()->controllerLoopOutput();
 	}
 }
-
-void handleCloudEvent_RefreshSensors(JsonObject& event) {
-  std::map<SensorLocation, TemperatureSensor> sensorsMap = BrewsterController::get()->getSensorManager()->getAllTemperatureSensors();
-  for ( auto &p : sensorsMap ) {
-    p.second.sendTempChangeEvent();
-  }
-}
-
-void handleCloudEvent_RefreshOutputs(JsonObject& event) {
-  for (int i = 0; i < OUTPUT_NUMBER; i++) {
-    BrewsterController::get()->getOutput((ControllerOutput)i)->sendCloudEvent();
-  }
-}
-
-void handleCloudFunction_HealthInfo(JsonObject& event) {
-  
-  String output = String::format("Brewster health info:\n\tFree memory: %d, Uptime: %d hours\n\tParticle Cloud:%s\n\tWiFi:%s,  signal: %.02f%%, quality: %.02f%%",
-              System.freeMemory(), System.uptime()/60/60, Particle.connected()?"Yes":"No", WiFi.SSID(), WiFi.RSSI().getStrength(), WiFi.RSSI().getQuality());
-  Log.info(output);
-
-  //Send result to the cloud
-  const int capacity = JSON_OBJECT_SIZE(1);
-  StaticJsonBuffer<capacity> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-  root["info"] = output.c_str();
-  cc->sendFunctionResult(event["signature"], root);
-}
-
-/*
-void handleCloudEvent(JsonObject& event) {
-    Log.trace("handleCloudEvent: %s", event["event"]);
-    
-    if (event["event"] == "ledDimm") {
-        int val = event["payload"]["value"];
-        Log.trace(String::format("Change led brightness to %d%c", val), '%');
-    //    analogWrite(led, val*255/100);
-    }
-}
-*/
